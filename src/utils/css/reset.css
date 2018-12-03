@@ -1,0 +1,194 @@
+body, body * {
+  max-height: 1000000px;
+  box-sizing: border-box;
+}
+html,body{-webkit-text-size-adjust: 100%;}
+/* 清除内外边距 */
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, /* structural elements 结构元素 */
+dl, dt, dd, ul, ol, li, /* list elements 列表元素 */
+pre, /* text formatting elements 文本格式元素 */
+fieldset, lengend, button, input, textarea, /* form elements 表单元素 */
+th, td { /* table elements 表格元素 */
+  margin: 0;
+  padding: 0;
+}
+body,
+button, input, select, textarea { /* for ie */
+  /*font: 12px/1 Tahoma, Helvetica, Arial, "宋体", sans-serif;*/
+  font: 14px/1 PingFang SC,Tahoma, Helvetica, Arial, "\5b8b\4f53", sans-serif; /* 用 ascii 字符表示，使得在任何编码下都无问题 */
+  outline: none;
+  border: none;
+}
+
+h1 { font-size: 18px; /* 18px / 12px = 1.5 */ }
+h2 { font-size: 16px; }
+h3 { font-size: 14px; }
+h4, h5, h6 { font-size: 100%; }
+
+address, cite, dfn, em, var { font-style: normal; } /* 将斜体扶正 */
+code, kbd, pre, samp, tt { font-family: "Courier New", Courier, monospace; } /* 统一等宽字体 */
+small { font-size: 14px; }
+/* 重置列表元素 */
+ul, ol { list-style: none; }
+
+
+a { text-decoration: none; }
+a:hover { text-decoration: none; }
+
+
+q:before, q:after { content: ''; }
+/* 重置表单元素 */
+
+fieldset, img { border: none; }
+
+button, input, select, textarea {
+  font-size: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* 重置 hr */
+hr {
+  border: none;
+  height: 1px;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color:rgba(0,0,0,0);
+}
+
+*::-webkit-input-placeholder {
+  font-size: 16px;
+  color:rgba(162,162,162,1);
+}
+datepicker::-webkit-input-placeholder {
+  color: #333;
+}
+/* 弹框的的确定按钮的颜色变成主题色---红色 */
+.weui-dialog__btn.weui-dialog__btn_primary {
+  color: red
+}
+/* 带有叉号的x-input框清除上边框 */
+.weui-cell{
+  padding: 0!important;
+  display: flex;
+  position: relative;
+  align-items: center;
+}
+.weui-cell:before {
+  border-top: none!important;
+}
+.vux-x-input.weui-cell {
+  width: 90%;
+}
+.weui-input {
+  font-size: 16px!important;
+  color: #333333;
+  letter-spacing: 0.34px;
+  line-height: 20px;
+}
+
+/* cell组件 文字左对齐 */
+.vux-cell-bd.vux-cell-primary label {
+  text-align: left!important;
+}
+.weui-cells.vux-no-group-title{
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.vux-cell-box {
+  width: 100%;
+}
+/* 上拉框右边字的颜色 */
+.vux-popup-header-right {
+  color: #83271F!important;
+}
+.vux-cell-value {
+  color: #666;
+  font-size: 14px;
+}
+/* .weui-cell_access .weui-cell__ft:after{
+  border-color :#C7C7C7;
+} */
+
+/* 地址  右箭头 */
+/* .weui-cell_access .weui-cell__ft {
+  padding-right: 13px;
+  position: relative;
+}
+
+.weui-cell__ft {
+  text-align: right;
+  color: #999;
+} */
+.vux-popup-picker-placeholder {
+  font-size: 14px;
+  color: #666;
+}
+/* 左边文字大小 */
+.weui-cell__hd{
+  font-size: 14px;
+}
+
+/* 添加地址页面左边的label */
+.address .weui-label{
+  font-size: 16px;
+  font-weight: bold;
+}
+.address .vux-popup-picker-select{
+  display: flex;
+  justify-content: flex-start;
+}
+.address .vux-popup-picker-select span{
+  color: #666;
+}
+.address .weui-cell__hd{
+  margin-right: 20px;
+}
+/*common*/
+@-webkit-keyframes btnRotate {
+  0% {
+      -webkit-transform: rotateZ(0deg)
+  }
+  100% {
+      -webkit-transform: rotateZ(360deg)
+  }
+}
+@keyframes btnRotate {
+  0% {
+      -webkit-transform: rotateZ(0deg)
+  }
+  100% {
+      -webkit-transform: rotateZ(360deg)
+  }
+}
+@-webkit-keyframes slideIn {
+  0% {
+      -webkit-transform: translateY(100%)
+  }
+  100% {
+      -webkit-transform: translateY(0)
+  }
+}
+@keyframes slideIn {
+  0% {
+      -webkit-transform: translateY(100%)
+  }
+  100% {
+      -webkit-transform: translateY(0)
+  }
+}
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden
+}
