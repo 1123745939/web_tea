@@ -20,6 +20,7 @@
     "mint-ui": "^2.2.13",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
+    "swiper": "^4.4.2",
     "vue": "^2.5.2",
     "vue-i18n": "^8.3.2",
     "vue-loader": "^13.7.3",
