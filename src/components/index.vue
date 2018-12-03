@@ -132,7 +132,7 @@ export default {
       moreShow : false,//更多那个按钮是否显示
       list:[],
       page:1,
-      tabIndex:1,
+      tabIndex: 1,
       loading :true,
       advanceCount:'',
       recommendCount:'',
@@ -153,6 +153,18 @@ export default {
   },
   created(){
     document.title = '茶急送'
+    if(!sessionStorage.tabIndex){
+      this.tabIndex = 1
+    }else{
+      this.tabIndex = sessionStorage.tabIndex
+      if(this.tabIndex == 1){
+
+      }else if(this.tabIndex == 2){
+        this.GOrecommand()
+      }else if(this.tabIndex == 3){
+        this.GOadvance()
+      }
+    }
   },
   computed:{
     pullDownRefreshObj: function () {
@@ -275,6 +287,9 @@ export default {
       },
       startY() {
         this.rebuildScroll()
+      },
+      tabIndex(oldV,neWV){
+        sessionStorage.tabIndex = oldV
       }
   }
 }

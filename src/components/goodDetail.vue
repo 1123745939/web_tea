@@ -30,12 +30,12 @@
     <!-- 详情 -->
 
     <div class="d">
-      <span class="d_t">2018/09/18 绿茶28期</span>
+      <span class="d_t">{{detailObj.tea_date}} {{detailObj.tea_period}}</span>
       <div class="li_top" @click="$router.push('/videoPlay')">
         <div class="play"><span></span></div>
         <div class="data">
-          <div class="d_l">
-            5万次播放
+          <div class="d_l" v-if="detailObj.vidio">
+            {{detailObj.vidio.tea_play_count}}次播放
           </div>
           <ul class="p_r">
             <li><img src="../assets/img/star.png" alt="">300</li>
@@ -58,18 +58,16 @@
       </div>
       <div class="li_mid">
         <div class="red"></div>
-        <span class="t_t">这道大红袍如此浓郁的花果香锐不可挡，你一定没喝过！</span>
+        <span class="t_t">{{detailObj.tea_title}}</span>
         <div class="t_star">
-          <div>￥<span class="p1">1800</span>.00 <span class="p2">/50g</span></div>
+          <div>￥<span class="p1">{{detailObj.tea_price}}</span>.00 <span class="p2">/{{detailObj.tea_format}}g</span></div>
           <ul>
-            <li></li>
-            <li></li>
-            <li></li>
+            <li v-for="i in detailObj.tea_score" :key="i"></li>
           </ul>
         </div>
         <div class="t_re">
           <img src="../assets/img/fire.png" alt="">
-          <span>推荐理由：香气浓郁，味道甘甜</span>
+          <span>推荐理由：{{detailObj.tea_reason}}</span>
         </div>
       </div>    
     </div>
