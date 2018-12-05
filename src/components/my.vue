@@ -5,8 +5,8 @@
       <div class="car"></div>
       <div class="tab">
         <div class="tab_top">
-          <img src="../assets/img/photo-no.png" alt="" @click="$router.push('/personalInfo')">
-          <p>您还没有昵称哦</p>
+          <img :src="infoObj.img_link" alt="" @click="$router.push('/personalInfo')">
+          <p>{{infoObj.nickname}}</p>
         </div>
         <ul class="leb">
           <li @click="$router.push('/address')"><p>97</p>收藏</li>
@@ -153,19 +153,30 @@
 </template>
 
 <script>
-import {Login} from '../api/api.js'
+import {getMyInfo} from '../api/api.js'
 export default {
   data () {
     return {
-      msg: ''
+      token:sessionStorage.token,
+      infoObj:{}
     }
   },
   created(){
     document.title = '茶急送'
+    this.init()
   },
   methods:{
-    goDetail(){
-      this.$router.push('/goodDetail')
+    init(){
+      //个人信息
+      getMyInfo({token:this.token}).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.infoObj = res.data.data
+          this.infoObj.nickname = this.infoObj.nickname ? this.infoObj.nickname : '您还没有昵称哦'
+          console.log(this.infoObj)  
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
     }
   }
 }
@@ -208,7 +219,7 @@ export default {
       .tab_top
         width 100%
         position absolute
-        top -22%
+        top -20%
         display flex
         flex-direction column
         justify-content center

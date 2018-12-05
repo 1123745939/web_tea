@@ -1,7 +1,7 @@
 <template>
   <div class="con">
-    <div class="content">
-      <ul v-if="addressList.length>0">
+    <div class="content"  v-if="addressList.length>0">
+      <ul>
         <li v-for="(item,index) in addressList" :key="item.id">
           <div class="a_l">
             <div class="a">
@@ -33,6 +33,13 @@
         + 添加新地址
       </div>
     </div>
+    <div class="noList" v-else>
+    <div class="box">
+      <img src="../assets/img/symbols-add.png" alt="">
+      <span>还没有收货地址</span>
+      <p @click="$router.push('/addressAdd')">去添加</p>
+    </div>
+  </div>
   </div>
 </template>
 
@@ -197,5 +204,38 @@ export default {
       padding l(20) 4.3%
       text-align right 
     
-
+  .noList
+    width l(175)
+    height l(280)
+    position absolute
+    top 0
+    bottom 0
+    left 0
+    right 0
+    margin auto
+    div
+      width 100%
+      height 100%
+      display flex
+      flex-direction column
+      justify-content space-between
+      align-items center
+      img 
+        display block
+        width l(170)
+        height l(150)
+      span 
+        font-family: PingFangSC-Regular;
+        font-size: 14px;
+        color: #BABABA;
+        letter-spacing: 1px;
+      p
+        width l(160)
+        height l(44)
+        background: #83271F;
+        border-radius: 100px;
+        font-size: 18px;
+        color: #FFFFFF;
+        letter-spacing: 1.12px;
+        line-height l(44)
 </style>

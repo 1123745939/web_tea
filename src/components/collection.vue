@@ -93,7 +93,7 @@ export default {
     }
   },
   created(){
-    document.title = '收藏'
+    document.title = '我的收藏'
     this.init(this.page)
   },
   computed:{
@@ -119,8 +119,7 @@ export default {
       }
       myCollect(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          this.list = this.list.concat(res.data.data)
-          console.log(this.list)
+          this.list = this.list.concat(res.data.data.result)
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }

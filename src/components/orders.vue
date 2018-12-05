@@ -5,7 +5,7 @@
         <tab-item :selected="index == selectIndex ? true:false" @on-item-click="onItemClick(item.id,index)" v-for="(item,index) in tabs" :key="item.id">{{item.name}}</tab-item>
       </tab>
     </div>
-    <ul class="o_l">
+    <ul class="o_l" v-if="orderList.length">
       <li>
         <div class="li_h">
           <p class="time">2018/10/16 14:18</p>
@@ -67,6 +67,12 @@
         </div>
       </li>
     </ul>
+    <div class="noList" v-else>
+    <div class="box">
+      <img src="../assets/img/symbols-order.png" alt="">
+      <span>暂无订单</span>
+    </div>
+  </div>
   </div>
 </template>
 
@@ -83,7 +89,8 @@ export default {
     return {
       status:1,
       selectIndex:0,
-      tabs:[{id:1,name:'全部'},{id:2,name:'待付款'},{id:3,name:'待发货'},{id:4,name:'待收货'},{id:5,name:'待评价'},{id:6,name:'售后'}]
+      tabs:[{id:1,name:'全部'},{id:2,name:'待付款'},{id:3,name:'待发货'},{id:4,name:'待收货'},{id:5,name:'待评价'},{id:6,name:'售后'}],
+      orderList:[]
     }
   },
   created(){
@@ -212,6 +219,39 @@ export default {
           line-height l(23)
           color #666666
           border 1px solid #D4D4D4
-
-  
+  .noList
+    width l(175)
+    height l(200)
+    position absolute
+    top 0
+    bottom 0
+    left 0
+    right 0
+    margin auto
+    div
+      width 100%
+      height 100%
+      display flex
+      flex-direction column
+      justify-content space-between
+      align-items center
+      img 
+        display block
+        width l(176)
+        height l(147)
+      span 
+        font-family: PingFangSC-Regular;
+        font-size: 14px;
+        color: #BABABA;
+        letter-spacing: 1px;
+      p
+        width l(160)
+        height l(44)
+        background: #83271F;
+        border-radius: 100px;
+        font-size: 18px;
+        color: #FFFFFF;
+        letter-spacing: 1.12px;
+        line-height l(44)
+    
 </style>

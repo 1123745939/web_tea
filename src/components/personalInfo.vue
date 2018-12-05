@@ -8,8 +8,8 @@
           <img src="../assets/img/touxiang@1x.png" alt="">头像
         </div>
         <div class="right">
-          <img src="../assets/img/photo-no.png" alt="" class="tou" v-show="!havePhoto">
-          <img :src="photoSrc" alt="" class="tou" v-show="havePhoto">
+          <img src="../assets/img/photo-no.png" alt="" class="tou" v-if="havePhoto">
+          <img :src="photoSrc" alt="" class="tou" v-else>
           <img src="../assets/img/more1.png" alt="">
         </div>
       </div>
@@ -140,6 +140,8 @@ export default {
         }else{
           this.sex = '女'
         }
+        this.photoSrc = res.data.data.img_link
+        console.log(this.photoSrc)
         this.tel = res.data.data.mobile
         res.data.data.nickname ? this.nickname = res.data.data.nickname : this.nickname ="请设置"
         res.data.data.address ? this.address = res.data.data.address : this.address ="请完善地址"

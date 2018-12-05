@@ -36,7 +36,7 @@
     </div>
 
     <!-- 搜索到的列表 -->
-    <div class="big_box" v-if="conShow">
+    <div class="big_box" v-if="conShow && searchResultList.length">
         <!-- tab选项 -->
       <ul class="tab">
         <li class="tab_li">期数<img src="../assets/img/jian_up.png" alt=""></li>
@@ -115,6 +115,13 @@
         </li>
       </ul>
     </div>
+    <!-- 没有数据的话 -->
+    <div class="noList" v-show="conShow && !searchResultList.length">
+      <div class="box">
+        <img src="../assets/img/symbols-car.png" alt="">
+        <span>暂无数据</span>
+      </div>
+    </div>
     <!-- 删除的弹框提示 -->
     <div>
       <confirm v-model="show" title="" @on-confirm="onConfirm">
@@ -143,9 +150,9 @@ export default {
       historyArr:[],
       filterArr:[],
       kindList:[],
-      kindList8:[],
       placeList:[],
       placeList8:[],
+      searchResultList:[],//搜索到的列表
       morePlaceShow:false,
     }
   },
@@ -546,5 +553,39 @@ export default {
               .p2
                 color: #3F3F3F;
                 fz(14)
-
+  //没有数据
+  .noList
+    width l(175)
+    height l(200)
+    position absolute
+    top 0
+    bottom 0
+    left 0
+    right 0
+    margin auto
+    div
+      width 100%
+      height 100%
+      display flex
+      flex-direction column
+      justify-content space-between
+      align-items center
+      img 
+        display block
+        width l(176)
+        height l(147)
+      span 
+        font-family: PingFangSC-Regular;
+        font-size: 14px;
+        color: #BABABA;
+        letter-spacing: 1px;
+      p
+        width l(160)
+        height l(44)
+        background: #83271F;
+        border-radius: 100px;
+        font-size: 18px;
+        color: #FFFFFF;
+        letter-spacing: 1.12px;
+        line-height l(44)
 </style>

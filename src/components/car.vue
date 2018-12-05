@@ -1,5 +1,5 @@
 <template>
-  <div class="con">
+  <div class="con"  v-if="carList.length">
     <swipeout class="vux-1px-tb">
       <swipeout-item transition-mode="follow" v-for="i in 3" :key="i">
         <div slot="right-menu">
@@ -39,6 +39,13 @@
       <p class="goPay">去结算</p>
     </div>
   </div>
+  <div class="noList" v-else>
+    <div class="box">
+      <img src="../assets/img/symbols-car.png" alt="">
+      <span>购物车空空如也哟～</span>
+      <p @click="$router.push('/')">去添加</p>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -54,6 +61,7 @@ export default {
   data () {
     return {
       selectAll :true,
+      carList:[]
     }
   },
   created(){
@@ -194,4 +202,39 @@ export default {
   .blank
     height l(44)
     margin-top l(20)
+.noList
+  width l(175)
+  height l(280)
+  position absolute
+  top 0
+  bottom 0
+  left 0
+  right 0
+  margin auto
+  div
+    width 100%
+    height 100%
+    display flex
+    flex-direction column
+    justify-content space-between
+    align-items center
+    img 
+      display block
+      width l(170)
+      height l(150)
+    span 
+      font-family: PingFangSC-Regular;
+      font-size: 14px;
+      color: #BABABA;
+      letter-spacing: 1px;
+    p
+      width l(160)
+      height l(44)
+      background: #83271F;
+      border-radius: 100px;
+      font-size: 18px;
+      color: #FFFFFF;
+      letter-spacing: 1.12px;
+      line-height l(44)
 </style>
+
