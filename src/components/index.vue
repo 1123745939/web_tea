@@ -9,11 +9,11 @@
           <img src="../assets/img/tab1_active.png" alt="" v-if="tabIndex==1">
           <img src="../assets/img/tab1.png" alt="" v-else>全部
         </li>
-         <li  class="tabli" @click="token == ''? loginMaskShow=true :GOrecommand()">
+         <li  class="tabli" @click="token == ''? loginMaskShow=true :GOrecommand('','',0)">
           <img src="../assets/img/tab2_active.png" alt="" v-if="tabIndex==2">
           <img src="../assets/img/tab2.png" alt="" v-else>推荐
         </li>
-         <li  class="tabli" @click="GOadvance()" >
+         <li  class="tabli" @click="GOadvance('','',0)" >
           <img src="../assets/img/tab3_active.png" alt="" v-if="tabIndex==3">
           <img src="../assets/img/tab3.png" alt="" v-else>预告
         </li>
@@ -23,9 +23,7 @@
          <li  class="tabli" @click="moreShow = !moreShow">
           <img src="../assets/img/tab5.png" alt="">更多 
           <ul class="more" v-if="moreShow">
-            <li>播放量最高</li>
-            <li>收藏最多</li>
-            <li>点赞最多</li>
+            <li v-for="i in moreLists" :key="i.id" @click.stop="shilter(i.id)" :class="filterId==i.id ? 'active' :''">{{i.name}}</li>
           </ul>
         </li>
       </ul>
@@ -47,10 +45,10 @@
                 <div class="d_l">
                   5次播放
                 </div>
-                <ul class="p_r" v-if="item.count">
-                  <li><img src="../assets/img/star.png" alt="">{{item.count.tea_collect_count}}</li>
-                  <li><img src="../assets/img/zan.png" alt="">{{item.count.tea_thumb_count}}</li>
-                  <li><img src="../assets/img/talk.png" alt="">{{item.count.tea_comment_count}}</li>
+                <ul class="p_r">
+                  <li><img src="../assets/img/star.png" alt="">{{item.tea_collect_count}}</li>
+                  <li><img src="../assets/img/zan.png" alt="">{{item.tea_thumb_count}}</li>
+                  <li><img src="../assets/img/talk.png" alt="">{{item.tea_comment_count}}</li>
                 </ul>
               </div>
               <div class="time">{{item.tea_date}} {{item.tea_period}}</div>
@@ -136,6 +134,10 @@ export default {
       loading :true,
       advanceCount:'',
       recommendCount:'',
+      moreLists:[{id:1,name:'播放量最高'},{id:2,name:'收藏最多'},{id:3,name:'点赞最高'}],
+      filterId:'',
+      order:'',
+      is_order : 0,
 
       
       pullUpLoadThreshold: 0,
@@ -160,9 +162,9 @@ export default {
       if(this.tabIndex == 1){
 
       }else if(this.tabIndex == 2){
-        this.GOrecommand()
+        this.GOrecommand('','',0)
       }else if(this.tabIndex == 3){
-        this.GOadvance()
+        this.GOadvance('','',0)
       }
     }
   },
@@ -185,19 +187,31 @@ export default {
       this.tabIndex = 1
       this.indexActive = this.tabIndex
     },
-    GOrecommand(){
+    GOrecommand(key,order,is_order){
       this.tabIndex = 2
       this.indexActive = this.tabIndex
       this.list = []
       this.page = 1
-      this.recommand(1)
+      this.recommand(1,key,order,is_order)
     },
     //推荐
-    recommand(page){     
+    recommand(page,key,order,is_order){    
+      if(key==1){
+        key = 'tea_play_count '
+      }else if(key==2){
+        key=='tea_collect_count'
+      }else if(key==3){
+        key = 'tea_thumb_count'
+      }else{
+        key = ''
+      }
       const options = {
         token: this.token,
+        key:key,
         page:page,
         rows:10,
+        order:order,
+        is_order:is_order,
       }
       getRecommand(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
@@ -211,19 +225,30 @@ export default {
         }
       })
     },
-    GOadvance(){
+    GOadvance(key,order,is_order){
       this.tabIndex = 3
       this.indexActive = this.tabIndex
       this.list = []
       this.page = 1
-      this.advance(1)
+      this.advance(1,key,order,is_order)
     },
     //预告
-    advance(page){
+    advance(page,key,order,is_order){
+      if(key==1){
+        key = 'tea_play_count '
+      }else if(key==2){
+        key='tea_collect_count'
+      }else if(key==3){
+        key = 'tea_thumb_count'
+      }else{
+        key = ''
+      }
       const options = {
-        token: this.token,
+        key:key,
         page:page,
         rows:10,
+        order:order,
+        is_order:is_order
       }
       getAdvance(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
@@ -237,13 +262,29 @@ export default {
         }
       })
     },
+    //排序
+    shilter(id){
+      this.list = []
+      this.filterId = id
+      this.order = 'desc'
+      this.is_order = 1
+      this.moreShow = false
+      console.log(this.moreShow)
+      if(this.tabIndex==1){
+
+      }else if(this.tabIndex==2){
+        this.GOrecommand(id,this.order,this.is_order)
+      }else if(this.tabIndex==3){
+        this.GOadvance(id,this.order,this.is_order)
+      }
+    },
        //下拉刷新
     onPullingDown() {
       // 模拟更新数据
       if(this.tabIndex == 2){
-        this.recommand(1)
+        //this.recommand(1)
       }else if(this.tabIndex == 3){
-        this.advance(1)
+        //this.advance(1)
       }
      },
      //上拉加载
@@ -252,10 +293,19 @@ export default {
       console.log('pulling up and load data')
 
       this.page ++
+      //  filterId:'',
+      // order:'',
+      // is_order : 0,
+      if(this.filterId && this.order){
+        this.is_order = 1
+      }else{
+        this.is_order =0
+      }
+
       if(this.tabIndex == 2){
-        this.recommand(this.page)
+        this.recommand(this.page,this.filterId,this.order,this.is_order)
       }else if(this.tabIndex == 3){
-        this.advance(this.page)
+        this.advance(this.page,this.filterId,this.order,this.is_order)
       }
       this.$refs.scroll.forceUpdate()
     },
@@ -359,6 +409,8 @@ export default {
           color: #FFFFFF;
           letter-spacing: 0.28px;
           padding-top l(3)
+          li.active
+            color #83271f
           li:last-of-type
             border-bottom 0
           li

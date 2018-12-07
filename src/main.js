@@ -10,11 +10,6 @@ import  { ToastPlugin,LoadingPlugin } from 'vux'
 Vue.use(ToastPlugin)
 Vue.use(LoadingPlugin)
 
-//引入mint组件
-import MintUI from 'mint-ui'
-import 'mint-ui/lib/style.css'
-Vue.use(MintUI)
-
 import i18n from './language'
 
 Vue.config.productionTip = false
