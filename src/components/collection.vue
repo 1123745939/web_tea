@@ -18,8 +18,8 @@
             <li class="h_li">
               <div class="left">
                 <img src="../assets/img/play.png" alt="">
-                <span class="time">{{i.tea_date}} 绿茶28期</span>
-                <span class="p_n">5万次播放</span>
+                <span class="time">{{i.tea_date}} {{i.tea_period}}</span>
+                <span class="p_n">{{i.tea_play_count}}次播放</span>
               </div>
               <div class="right">
                 <p class="name">{{i.tea_title}}</p>
@@ -33,7 +33,8 @@
                   </ul>
                 </div>
                 <div class="rest_n">
-                  <div class="rest_box">仅剩18份</div>
+                  <div class="num_n">仅剩{{i.tea_count}}份</div>
+                  <div class="rest_box" :style="{width:i.tea_count/i.tea_total*100+'%'}"></div>
                 </div>
                 <div class="pri">
                   <div class="pri_l">
@@ -120,6 +121,7 @@ export default {
       myCollect(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.list = this.list.concat(res.data.data.result)
+          console.log(this.list)
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -287,16 +289,26 @@ export default {
             border-radius: 4px;  
             position relative 
             margin l(5) 0
+            font-size: 10px;
+            color: #FFFFFF;
+            letter-spacing: 0.21px;
+            line-height l(17)
+            text-align center
+            .num_n
+              position absolute
+              height 100%
+              left 0
+              top 0
+              z-index 99
+              padding-left 5px
             .rest_box
+              position absolute
+              left 0
+              top 0px
               width 80%
               height 100%
               background: #E63443;
               border-radius: 4px 0 0 4px;
-              font-size: 10px;
-              color: #FFFFFF;
-              letter-spacing: 0.21px;
-              line-height l(17)
-              text-align center
           div.pri
             disFlex ()
             .pri_l

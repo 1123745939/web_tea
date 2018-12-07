@@ -9,7 +9,7 @@
           <img src="../assets/img/tab1_active.png" alt="" v-if="tabIndex==1">
           <img src="../assets/img/tab1.png" alt="" v-else>全部
         </li>
-         <li  class="tabli" @click="GOrecommand()">
+         <li  class="tabli" @click="token == ''? loginMaskShow=true :GOrecommand()">
           <img src="../assets/img/tab2_active.png" alt="" v-if="tabIndex==2">
           <img src="../assets/img/tab2.png" alt="" v-else>推荐
         </li>

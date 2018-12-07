@@ -23,16 +23,6 @@
           <img src="../assets/img/hobbym.png" alt="" class="more" v-show="item.moreKindShow" @click="handle(index)">
         </li>
       </ul>
-      <!-- 产地 -->
-      <ul class="kinds">
-        <li class="k_t">
-          <div class="his_t"><img src="../assets/img/t_add.png" alt="">产地</div>
-          <ul class="his_word">
-            <li v-for="item in placeList8" :key="item.id">{{item.name}}</li>
-          </ul>
-          <img src="../assets/img/hobbym.png" alt="" class="more" v-show="morePlaceShow" @click="placeList8 = placeList;morePlaceShow = false">
-        </li>
-      </ul>
     </div>
 
     <!-- 搜索到的列表 -->
@@ -150,10 +140,7 @@ export default {
       historyArr:[],
       filterArr:[],
       kindList:[],
-      placeList:[],
-      placeList8:[],
       searchResultList:[],//搜索到的列表
-      morePlaceShow:false,
     }
   },
   created(){
@@ -179,12 +166,6 @@ export default {
               item.moreKindShow = false
             }
           })
-          console.log(this.kindList,'kindlist')
-          this.placeList = res.data.data.places.length>12 ?  res.data.data.places.slice(0,12) : res.data.data.places
-          if(this.placeList.length>8){
-            this.morePlaceShow = true
-            this.placeList8 = this.placeList.slice(0,8)
-          }
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -197,8 +178,7 @@ export default {
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
-      })
-      
+      })   
     },
     //历史记录
     getHistoryDate(){
@@ -208,8 +188,7 @@ export default {
             this.historyArr = res.data.data
           }else{
             this.$vux.toast.text(res.data.error_message||res.data.message)
-          }
-          
+          }          
         })
       }
     },
