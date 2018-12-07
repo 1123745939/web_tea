@@ -14,6 +14,9 @@ Vue.use(LoadingPlugin)
 import MintUI from 'mint-ui'
 import 'mint-ui/lib/style.css'
 Vue.use(MintUI)
+import clipboard from 'clipboard';
+//注册到vue原型上
+Vue.prototype.clipboard = clipboard;
 
 import i18n from './language'
 
