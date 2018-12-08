@@ -57,16 +57,18 @@
               <div class="red"></div>
               <span class="t_t">{{item.tea_title}}</span>
               <input type="text" style="display:none" v-model="urls" id="foo">
-              <img src="../assets/img/share.png" alt="" @click.stop="share(1)" ref='copy' data-clipboard-action="copy" data-clipboard-target="#foo" class="aaa">
+              <img src="../assets/img/share.png" alt="" @click.stop="share(item.id,index)" ref='copy' data-clipboard-action="copy" data-clipboard-target="#foo" class="aaa">
             </div>
             <div class="li_bot">
               <div class="lt_l">
                 <div class="all">
-                  <span>仅剩{{item.tea_count}}份</span>
+                  <span :style="{width:item.tea_count/item.tea_total*100+'%'}"></span>
+                  <div>仅剩{{item.tea_count}}份</div>
                 </div>
                 <div>￥<span class="p1">{{item.tea_price}}</span>.00 <span class="p2">/{{item.tea_format}}g</span></div>
               </div>
-              <img src="../assets/img/l1.png" alt="">
+              <img src="../assets/img/l1.png" alt="" v-if="item.tea_count/item.tea_total">
+              <img src="../assets/img/l2.png" alt="" v-else>
             </div>
           </li>
         </ul>
@@ -79,8 +81,9 @@
     <!-- 底部 -->
     <div class="footer">
       <div class="f_l"  @click="token == ''? loginMaskShow=true : $router.push('/my') ">
-        <img src="../assets/img/photo.jpg" alt="">
-        似水流年
+        <img src="../assets/img/photo-no.png" alt="" v-if="!img_link">
+        <img :src="img_link" alt="" v-else>
+        {{this.username}} 
       </div>
       <ul class="f_r">
         <li  @click="token == ''? loginMaskShow=true : $router.push('/infos') ">
@@ -127,6 +130,8 @@ export default {
   data () {
     return {
       token : sessionStorage.token || '',
+      username:sessionStorage.username || '请设置昵称',
+      img_link:sessionStorage.img_link || '',
       loginMaskShow:false,
       moreShow : false,//更多那个按钮是否显示
       list:[],
@@ -186,17 +191,16 @@ export default {
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      setTimeout(()=>{
-        this.copyBtn = new this.clipboard(this.$refs.copy[0]);
-      },10)
-    })
+    // this.$nextTick(() => {
+    //   setTimeout(()=>{
+    //     this.copyBtn = new this.clipboard(this.$refs.copy[0]);
+    //   },10)
+    // })
   },
   methods:{
-    sleep(){
-      this.moreShow = !this.moreShow
-    },
-    share(id) {
+    share(id,index) {
+     
+      this.copyBtn = new this.clipboard(this.$refs.copy[index]);
       let _this = this;
       let clipboard = this.copyBtn;
       console.log(clipboard,'clipboard')
@@ -585,10 +589,14 @@ export default {
                 background: #E63443;
                 border-radius: 4px 0 0 4px;  
                 left 0
+                top 0             
+              div
+                position absolute
+                left 0
                 top 0
-                fz(10)
                 color #fff 
                 line-height l(17)
+                fz(10)
             div
               color: #E63443;
               fz(14)
@@ -627,6 +635,7 @@ export default {
         display block
         width l(41)
         height l(41)
+        border-radius 50%
     .f_r  
       display flex
       justify-content space-between

@@ -124,7 +124,7 @@
 <script>
 import { Confirm } from 'vux'
 import Vue from 'vue'
-import {getHistory,delHistory,getSearchDate,getFilter} from '../api/api.js'
+import {getHistory,delHistory,getSearchDate,getFilter,getSearch} from '../api/api.js'
 import util from '../utils/js/style.js'
 export default {
   components: {
@@ -202,17 +202,27 @@ export default {
         this.$vux.toast.text('请输入要搜索的内容','middle')
         return
       }
-
-      //请求接口,然后显示数据，反之显示没有您要找的数据
-      this.conShow = true
-      //向接口增加历史记录,
-      if(this.token){
-
+      this.searchCon(1,1,this.searchTxt,'',0,'','')   
+    },
+    searchCon(page,search_type,tea_desc,tea_type_id,type,key,value){
+      const options = {
+        token:this.token,
+        page:page,
+        rows:10,
+        search_type:search_type,//检索时 类型和关键词是否参与检索 取值 0 1 2    0 都有 1 仅关键词 2 仅类型
+        tea_desc:tea_desc,//检索关键词 若search_type 为0 1时必传
+        tea_type_id:tea_type_id,//检索类型id 若search_type 为0 2 时必传
+        type:type,//筛选类型  0 无需筛选 1 排序 2 筛选
+        key:key,//筛选的key 当type=1,2时必传  tea_period(期数)/tea_price(价格)/tea_place_id(产地id)/tea_make(制茶方法)/tea_year(年份)
+        value:value//	筛选的key对应的值 当type=1,2时必传
       }
-      // util.setHistory(this.searchTxt,'teaSearch')
-      // this.historyArr = util.getHistory('teaSearch')
-
-    
+      getSearch(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.searchResultList = res.data.tea
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        } 
+      })
     },
     //确认删除历史记录
     onConfirm () {

@@ -34,12 +34,12 @@
       <div class="li_top" @click="$router.push('/videoPlay')">
         <div class="play"><span></span></div>
         <div class="data">
-          <div class="d_l" v-if="detailObj.vidio">
-            {{detailObj.vidio.tea_play_count}}次播放
+          <div class="d_l">
+            {{detailObj.tea_play_count}}次播放
           </div>
           <ul class="p_r">
-            <li><img src="../assets/img/star.png" alt="">300</li>
-            <li><img src="../assets/img/zan.png" alt="">260</li>
+            <li><img src="../assets/img/star.png" alt="">{{detailObj.tea_collect_count}}</li>
+            <li><img src="../assets/img/zan.png" alt="">{{detailObj.tea_thumb_count}}</li>
           </ul>
         </div>
         <div class="swiper-container">
@@ -136,46 +136,32 @@
       </ul>
     </div>
     <!-- 同一款茶 -->
-    <div class="one_t">
+    <div class="one_t" v-if="sameList.length">
       <div class="ont_tt">
         同一款茶<img src="../assets/img/more.png" alt="">                                                 
       </div>
       <ul style="border-bottom:1px solid #ccc">
-        <li>
-          <div>
+        <li v-for="item in sameList" :key="item.tea_title">
+          <div :style="{background:'url('+item.tea_img_link+')'}">
             <img src="../assets/img/play.png" alt="">
-            <span>2018/09/18 绿茶28期</span>
+            <span>{{item.tea_date}} {{item.tea_period}}</span>
           </div>
-            <p>2018年特级都匀毛尖</p>         
-        </li>
-         <li>
-          <div>
-            <img src="../assets/img/play.png" alt="">
-            <span>2018/09/18 绿茶28期</span>
-          </div>
-            <p>2018年特级都匀毛尖</p>         
+            <p>{{item.tea_title}}</p>         
         </li>
       </ul>
     </div>
     <!-- 相似的茶 -->
-    <div class="one_t">
+    <div class="one_t" v-if="likeList.length">
       <div class="ont_tt">
         相似的茶<img src="../assets/img/more.png" alt="">                                                 
       </div>
       <ul>
-        <li>
-          <div>
+        <li v-for="item in likeList" :key="item.tea_title">
+          <div :style="{background:'url('+item.tea_img_link+')'}">
             <img src="../assets/img/play.png" alt="">
-            <span>2018/09/18 绿茶28期</span>
+            <span>{{item.tea_date}} {{item.tea_period}}</span>
           </div>
-            <p>2018年特级都匀毛尖</p>         
-        </li>
-         <li>
-          <div>
-            <img src="../assets/img/play.png" alt="">
-            <span>2018/09/18 绿茶28期</span>
-          </div>
-            <p>2018年特级都匀毛尖</p>         
+            <p>{{item.tea_title}}</p>         
         </li>
       </ul>
     </div>
@@ -207,7 +193,9 @@ export default {
   data () {
     return {
       token : sessionStorage.token || '',
-      detailObj:{}
+      detailObj:{},
+      sameList:[],
+      likeList:[]
     }
   },
   created(){
@@ -233,8 +221,12 @@ export default {
     init(id){
       getGoodDetail({id:id}).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          this.detailObj = res.data.data[0]
-          console.log(this.detailObj)  
+          console.log(res.data.data)
+          this.detailObj = res.data.data.detail
+          this.sameList = res.data.data.same
+          this.likeList = res.data.data.like
+          console.log(this.sameList)  
+          console.log(this.likeList)  
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }

@@ -49,6 +49,8 @@ export default {
       Login(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           sessionStorage.token = res.data.data.access_token
+          sessionStorage.img_link = res.data.data.img_link
+          sessionStorage.username = res.data.data.username
           let redirect = this.$route.query.type
           if(redirect !='goodDetail'){
             this.$router.push('/')

@@ -154,6 +154,10 @@ export const delHistory = function (params) {
 export const getFilter = function (params) {
   return axios.get(`${baseUrl}`+"/index/data/filter", {params});
 }
+//////搜索结果
+export const getSearch = function (params) {
+  return axios.post(`${baseUrl}`+"/index/data/result", jsonToQuery(params));
+}
 //////商品详情
 export const getGoodDetail = function (params) {
   return axios.get(`${baseUrl}`+"/index/tea/detail", {params});

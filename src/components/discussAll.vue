@@ -116,7 +116,7 @@ export default {
     }
   },
   created(){
-    document.title = '详情'
+    document.title = '全部评论'
     
   },
   mounted(){
