@@ -1,7 +1,7 @@
 <template>
   <div class="con">
     <!-- 头部 -->
-     <div class="content">
+    <div class="content" @click.stop="moreShow = moreShow ? !moreShow : moreShow">
       <div class="search" @click="$router.push('/search')"></div>
       <div class="car" @click="token == ''? loginMaskShow=true : $router.push('/car')"><span class="carNum">8</span></div>
       <ul class="tab">
@@ -20,7 +20,7 @@
         <li class="tabli" @click="token == ''? loginMaskShow=true : $router.push('/collection') ">
           <img src="../assets/img/tab4.png" alt="">收藏
         </li>
-         <li  class="tabli" @click="moreShow = !moreShow">
+         <li  class="tabli" @click.stop="moreShow = !moreShow">
           <img src="../assets/img/tab5.png" alt="">更多 
           <ul class="more" v-if="moreShow">
             <li v-for="i in moreLists" :key="i.id" @click.stop="shilter(i.id)" :class="filterId==i.id ? 'active' :''">{{i.name}}</li>
@@ -37,7 +37,7 @@
         :startY="parseInt(startY)"
         @pullingDown="onPullingDown"
         @pullingUp="onPullingUp">
-        <ul class="goodsList">     
+        <ul class="goodsList" id="lists">     
           <li v-for="(item,index) in list" :key="index" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">
             <div class="li_top">
               <div class="play"><span></span></div>
@@ -56,7 +56,8 @@
             <div class="li_mid">
               <div class="red"></div>
               <span class="t_t">{{item.tea_title}}</span>
-              <img src="../assets/img/share.png" alt="">
+              <input type="text" style="display:none" v-model="urls" id="foo">
+              <img src="../assets/img/share.png" alt="" @click.stop="share(1)" ref='copy' data-clipboard-action="copy" data-clipboard-target="#foo" class="aaa">
             </div>
             <div class="li_bot">
               <div class="lt_l">
@@ -150,6 +151,8 @@ export default {
       pullUpLoadNoMoreTxt: '没有更多数据了',
       startY: 0,
       scrollToTime: 700,
+      copyBtn: null,
+      urls:'121212121',
     }
     
   },
@@ -182,7 +185,28 @@ export default {
       } : false
     }
   },
+  mounted() {
+    this.$nextTick(() => {
+      setTimeout(()=>{
+        this.copyBtn = new this.clipboard(this.$refs.copy[0]);
+      },10)
+    })
+  },
   methods:{
+    sleep(){
+      this.moreShow = !this.moreShow
+    },
+    share(id) {
+      let _this = this;
+      let clipboard = this.copyBtn;
+      console.log(clipboard,'clipboard')
+      clipboard.on('success', function() {
+         _this.$vux.toast.text('复制成功，可直接粘贴给好友！')
+      });
+      clipboard.on('error', function() {
+          _this.$vux.toast.text('复制失败，请重新复制！')
+      });
+    },
     goAll(){
       this.tabIndex = 1
       this.indexActive = this.tabIndex

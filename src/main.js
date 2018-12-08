@@ -8,7 +8,10 @@ FastClick.attach(document.body)
 
 import  { ToastPlugin,LoadingPlugin } from 'vux'
 Vue.use(ToastPlugin)
-Vue.use(LoadingPlugin)
+Vue.use(LoadingPlugin) 
+import clipboard from 'clipboard';
+//注册到vue原型上
+Vue.prototype.clipboard = clipboard;
 
 import i18n from './language'
 
