@@ -122,9 +122,27 @@ export const updataPhone = function (params) {
 export const updataPass = function (params) {
   return axios.post(`${baseUrl}`+"/auth/reset", jsonToQuery(params));
 }
+    //爱好调查问卷
+export const HobbyList = function (params) {
+  return axios.get(`${baseUrl}`+"/my/hobby", {params});
+} 
+   //提交调查问卷
+export const saveQuestion = function (params) {
+  return axios.post(`${baseUrl}`+"/my/hobby/create", jsonToQuery(params));
+}      
     //我的收藏
 export const myCollect = function (params) {
   return axios.post(`${baseUrl}`+"/index/tea/collect", jsonToQuery(params));
+}
+//首页数据
+  //全部
+    //全部中的置顶和预售
+export const getAlltop= function (params) {
+  return axios.post(`${baseUrl}`+"/index/data", jsonToQuery(params));
+}
+    //全部中 除了置顶和预售之外的数据
+export const getAll = function (params) {
+  return axios.post(`${baseUrl}`+"/index/tea/all", jsonToQuery(params));
 }
     //预告
 export const getAdvance = function (params) {
@@ -134,6 +152,14 @@ export const getAdvance = function (params) {
 export const getRecommand = function (params) {
   return axios.post(`${baseUrl}`+"/index/tea/recommand", jsonToQuery(params));
 }
+    //点赞
+export const vidioThumb = function (params) {
+  return axios.post(`${baseUrl}`+"/index/vidio/thumb", jsonToQuery(params));
+}    
+    //收藏
+export const vidioCollect = function (params) {
+  return axios.post(`${baseUrl}`+"/index/vidio/collect", jsonToQuery(params));
+}  
     //搜索界面数据
 export const getSearchDate = function (params) {
   return axios.get(`${baseUrl}`+"/index/search", {params});

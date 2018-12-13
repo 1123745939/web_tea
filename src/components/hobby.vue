@@ -60,6 +60,9 @@
         </li>
       </ul>
     </div>
+    <div class="xuan" @click="$router.push('/myInfo')">
+      <img src="../assets/img/question.png" alt="">
+    </div>
   </div>
 </template>
 
@@ -88,6 +91,16 @@ export default {
   background #F7F7F7
   border-top 1px solid  #E8E8E8
   padding  l(10) 0 0
+  .xuan
+    width l(120)
+    height l(80)
+    position fixed
+    right 0
+    top 80%
+    img 
+      display block
+      width 100%
+      height 100%
   .content
     height l(656)
     background #F7F7F7

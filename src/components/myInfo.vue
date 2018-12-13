@@ -1,56 +1,131 @@
 <template>
   <div class="con">
     <div class="sex">
-      <div class="aa">
-        <span>您的性别</span>
-        <div class="active"></div><p>男</p>
-        <div></div><p>女</p>
+      <div class="aa" v-for="(item,index) in questionList" :key="item.question_nid">
+        <span>{{item.title}}</span>
+        <ul v-if="item.type!='text'">
+          <li v-for="(i,index1) in item.values" :key="i.key" @click="change(index,index1)">
+            <div :class="i.if_select?'active':''"></div><p>{{i.value}}</p>
+          </li>
+        </ul>
+        <textarea  v-else @change="write(index)" v-model="item.values[0].value"></textarea>
       </div>
     </div>
-    <ul class="gr">
-      <li>
-        <span>您的年龄</span>
-        <div>50-55
-          <img src="../assets/img/more1.png" alt="">
-        </div>
-      </li>
-      <li>
-        <span>您的职业</span>
-        <div>白领
-          <img src="../assets/img/more1.png" alt="">
-        </div>
-      </li>
-      <li>
-        <span>喝茶频率</span>
-        <div>每天
-          <img src="../assets/img/more1.png" alt="">
-        </div>
-      </li>
-      <li>
-        <span>喝茶频率</span>
-        <div>每天
-          <img src="../assets/img/more1.png" alt="">
-        </div>
-      </li>
-    </ul>
+    <div class="sub" @click="checkCode">保存并提交</div>
   </div>
 </template>
 
 <script>
-import { Group, Cell, CellBox } from 'vux'
-import {Login} from '../api/api.js'
+import { Group, CellBox, Checklist ,XTextarea} from 'vux'
+import { HobbyList ,saveQuestion } from '../api/api.js'
 export default {
+   components: {
+    Group,
+    Checklist,
+    XTextarea,
+  },
   data () {
     return {
-      msg: ''
+      token :sessionStorage.token || '',
+      questionList:[],
+      value:''
     }
   },
   created(){
-    document.title = '我的信息'
+    document.title = '爱好调查'
+    this.init()
   },
   methods:{
-    goDetail(){
-      this.$router.push('/goodDetail')
+    init(){
+      HobbyList({token:this.token}).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.questionList = res.data.data
+          this.questionList.forEach(item=>{
+            item.values.forEach(ele=>{
+              if(item.value){
+                if(item.value.split(',').indexOf(ele.key)!=-1){
+                  ele.if_select = true
+                }else{
+                  ele.if_select = false
+                }
+              }else{
+                ele.if_select = false
+              }
+              
+            })
+          })           
+          console.log(this.questionList,'this.questionList')
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }        
+      })
+    },
+    change (index1, index2) {
+      console.log('change', index1, index2)
+      if(this.questionList[index1].type=='radio'){//单选
+        if(this.questionList[index1].values[index2].if_select == false){
+          this.questionList[index1].values.forEach(item=>{
+            item.if_select = false
+          })
+          this.questionList[index1].values[index2].if_select = true
+        }else{
+          this.questionList[index1].values.forEach(item=>{
+            item.if_select = false
+          })
+        this.questionList[index1].values[index2].if_select = false
+        }
+        
+      }else{
+        if(this.questionList[index1].values[index2].if_select == false){
+          this.questionList[index1].values[index2].if_select = true
+        }else{
+          this.questionList[index1].values[index2].if_select = false
+        }
+      }
+      this.$forceUpdate();//页面强制手动重新渲染
+      console.log(this.questionList)
+    },
+    write(index){
+      console.log()
+    },
+    checkCode(){
+      var arr = []
+      this.questionList.forEach(item=>{
+        var obj = {}
+        obj.q_id = item.id
+        obj.key = item.values[0].question_nid
+        if(item.type!='text'){
+          var selArr = []
+          item.values.forEach(ele=>{
+            if(ele.if_select == true){
+              selArr.push(ele.key)
+            }
+          })
+          obj[item.values[0].question_nid] = selArr.join(',')
+        }else{
+          obj[item.values[0].question_nid] = item.values[0].value
+        }
+        
+        arr.push(obj)
+      })
+      console.log(arr)
+      //接下来 调接口 保存
+      const options = {
+        token :this.token,
+        data :JSON.stringify({values:arr})
+      }
+      console.log(options)
+      
+      saveQuestion(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('提交成功')
+          setTimeout(()=>{
+            this.$router.push('/hobby')
+          },1000)
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }      
+      })
     }
   }
 }
@@ -65,6 +140,20 @@ export default {
   border-top 1px solid #E8E8E8;
   height l(667)
   text-align left 
+  padding-bottom l(20)
+  .sub
+    width l(160)
+    height l(44)
+    background: #83271F;
+    border-radius: 100px;
+    font-size: 18px;
+    color: #FFFFFF;
+    letter-spacing: 1.12px;
+    line-height l(44)
+    margin-left 28.8%
+    margin-top l(50)
+    text-align center
+    margin-bottom l(50)
   .gr
     background #ffffff
     padding 0 4.3%
@@ -90,27 +179,40 @@ export default {
     background #ffffff
     margin-top l(10)
     .aa
-      padding 0 4.3%
-      border-bottom 1px solid #E8E8E8
-      display flex
-      justify-content flex-start
-      align-items center
-      height l(58)
+      padding l(5) 4.3% 0
+      
       span 
         fz(16)
         color: #333333;
         letter-spacing: 0.36px;
-      div
-        width l(18)
-        height l(18)
-        backgroundIcon ('c_blank.png')
-        margin-right l(20)
-        margin-left l(20)
-      div.active
-        backgroundIcon ('c_active.png')
-      p
-        fz(14)
-        color: #333333;
-        letter-spacing: 0.31px;
-        margin-right l(20)
+        display block
+        padding l(5) 0
+      ul
+        width 100%
+        margin-top l(5)
+        li
+          display flex
+          justify-content flex-start
+          height l(40)
+          align-items center
+          border-bottom 1px solid #E8E8E8
+          div
+            width l(18)
+            height l(18)
+            backgroundIcon ('c_blank.png')
+            margin-right l(20)
+          div.active
+            backgroundIcon ('c_active.png')
+          p
+            fz(14)
+            color: #333333;
+            letter-spacing: 0.31px;
+            margin-right l(20)
+      textarea
+        border 1px solid #cccccc
+        resize none 
+        display block
+        width 100%
+        height l(50)
+        padding l(5)
 </style>

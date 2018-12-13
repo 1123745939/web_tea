@@ -46,12 +46,13 @@
                   5次播放
                 </div>
                 <ul class="p_r">
-                  <li><img src="../assets/img/star.png" alt="">{{item.tea_collect_count}}</li>
-                  <li><img src="../assets/img/zan.png" alt="">{{item.tea_thumb_count}}</li>
+                  <li @click.stop="collect(item.id,index)"><img src="../assets/img/star.png" alt="">{{item.tea_collect_count}}</li>
+                  <li @click.stop="thumb(item.id,index)"><img src="../assets/img/zan.png" alt="">{{item.tea_thumb_count}}</li>
                   <li><img src="../assets/img/talk.png" alt="">{{item.tea_comment_count}}</li>
                 </ul>
               </div>
-              <div class="time">{{item.tea_date}} {{item.tea_period}}</div>
+              <div class="time" v-if="!item.isAdvance">{{item.tea_date}} {{item.tea_period}}</div>
+              <div class="time" v-else>预售 {{item.tea_period}}</div>
             </div>
             <div class="li_mid">
               <div class="red"></div>
@@ -67,7 +68,7 @@
                 </div>
                 <div>￥<span class="p1">{{item.tea_price}}</span>.00 <span class="p2">/{{item.tea_format}}g</span></div>
               </div>
-              <img src="../assets/img/l1.png" alt="" v-if="item.tea_count/item.tea_total">
+              <img src="../assets/img/l1.png" alt="" v-if="item.tea_count/item.tea_total && !item.isAdvance">
               <img src="../assets/img/l2.png" alt="" v-else>
             </div>
           </li>
@@ -113,7 +114,7 @@
 <script>
 import { Confirm,TransferDomDirective as TransferDom ,Swipeout, SwipeoutItem, SwipeoutButton, XButton ,LoadMore } from 'vux'
 import Scroll from './scroll/scroll'
-import {getRecommand,getAdvance} from '../api/api.js'
+import {getAlltop,getAll,getRecommand,getAdvance,vidioThumb,vidioCollect} from '../api/api.js'
 export default {
    directives: {
     TransferDom
@@ -144,6 +145,7 @@ export default {
       filterId:'',
       order:'',
       is_order : 0,
+      topArr:[],//置顶和预售的数组
 
       
       pullUpLoadThreshold: 0,
@@ -167,14 +169,15 @@ export default {
       this.tabIndex = 1
     }else{
       this.tabIndex = sessionStorage.tabIndex
+    }
       if(this.tabIndex == 1){
-
+        this.goAll()
       }else if(this.tabIndex == 2){
         this.GOrecommand('','',0)
       }else if(this.tabIndex == 3){
         this.GOadvance('','',0)
       }
-    }
+   
   },
   computed:{
     pullDownRefreshObj: function () {
@@ -211,9 +214,78 @@ export default {
           _this.$vux.toast.text('复制失败，请重新复制！')
       });
     },
+    //收藏
+    collect(id,index){
+      console.log(id)
+      const options = {
+        token :this.token,
+        id:id
+      }
+      vidioCollect(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('+1') 
+          }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //点赞
+    thumb(id,index){
+      const options = {
+        token :this.token,
+        id:id
+      }
+      vidioThumb(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('+1') 
+          }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
     goAll(){
       this.tabIndex = 1
       this.indexActive = this.tabIndex
+      this.list = []
+      this.page = 1
+      this.allData(1)
+    },
+    topData(){
+      getAlltop().then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          if(res.data.data.advance){
+            res.data.data.advance.forEach(item=>{
+              item.isAdvance = true
+            })
+          }
+          this.topArr = res.data.data.advance.concat(res.data.data.top)
+            console.log(res.data,'getAlltop')
+          }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    async allData(page){
+      const options = {
+        page:page,
+        rows:2,
+      }
+      await this.topData()
+      getAll(options).then(res=>{      
+        if(res.data.code == 200 && !res.data.error_code){
+          if(this.page==1){
+            this.list = this.list.concat(res.data.data.tea)
+            this.list = this.topArr.concat(this.list)
+          }else{
+            this.list = this.list.concat(res.data.data.tea)
+          }
+          console.log(this.list)
+            console.log(res.data.data.tea,'allll')
+          }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      
+      })
     },
     GOrecommand(key,order,is_order){
       this.tabIndex = 2
@@ -329,8 +401,9 @@ export default {
       }else{
         this.is_order =0
       }
-
-      if(this.tabIndex == 2){
+      if(this.tabIndex==1){
+       this.allData(this.page,this.filterId,this.order,this.is_order)
+      }else if(this.tabIndex == 2){
         this.recommand(this.page,this.filterId,this.order,this.is_order)
       }else if(this.tabIndex == 3){
         this.advance(this.page,this.filterId,this.order,this.is_order)
@@ -649,6 +722,10 @@ export default {
         fz(10)
         color: #83271F;
         letter-spacing: 1px;
+        img
+          width l(26)
+          height l(30)
+          display block
 
 
 </style>

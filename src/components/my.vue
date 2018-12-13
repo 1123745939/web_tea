@@ -87,11 +87,11 @@
     </div>
     <!-- 爱好 -->
     <div class="order hobby">
-      <div class="o_h">
+      <div class="o_h"  @click="$router.push('/hobby')">
         <div class="oh_l">
           <img src="../assets/img/hobby.png" alt="">爱好
         </div>
-        <img src="../assets/img/edit.png" alt=""  @click="$router.push('/myInfo')">
+        <img src="../assets/img/more2.png" alt="" >
       </div>
        <ul class="o_l">
         <li class="li_f">
@@ -120,7 +120,7 @@
             
         </li>
       </ul>
-      <img src="../assets/img/hobbym.png" alt="" class="hobbym">
+      <!-- <img src="../assets/img/hobbym.png" alt="" class="hobbym"> -->
     </div>
     <!-- 热评 -->
     <div class="order hot">
