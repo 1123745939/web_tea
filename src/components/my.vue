@@ -9,9 +9,9 @@
           <p>{{infoObj.nickname}}</p>
         </div>
         <ul class="leb">
-          <li @click="$router.push('/address')"><p>97</p>收藏</li>
-          <li><p>10</p>点赞</li>
-          <li><p>30</p>足迹</li>
+          <li @click="$router.push('/collection')"><p>97</p>收藏</li>
+          <li @click="$router.push('/thumbs')"><p>10</p>点赞</li>
+          <li @click="$router.push('/slots')"><p>30</p>足迹</li>
         </ul>
       </div>
     </div>

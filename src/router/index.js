@@ -20,6 +20,8 @@ import teaFriendsList from '@/components/teaFriendsList'
 import evaluate from '@/components/evaluate'
 import hobby from '@/components/hobby'
 import collection from '@/components/collection'
+import thumbs from '@/components/thumbs'
+import slots from '@/components/slots'
 import login from '@/components/login'
 import forgetPass from '@/components/forgetPass'
 import changePass from '@/components/changePass'
@@ -131,6 +133,16 @@ const router =  new Router({
       path: '/collection',
       name: 'collection',
       component: collection
+    },
+    {
+      path: '/thumbs',
+      name: 'thumbs',
+      component: thumbs
+    },
+    {
+      path: '/slots',
+      name: 'slots',
+      component: slots
     },
     {
       path: '/login',

@@ -1,61 +1,51 @@
 <template>
   <div class="con">
-    <div class="content" v-if="list.length>0">
-      <scroll ref="scroll"
+    <div class="content" v-if="list.length">
+      <ul class="h_list">
+        <scroll ref="scroll"
             :data="list"
             :pullDownRefresh="pullDownRefreshObj"
             :pullUpLoad="pullUpLoadObj"
             :startY="parseInt(startY)"
             @pullingDown="onPullingDown"
             @pullingUp="onPullingUp">
-            
-            <swipeout class="vux-1px-tb">
-              <swipeout-item transition-mode="follow" v-for="i in list" :key="i.id">
-                <div slot="right-menu">
-                  <swipeout-button type="warn" @click.native="handle(i)">取消收藏</swipeout-button>
+                     
+              <li class="h_li">
+                <div class="left">
+                  <img src="../assets/img/play.png" alt="">
+                  <span class="time">{{i.tea_date}} {{i.tea_period}}</span>
+                  <span class="p_n">{{i.tea_play_count}}次播放</span>
                 </div>
-                <div slot="content" class="demo-content vux-1px-t">
-                  <li class="h_li">
-                    <div class="left">
-                      <img src="../assets/img/play.png" alt="">
-                      <span class="time">{{i.tea_date}} {{i.tea_period}}</span>
-                      <span class="p_n">{{i.tea_play_count}}次播放</span>
+                <div class="right">
+                  <p class="name">{{i.tea_title}}</p>
+                  <p class="intro">介绍：{{i.tea_desc}}</p>
+                  <div class="mark">
+                    评分
+                    <ul class="tea">
+                      <li class="img" v-for="x in i.tea_score" :key="x">
+                        <img src="../assets/img/tea.png" alt="">
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="rest_n">
+                    <div class="num_n">仅剩{{i.tea_count}}份</div>
+                    <div class="rest_box" :style="{width:i.tea_count/i.tea_total*100+'%'}"></div>
+                  </div>
+                  <div class="pri">
+                    <div class="pri_l">
+                      ￥<p>{{i.tea_price}}.</p>00 <span>/{{i.tea_format}}g</span>
                     </div>
-                    <div class="right">
-                      <p class="name">{{i.tea_title}}</p>
-                      <p class="intro">介绍：{{i.tea_desc}}</p>
-                      <div class="mark">
-                        评分
-                        <ul class="tea">
-                          <li class="img" v-for="x in i.tea_score" :key="x">
-                            <img src="../assets/img/tea.png" alt="">
-                          </li>
-                        </ul>
-                      </div>
-                      <div class="rest_n">
-                        <div class="num_n">仅剩{{i.tea_count}}份</div>
-                        <div class="rest_box" :style="{width:i.tea_count/i.tea_total*100+'%'}"></div>
-                      </div>
-                      <div class="pri">
-                        <div class="pri_l">
-                          ￥<p>{{i.tea_price}}.</p>00 <span>/{{i.tea_format}}g</span>
-                        </div>
-                        <div class="pri_r">马上抢</div>
-                      </div>
-                    </div>
-                  </li>
+                    <div class="pri_r">马上抢</div>
+                  </div>
                 </div>
-              </swipeout-item>
-            </swipeout>
-           
-		    <div class="order-list" v-if="list.length == 0 && !loading">
-		    	<load-more :show-loading="false" tip="暂无数据" background-color="#f0f7f5"></load-more>
-		    </div>
-
-    </scroll>
-      
+              </li>          
+          <div class="order-list" v-if="list.length == 0 && !loading">
+            <load-more :show-loading="false" tip="暂无数据" background-color="#f0f7f5"></load-more>
+          </div>
+        </scroll>
+      </ul>
     </div>
-    <div class="noList" v-else>
+     <div class="noList" v-else>
       <div class="box">
         <img src="../assets/img/symbols-order.png" alt="">
         <span>暂无数据</span>
@@ -65,7 +55,7 @@
 </template>
 
 <script>
-import {collectList} from '../api/api.js'
+import {slotsList} from '../api/api.js'
 import {  Swipeout, SwipeoutItem, SwipeoutButton, XButton ,LoadMore } from 'vux'
 import Scroll from './scroll/scroll'
 export default {
@@ -100,7 +90,7 @@ export default {
     }
   },
   created(){
-    document.title = '我的收藏'
+    document.title = '我的足迹'
     this.init(this.page)
   },
   computed:{
@@ -124,7 +114,7 @@ export default {
         page:page,
         rows:10,
       }
-      collectList(options).then(res=>{
+      slotsList(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.list = this.list.concat(res.data.data.result)
           console.log(this.list)

@@ -122,18 +122,28 @@ export const updataPhone = function (params) {
 export const updataPass = function (params) {
   return axios.post(`${baseUrl}`+"/auth/reset", jsonToQuery(params));
 }
-    //爱好调查问卷
+  //爱好调查问卷
 export const HobbyList = function (params) {
   return axios.get(`${baseUrl}`+"/my/hobby", {params});
 } 
-   //提交调查问卷
+  //提交调查问卷
 export const saveQuestion = function (params) {
   return axios.post(`${baseUrl}`+"/my/hobby/create", jsonToQuery(params));
 }      
-    //我的收藏
-export const myCollect = function (params) {
-  return axios.post(`${baseUrl}`+"/index/tea/collect", jsonToQuery(params));
-}
+  //我的收藏
+export const collectList = function (params) {
+  return axios.get(`${baseUrl}`+"/my/data/collects", {params});
+} 
+   //我的点赞
+export const thumbsList = function (params) {
+  return axios.get(`${baseUrl}`+"/my/data/thumbs", {params});
+} 
+   //我的足迹
+export const slotsList = function (params) {
+  return axios.get(`${baseUrl}`+"/my/data/slots", {params});
+} 
+
+
 //首页数据
   //全部
     //全部中的置顶和预售
@@ -151,6 +161,10 @@ export const getAdvance = function (params) {
     //推荐
 export const getRecommand = function (params) {
   return axios.post(`${baseUrl}`+"/index/tea/recommand", jsonToQuery(params));
+}
+    //我的收藏(主页)
+export const myCollect = function (params) {
+  return axios.post(`${baseUrl}`+"/index/tea/collect", jsonToQuery(params));
 }
     //点赞
 export const vidioThumb = function (params) {
