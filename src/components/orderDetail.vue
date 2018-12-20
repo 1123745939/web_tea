@@ -107,7 +107,7 @@
 
 <script>
 import { XDialog,TransferDomDirective as TransferDom } from 'vux'
-import {Login} from '../api/api.js'
+import {orderUnlike} from '../api/api.js'
 export default {
   directives: {
     TransferDom
@@ -117,14 +117,19 @@ export default {
   },
   data () {
     return {
+      token:sessionStorage.token || '',
+      id:'',
+      tea_id:'',
       txt:'',
       status: 3,
       showHideOnBlur:false,
-      dislikeYL:[{id:1,txt:'太苦了',active:true},{id:2,txt:'口味不好',active:false},{id:3,txt:'冲泡次数太少',active:true},{id:4,txt:'其他',active:true}]
+      dislikeYL:[{id:1,txt:'太苦了',active:false},{id:2,txt:'口味不好',active:false},{id:3,txt:'冲泡次数太少',active:false},{id:4,txt:'其他',active:false}]
     }
   },
   created(){
     document.title = '订单详情'
+    this.tea_id = this.$route.query.tea_id
+    this.id = this.$route.query.id
   },
   methods:{
     selY(index){
@@ -136,6 +141,33 @@ export default {
     },
     submit(){
       console.log(this.dislikeYL)
+      var arr = []
+      this.dislikeYL.forEach(item=>{
+        if(item.active == true){
+          var obj = {}
+          obj.reason = item.txt
+          arr.push(JSON.stringify(obj))
+        }
+      })
+      if(!arr.length && !this.txt){
+        this.$vux.toast.text('请勾选原因或者写入原因')
+        return
+      }
+      const options = {
+        token:this.token,
+        tea_id:this.tea_id,
+        reason:arr,
+        order_id:this.id,
+        user_reason:this.txt
+      }
+      orderUnlike(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('提交成功')
+          this.showHideOnBlur = false
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
     }
   }
 }

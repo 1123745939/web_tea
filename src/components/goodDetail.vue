@@ -175,27 +175,42 @@
       <div  class="f1" @click="$router.push('/car')">
         <img src="../assets/img/car.png" alt="">
         购物车
-        <span>6</span>
+        <span>{{carNum}}</span>
       </div>
       <div class="buy_box">
-        <p>加入购物车</p>
+        <p @click="token? addCar():loginMaskShow = true">加入购物车</p>
         <p class="buy" @click="$router.push('/pay')">我要购买</p>
       </div>
+    </div>
+    <!-- 提示去登录的弹框 -->
+    <div v-transfer-dom>
+      <confirm v-model="loginMaskShow" title="您还没有登录" @on-confirm="$router.push({path:'/login'})">
+        <p style="text-align:center;">现在去登录?</p>
+      </confirm>
     </div>
   </div>
 </template>
 
 <script>
+import { Confirm,TransferDomDirective as TransferDom } from 'vux'
 import Swiper from 'swiper' 
 import 'swiper/dist/css/swiper.min.css'
-import {getGoodDetail} from '../api/api.js'
+import {getGoodDetail,carList,addShop} from '../api/api.js'
 export default {
+    directives: {
+    TransferDom
+  },
+  components: {
+    Confirm,
+  },
   data () {
     return {
       token : sessionStorage.token || '',
       detailObj:{},
       sameList:[],
-      likeList:[]
+      likeList:[],
+      loginMaskShow:false,
+      carNum:''
     }
   },
   created(){
@@ -216,6 +231,7 @@ export default {
         })
     var id  = this.$route.query.id
     this.init(id)
+    this.getcarNum()
   },
   methods:{
     init(id){
@@ -224,15 +240,39 @@ export default {
           console.log(res.data.data)
           this.detailObj = res.data.data.detail
           this.sameList = res.data.data.same
-          this.likeList = res.data.data.like
-          console.log(this.sameList)  
-          console.log(this.likeList)  
+          this.likeList = res.data.data.like 
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //购物车的数量
+    getcarNum(){
+      carList({token:this.token}).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.carNum = res.data.data.count
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //加入购物车
+    addCar(){
+      const options = {
+        token :this.token,
+        id:this.detailObj.id
+      }
+      addShop(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('加入购物车成功')
+          this.getcarNum()
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
       })
     }
-  }
+  },
+  
 }
 </script>
 
@@ -585,7 +625,7 @@ export default {
         border-radius 50%
         position absolute
         top -1%
-        right 30%
+        right 27%
         background #E63443;
         line-height l(14)
         color #ffffff

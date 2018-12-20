@@ -1,21 +1,22 @@
 <template>
   <div class="con"  v-if="carList.length">
     <swipeout class="vux-1px-tb">
-      <swipeout-item transition-mode="follow" v-for="i in 3" :key="i">
+      <swipeout-item transition-mode="follow" v-for="(i,index) in carList" :key="i.id">
         <div slot="right-menu">
-          <swipeout-button type="warn" @click.native="handle(i)">删除</swipeout-button>
+          <swipeout-button @click.native="show = true;id=i.id" type="warn">删除</swipeout-button>
         </div>
         <div slot="content" class="demo-content vux-1px-t">
           <li>
-            <img src="../assets/img/c_blank.png" alt="" class="car_s">
+            <img src="../assets/img/c_blank.png" alt="" class="car_s" v-if="i.active == false" @click="select(index)"> 
+            <img src="../assets/img/c_active.png" alt="" class="car_s" v-else  @click="select(index)"> 
             <img src="../assets/img/list1.png" alt="" class="car_img">
             <div class="car_p">
-              <span>安溪铁观音</span>
-              <p class="t_d">2018/09/18 绿茶18期</p>
+              <span>{{i.tea_title}}</span>
+              <p class="t_d">{{i.tea_date}} {{i.tea_period}}</p>
               <div class="t_num">
-                <p>￥<span>1399</span>.00</p>
+                <p>￥<span>{{i.tea_price}}</span>.00</p>
                 <div>
-                  <p></p>3 <p></p>
+                  <p></p>{{i.tea_count}} <p></p>
                 </div>
               </div>
             </div>
@@ -23,6 +24,12 @@
         </div>
       </swipeout-item>
     </swipeout>
+    <!-- 是否删除的弹框 -->
+    <div v-transfer-dom>
+      <confirm v-model="show"  @on-confirm="handle">
+        <p style="text-align:center;">确认要删除吗</p>
+      </confirm>
+    </div>
     <div class="yun">
       运费
       <span>顺丰包邮</span>
@@ -30,29 +37,36 @@
     <div class="blank"></div>
     <!-- 底部 -->
     <div class="footer">
-      <img src="../assets/img/c_blank.png" alt="" v-if="!selectAll">
-      <img src="../assets/img/c_active.png" alt="" v-else>
+      <img src="../assets/img/c_blank.png" alt="" v-if="!selectAll" @click="selectAllAll">
+      <img src="../assets/img/c_active.png" alt="" v-else  @click="selectAllAll">
       <span>全选</span>
       <div>
         总计:<p>￥<span>1399</span>.00</p>
       </div>
-      <p class="goPay">去结算</p>
+      <p class="goPay" @click="goPay">去结算</p>
     </div>
+    
   </div>
+  
   <div class="noList" v-else>
     <div class="box">
       <img src="../assets/img/symbols-car.png" alt="">
       <span>购物车空空如也哟～</span>
       <p @click="$router.push('/')">去添加</p>
     </div>
+    <!-- 提示是否删除的弹框 -->
   </div>
 </template>
 
 <script>
-import {  Swipeout, SwipeoutItem, SwipeoutButton, XButton } from 'vux'
-import {Login} from '../api/api.js'
+import {  Swipeout, SwipeoutItem, SwipeoutButton, XButton ,Confirm, TransferDomDirective as TransferDom} from 'vux'
+import {carList,delShop} from '../api/api.js'
 export default {
+  directives: {
+    TransferDom
+  },
   components: {
+    Confirm,
     Swipeout,
     SwipeoutItem,
     SwipeoutButton,
@@ -60,16 +74,85 @@ export default {
   },
   data () {
     return {
-      selectAll :true,
-      carList:[]
+      token:sessionStorage.token,
+      selectAll :false,
+      carList:[],
+      show:false,
+      id:''
     }
   },
   created(){
     document.title = '购物车'
+    this.init()
   },
   methods:{
-    handle(i){
-      alert('要删除第'+i)
+    init(page){
+      const options = {
+        token:this.token,
+      }
+      carList(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.carList = res.data.data.result
+          this.carList.forEach(item=>{
+            item.active = false
+          })
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //删除
+    handle(){
+      const options = {
+        token :this.token,
+        id:this.id
+      }
+      delShop(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('删除成功')
+          this.carList.forEach((item,index)=>{
+            if(item.id==this.id){
+              this.carList.splice(index,1)
+            }
+          })
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //单个的选择
+    select(index){
+      this.carList[index].active = !this.carList[index].active
+     
+      this.$forceUpdate()
+      var aa = this.carList.every(item=>{
+        return item.active == true
+      })
+      this.selectAll = aa == true ? true : false
+    },
+    //全选
+    selectAllAll(){
+      if(this.selectAll){
+        this.selectAll = false
+        this.carList.forEach(item=>{
+          item.active = false
+        })
+      }else{
+        this.selectAll = true
+        this.carList.forEach(item=>{
+          item.active = true
+        })
+      }
+    },
+    //去结算
+    goPay(){
+      var bb = this.carList.some(item=>{
+        return item.active == true
+      })
+      if(!bb){
+        this.$vux.toast.text('您还没有选择任何商品')
+        return
+      }
     }
   }
 }

@@ -202,3 +202,51 @@ export const getSearch = function (params) {
 export const getGoodDetail = function (params) {
   return axios.get(`${baseUrl}`+"/index/tea/detail", {params});
 }
+
+//购物车相关
+      //购物车列表
+export const carList = function (params) {
+  return axios.get(`${baseUrl}`+"/shop", {params});
+}
+      //购物车列表
+export const addShop = function (params) {
+  return axios.post(`${baseUrl}`+"/shop/create", jsonToQuery(params));
+}
+      //删除购物车
+export const delShop = function (params) {
+  return axios.post(`${baseUrl}`+"/shop/delete", jsonToQuery(params));
+}
+
+//订单相关
+      //订单列表
+export const orderList = function (params) {
+  return axios.post(`${baseUrl}`+"/order", jsonToQuery(params));
+}
+      //取消订单
+export const orderCancel = function (params) {
+  return axios.get(`${baseUrl}`+"/order/cancel", {params});
+}
+     //确认收货
+export const orderConfirm = function (params) {
+  return axios.get(`${baseUrl}`+"/order/confirm", {params});
+}
+     //删除订单
+export const orderDel = function (params) {
+  return axios.get(`${baseUrl}`+"/order/delete", {params});
+}
+    //不喜欢/order/unlike/create
+export const orderUnlike = function (params) {
+  return axios.post(`${baseUrl}`+"/order/unlike/create", jsonToQuery(params));
+}
+      //评论上传图片
+export const orderUploadImg = function (params) {
+  return axios.post(`${baseUrl}`+"/order/comment/image", jsonToQuery(params));
+}
+      //评论上传视频
+export const orderUploadVidio = function (params) {
+  return axios.post(`${baseUrl}`+"/order/comment/vidio", jsonToQuery(params));
+}
+      //删除上传的图片或者视频
+export const orderDelComment = function (params) {
+  return axios.post(`${baseUrl}`+"/order/comment/delete", jsonToQuery(params));
+}

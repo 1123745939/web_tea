@@ -5,68 +5,100 @@
         <tab-item :selected="index == selectIndex ? true:false" @on-item-click="onItemClick(item.id,index)" v-for="(item,index) in tabs" :key="item.id">{{item.name}}</tab-item>
       </tab>
     </div>
-    <ul class="o_l" v-if="orderList.length">
-      <li>
-        <div class="li_h">
-          <p class="time">2018/10/16 14:18</p>
-          <p v-if="status == 1">等待付款</p>
-          <p v-if="status == 2">买家已付款</p>
-          <p v-if="status == 3">卖家已发货</p>
-          <p v-if="status == 4 || status == 5">交易成功</p>
-          <p v-if="status == 6">退款中</p>
-          <p v-if="status == 7">退款成功</p>
-          <p v-if="status == 8">退款失败</p>
-        </div>
-        <div class="li_m"  @click="$router.push('/orderDetail')">
-          <div class="t_img">
-            <img src="../assets/img/play.png" alt="">
-          </div>
-          <div class="t_info">
-            <p>个人基因检测标准版个人基因检测标准版</p>
-            <span>2018/09/18 绿茶28期</span>
-          </div>
-          <div class="in_num">
-              <p>￥1800.00</p>
-              <span>X1</span>
+    <div class="box" v-if="orderList1.length">
+      <scroll ref="scroll"
+        :data="orderList1"
+        :pullDownRefresh="pullDownRefreshObj"
+        :pullUpLoad="pullUpLoadObj"
+        :startY="parseInt(startY)"
+        @pullingDown="onPullingDown"
+        @pullingUp="onPullingUp">
+
+        <ul class="o_l">
+          <li v-for="(item,index) in orderList1" :key="item.id">
+            <div class="li_h">
+              <p class="time">{{item.created_at}}</p>
+              <p>{{item.id}}{{item.status_text}}{{item.order_status}}</p>
             </div>
-        </div>
-        <div class="heji">
-          <span>共1件商品</span>
-          <p>合计：￥<span>1800</span>.00</p>
-        </div>
-        <div class="b_b" v-if="status == 1">
-          <p>取消订单</p>
-          <p>立即支付</p>
-        </div>
-        <div class="b_b" v-if="status == 2">
-          <p>取消订单</p>
-        </div>
-         <div class="b_b" v-if="status == 3">
-          <p>查看物流</p>
-          <p>确认收货</p>
-        </div>
-         <div class="b_b" v-if="status == 4">
-          <p>删除订单</p>
-          <p>评价</p>
-          <p>再次购买</p>
-        </div>
-        <div class="b_b" v-if="status == 5">
-          <p>删除订单</p>
-          <p>再次评价</p>
-          <p>再次购买</p>
-        </div>
-        <div class="b_b" v-if="status == 6">
-          <p>查看详情</p>
-          <p>取消退款</p>
-        </div>
-        <div class="b_b" v-if="status == 7">
-          <p>查看详情</p>
-        </div>
-        <div class="b_b" v-if="status == 8">
-          <p>查看详情</p>
-        </div>
-      </li>
-    </ul>
+            <div class="li_m"  @click="$router.push({path:'/orderDetail',query:{id:item.id,tea_id:item.tea_id}})">
+              <div class="t_img">
+                <img src="../assets/img/play.png" alt="">
+              </div>
+              <div class="t_info">
+                <p>{{item.tea_title}}</p>
+                <span>{{item.tea_date}} {{item.tea_period}}</span>
+              </div>
+              <div class="in_num">
+                  <p>￥{{item.order_price}}.00</p>
+                  <span>X{{item.order_count}}</span>
+                </div>
+            </div>
+            <div class="heji">
+              <span>共{{item.order_count}}件商品</span>
+              <p>合计：￥<span>{{item.order_total}}</span>.00</p>
+            </div>
+            <div class="b_b" v-if="item.order_status == 0">
+              <p @click="cancelShow = true;id=item.id">取消订单</p>
+              <p>立即支付</p>
+            </div>
+            <div class="b_b" v-if="item.order_status == 1">
+              <p @click="cancelShow = true;id=item.id">取消订单</p>
+            </div>
+            <div class="b_b" v-if="item.order_status == 2">
+              <p>查看物流</p>
+              <p @click="confirmShow = true;id=item.id">确认收货</p>
+            </div>
+            <div class="b_b" v-if="item.order_status == 3">
+              <p @click="delShow = true;id=item.id">删除订单</p>
+              <p @click="$router.push('/evaluate')">评价</p>
+              <p>再次购买</p>
+            </div>
+            <div class="b_b" v-if="item.order_status == 4">
+              <p @click="delShow = true;id=item.id">删除订单</p>
+              <p>再次评价</p>
+              <p>再次购买</p>
+            </div>
+            <div class="b_b" v-if="item.order_status == 5">
+              <p>查看详情</p>
+              <p>取消退款</p>
+            </div>
+            <div class="b_b" v-if="item.order_status == 6">
+              <p>查看详情</p>
+            </div>
+                <!-- 是否删除的弹框 -->
+                <div v-transfer-dom>
+                  <confirm v-model="delShow"  @on-confirm="del()">
+                    <p style="text-align:center;">确认要删除吗</p>
+                  </confirm>
+                </div>
+                <!-- 是否取消订单的弹框 -->
+                <div v-transfer-dom>
+                  <confirm v-model="cancelShow"  @on-confirm="cancel(index)">
+                    <p style="text-align:center;">确认要取消订单吗</p>
+                  </confirm>
+                </div>
+                <!-- 是否取消退款的弹框 -->
+                <div v-transfer-dom>
+                  <confirm v-model="cancelTuiShow"  @on-confirm="id = item.id">
+                    <p style="text-align:center;">确认要删除吗</p>
+                  </confirm>
+                </div>
+                <!-- 是否确认收货的弹框 -->
+                <div v-transfer-dom>
+                  <confirm v-model="confirmShow"  @on-confirm="confirm()">
+                    <p style="text-align:center;">要确认收货吗</p>
+                  </confirm>
+                </div>
+          </li>
+       </ul>
+		    <div class="order-list" v-if="orderList1.length == 0 && !loading">
+		    	<load-more :show-loading="false" tip="暂无数据" background-color="#f0f7f5"></load-more>
+		    </div>
+    </scroll>
+
+    </div>
+
+    
     <div class="noList" v-else>
     <div class="box">
       <img src="../assets/img/symbols-order.png" alt="">
@@ -77,29 +109,222 @@
 </template>
 
 <script>
-import { Tab, TabItem , XButton } from 'vux'
-import {Login} from '../api/api.js'
+import { Tab, TabItem , XButton ,Confirm, TransferDomDirective as TransferDom} from 'vux'
+import Scroll from './scroll/scroll'
+import { orderList , orderCancel , orderConfirm ,orderDel} from '../api/api.js'
 export default {
+   directives: {
+    TransferDom
+  },
   components: {
+    Confirm,
     Tab,
     TabItem,
-    XButton
+    XButton,
+    Scroll
   },
   data () {
     return {
+      token:sessionStorage.token,
       status:1,
       selectIndex:0,
       tabs:[{id:1,name:'全部'},{id:2,name:'待付款'},{id:3,name:'待发货'},{id:4,name:'待收货'},{id:5,name:'待评价'},{id:6,name:'售后'}],
-      orderList:[]
+      orderList:[],
+      orderList1:[],
+      page:1,
+      ifRefrush:false,
+      id:'',
+      delShow:false,
+      cancelShow:false,
+      cancelTuiShow:false,
+      confirmShow:false,
+
+      pullUpLoadThreshold: 0,
+      pullDownRefresh: true,
+      pullDownRefreshThreshold: 40,
+      pullDownRefreshStop: 40,
+      pullUpLoad: true,
+      pullUpLoadThreshold: 0,
+      pullUpLoadMoreTxt: '数据加载中',
+      pullUpLoadNoMoreTxt: '没有更多数据了',
+      startY: 0,
+      scrollToTime: 700,
+      loading :true,
     }
   },
   created(){
     document.title = '我的订单'
-    this.selectIndex = 3
+    this.selectIndex = 0
+    this.init(1)
+  },
+   computed:{
+    pullDownRefreshObj: function () {
+      return this.pullDownRefresh ? {
+        threshold: parseInt(this.pullDownRefreshThreshold),
+        stop: parseInt(this.pullDownRefreshStop)
+      } : false
+    },
+    pullUpLoadObj: function () {
+      return this.pullUpLoad ? {
+        threshold: parseInt(this.pullUpLoadThreshold),
+        txt: {more: this.pullUpLoadMoreTxt, noMore: this.pullUpLoadNoMoreTxt}
+      } : false
+    }
   },
   methods:{
+    init(page){
+      const options = {
+        token:this.token,
+        page:page,
+        rows:10
+      }
+      orderList(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          if(this.ifRefrush){
+            this.orderList = []
+            this.ifRefrush = false
+          }
+
+          this.orderList = this.orderList.concat(res.data.data.result)
+          if(this.selectIndex==0){
+            this.orderList1 = this.orderList
+            console.log(this.orderList1)
+            }else if(this.selectIndex==4){
+                this.orderList1 = this.orderList.filter(item=>{
+                  return item.order_status == 3 || item.order_status == 4
+                })
+            }else if(this.selectIndex==5){
+              this.orderList1 = this.orderList.filter(item=>{
+                return item.order_status == 5
+              })
+            }else{
+              this.orderList1 = this.orderList.filter(item=>{
+                return item.order_status == index-1
+              })
+            }
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //点击tab切换
     onItemClick(id,index){
       this.selectIndex = index
+      if(this.selectIndex==0){
+        this.orderList1 = this.orderList
+      }else if(this.selectIndex==4){
+        this.orderList1 = this.orderList.filter(item=>{
+          return item.order_status == 3 || item.order_status == 4
+        })
+      }else if(this.selectIndex==5){
+        this.orderList1 = this.orderList.filter(item=>{
+          return item.order_status == 5
+        })
+      }else{
+         this.orderList1 = this.orderList.filter(item=>{
+          return item.order_status == index-1
+        })
+      }
+      console.log(this.orderList1)
+       this.$forceUpdate()
+    },
+    //删除订单
+    del(){
+      const options = {
+        token :this.token,
+        id:this.id
+      }
+      orderDel(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('订单已删除')
+          this.selectIndex = 0
+          this.orderList = []
+          this.init(1)
+          this.$forceUpdate()
+          this.scroll.scrollTo(0, 0, 500)
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //取消订单
+    cancel(index){
+      const options = {
+        token :this.token,
+        id:this.id
+      }
+      orderCancel(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('订单已取消成功')
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //确认收货
+    confirm(){
+       const options = {
+        token :this.token,
+        id:this.id
+      }
+      orderConfirm(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('已经确认收货')
+          this.selectIndex = 4
+          this.orderList = []
+          this.init(1)
+          this.$forceUpdate()
+          this.scroll.scrollTo(0, 0, 500)
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    onPullingDown() {
+      // 模拟更新数据
+      this.ifRefrush = true
+      this.init(1)
+     },
+     //上拉加载
+    onPullingUp() {
+      // 更新数据
+      console.log('pulling up and load data')
+      this.page ++ ;
+      this.init(this.page)
+     
+      this.$refs.scroll.forceUpdate()
+    },
+    rebuildScroll() {
+      Vue.nextTick(() => {
+        this.$refs.scroll.destroy()
+        this.$refs.scroll.initScroll()
+      })
+    }
+  },
+  watch: {
+    scrollbarObj: {
+      handler() {
+        this.rebuildScroll()
+      },
+      deep: true
+    },
+    pullDownRefreshObj: {
+      handler() {
+        this.rebuildScroll()
+      },
+      deep: true
+    },
+    pullUpLoadObj: {
+      handler() {
+        this.rebuildScroll()
+      },
+      deep: true
+    },
+    startY() {
+      this.rebuildScroll()
+    },
+    tabIndex(oldV,neWV){
+      sessionStorage.tabIndex = oldV
     }
   }
 }
@@ -113,9 +338,12 @@ export default {
   background #F7F7F7
   height l(666)
   overflow-y scroll
+  .box
+    height l(626)
+    position relative
   .o_h
     width 100%
-    margin-bottom l(10)
+    //margin-bottom l(10)
     padding 0 4.3%
     background #fff
   ul
@@ -219,6 +447,7 @@ export default {
           line-height l(23)
           color #666666
           border 1px solid #D4D4D4
+          margin-left l(15)
   .noList
     width l(175)
     height l(200)

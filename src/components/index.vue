@@ -3,7 +3,7 @@
     <!-- 头部 -->
     <div class="content" @click.stop="moreShow = moreShow ? !moreShow : moreShow">
       <div class="search" @click="$router.push('/search')"></div>
-      <div class="car" @click="token == ''? loginMaskShow=true : $router.push('/car')"><span class="carNum">8</span></div>
+      <div class="car" @click="token == ''? loginMaskShow=true : $router.push('/car')"><span class="carNum" v-show="carNum">{{carNum}}</span></div>
       <ul class="tab">
         <li  class="tabli" @click="goAll()">
           <img src="../assets/img/tab1_active.png" alt="" v-if="tabIndex==1">
@@ -114,7 +114,7 @@
 <script>
 import { Confirm,TransferDomDirective as TransferDom ,Swipeout, SwipeoutItem, SwipeoutButton, XButton ,LoadMore } from 'vux'
 import Scroll from './scroll/scroll'
-import {getAlltop,getAll,getRecommand,getAdvance,vidioThumb,vidioCollect} from '../api/api.js'
+import {getAlltop,getAll,getRecommand,getAdvance,vidioThumb,vidioCollect,carList} from '../api/api.js'
 export default {
    directives: {
     TransferDom
@@ -146,6 +146,7 @@ export default {
       order:'',
       is_order : 0,
       topArr:[],//置顶和预售的数组
+      carNum:'',
 
       
       pullUpLoadThreshold: 0,
@@ -165,6 +166,7 @@ export default {
   },
   created(){
     document.title = '茶急送'
+    this.init()
     if(!sessionStorage.tabIndex){
       this.tabIndex = 1
     }else{
@@ -201,6 +203,17 @@ export default {
     // })
   },
   methods:{
+    //购物车数量
+    init(){
+      if(!this.token){return}
+      carList({token:this.token}).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.carNum = res.data.data.count
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
     share(id,index) {
      
       this.copyBtn = new this.clipboard(this.$refs.copy[index]);
@@ -268,7 +281,7 @@ export default {
     async allData(page){
       const options = {
         page:page,
-        rows:2,
+        rows:10,
       }
       await this.topData()
       getAll(options).then(res=>{      

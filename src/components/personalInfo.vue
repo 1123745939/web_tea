@@ -120,6 +120,7 @@ export default {
       tel:'',
       address:'',
       showLoginOut:false,
+      img:''
     }
   },
   created(){
@@ -164,7 +165,12 @@ export default {
           quality: 0.2
         }, function(base64Codes){
           console.log("压缩后：" + base64Codes.length / 1024 + " " + base64Codes);
-          that.uploadPhoto(filename,dataURL);
+          this.img = dataURL
+          var imgs=dataURL.replace(/\+/g,'-');
+              imgs=imgs.replace(/=/g,'')
+              imgs=imgs.replace(/\//g,'_')
+
+          that.uploadPhoto(filename,imgs);
           // var bl = convertBase64UrlToBlob(base64Codes);
           // form.append("file", bl, "file_"+Date.parse(new Date())+".jpg"); // 文件对象
         });
@@ -175,7 +181,11 @@ export default {
           // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
           var dataURL = reader.result;
           console.log(dataURL,'url');
-          that.uploadPhoto(filename,dataURL);
+          this.img = dataURL
+           var  imgs=dataURL.replace(/\+/g,'-');
+                imgs=imgs.replace(/=/g,'')
+                imgs=imgs.replace(/\//g,'_')
+          that.uploadPhoto(filename,imgs);
         }
       }
     },
@@ -229,16 +239,21 @@ export default {
     uploadPhoto(base,name){
       const options = {
         token :this.token,
-         filename:base,
+        filename:base,
         user_photo :name
       }
       updataPhoto(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          this.photoSrc = base;
-          this.havePhoto = true
-          this.$vux.toast.text('头像修改成功', 'middle')
+          // this.photoSrc = this.img;
+          console.log(this.photoSrc)
+           var imgs=name.replace(/-/g,'+');
+              imgs=imgs.replace(/\s+/g,'=')
+              imgs=imgs.replace(/_/g,'/')
+              this.photoSrc = imgs
+          this.havePhoto = false
+          this.$vux.toast.text('头像修改成功')
         }else{
-          this.$vux.toast.text(res.data.message, 'middle')
+          this.$vux.toast.text(res.data.error_message||res.data.message)
         }
       })
     },
@@ -256,6 +271,7 @@ export default {
       updataName(options).then(res=>{
          if(res.data.code == 200 && !res.data.error_code){
           this.nickname = value
+          sessionStorage.username = value
           this.$vux.toast.text('昵称修改成功', 'middle')
         }else{
           this.$vux.toast.text(res.data.message, 'middle')

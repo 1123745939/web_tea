@@ -114,20 +114,7 @@ datepicker::-webkit-input-placeholder {
   color: #666;
   font-size: 14px;
 }
-/* .weui-cell_access .weui-cell__ft:after{
-  border-color :#C7C7C7;
-} */
 
-/* 地址  右箭头 */
-/* .weui-cell_access .weui-cell__ft {
-  padding-right: 13px;
-  position: relative;
-}
-
-.weui-cell__ft {
-  text-align: right;
-  color: #999;
-} */
 .vux-popup-picker-placeholder {
   font-size: 14px;
   color: #666;
@@ -152,6 +139,12 @@ datepicker::-webkit-input-placeholder {
 .address .weui-cell__hd{
   margin-right: 20px;
 }
+
+/* mask透明度 */
+.weui-mask{
+  background: rgba(0, 0, 0, 0.5)!important;
+}
+
 /*common*/
 @-webkit-keyframes btnRotate {
   0% {

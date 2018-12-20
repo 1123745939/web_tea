@@ -22,39 +22,214 @@
     <textarea placeholder="请输入评价"></textarea>
     <!-- 图片 -->
     <div class="up_file">图片（可选，最多三张）</div>
-    <ul class="up_img">
-      <li>
-        <img src="../assets/img/list1.png" alt="">
+    <div class="bigBox">
+      <ul class="up_img" v-show="imgList.length">
+        <li v-for="(item,index) in imgList" :key="index">
+          <img :src="item.url" alt="">
+          <div @click="delImg(item.url,index)"></div>
+        </li>
+      </ul>
+      <div class="addphoto" v-show="imgList.length<3">
+        <img src="../assets/img/add_proto.png" alt="">
+        <input type="file" accept="image/*"  id="photoInput" @change="tirggerFile($event)">
+      </div>
+      <div class="vi" v-if="!ifSuccess">
+        <img src="../assets/img/add_video.png" alt="">
+        <input type="file" accept="video/*"  id="photoInput" @change="tirggerVideo($event)">
+      </div>    
+      <div class="vi" v-else>
+        <video :src="videoSrc"></video>
         <div></div>
-      </li>
-      <li>
-        <img src="../assets/img/add_proto.png" alt="">
-      </li>
-      <li>
-        <img src="../assets/img/add_proto.png" alt="">
-      </li>
-    </ul>
-    <div class="vi">
-      <img src="../assets/img/add_video.png" alt="">
+      </div>  
+      <video :src="videoSrc1" style="display:none" id="videoPlayer"></video>   
     </div>
     <span class="save">保存</span>
   </div>
 </template>
 
 <script>
-import {Login} from '../api/api.js'
+import { orderUploadImg , orderUploadVidio ,orderDelComment } from '../api/api.js'
 export default {
   data () {
     return {
-      msg: ''
+      token: sessionStorage.token || '',
+      imgList:[],
+      videoSrc:'',
+      videoSrc1:'',
+      ifSuccess:false
     }
   },
   created(){
     document.title = '发表评价'
   },
   methods:{
-    goDetail(){
-      this.$router.push('/goodDetail')
+    //上传图片
+    tirggerFile:function(e){
+      var that=this;
+      console.log(e)
+      console.log("ssssssssssss");
+      var file = e.target.files[0];
+      var filename = e.target.files[0].name
+      console.log(filename)
+      var imgSize=file.size/1024;
+      if(imgSize>200){
+        // 图片压缩
+        // alert('请上传大小不要超过200KB的图片')
+        that.photoCompress(file, {
+          quality: 0.2
+        }, function(base64Codes){
+          console.log("压缩后：" + base64Codes.length / 1024 + " " + base64Codes);
+          this.img = dataURL
+          var imgs=dataURL.replace(/\+/g,'-');
+              imgs=imgs.replace(/=/g,'')
+              imgs=imgs.replace(/\//g,'_')
+
+          that.uploadPhoto(filename,imgs);
+          // var bl = convertBase64UrlToBlob(base64Codes);
+          // form.append("file", bl, "file_"+Date.parse(new Date())+".jpg"); // 文件对象
+        });
+      }else {
+        var reader = new FileReader();
+        reader.readAsDataURL(file); // 读出 base64
+        reader.onloadend = function () {
+          // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
+          var dataURL = reader.result;
+          console.log(dataURL,'url');
+          this.img = dataURL
+           var  imgs=dataURL.replace(/\+/g,'-');
+                imgs=imgs.replace(/=/g,'')
+                imgs=imgs.replace(/\//g,'_')
+          that.uploadPhoto(filename,imgs);
+        }
+      }
+    },
+    photoCompress(file,w,objDiv){
+      var that = this;
+      var ready=new FileReader();
+      /*开始读取指定的Blob对象或File对象中的内容. 当读取操作完成时,readyState属性的值会成为DONE,如果设置了onloadend事件处理程序,则调用之.同时,result属性中将包含一个data: URL格式的字符串以表示所读取文件的内容.*/
+      ready.readAsDataURL(file);
+      ready.onload=function(){
+        var re=this.result;
+        that.canvasDataURL(re,w,objDiv)
+      }
+    },
+    // 图片压缩
+    canvasDataURL(path, obj, callback){
+      var img = new Image();
+      img.src = path;
+      img.onload = function(){
+        var that = this;
+        // 默认按比例压缩
+        var w = that.width,
+          h = that.height,
+          scale = w / h;
+        w = obj.width || w;
+        h = obj.height || (w / scale);
+        var quality = 0.7;  // 默认图片质量为0.7
+        //生成canvas
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        // 创建属性节点
+        var anw = document.createAttribute("width");
+        anw.nodeValue = h;
+        var anh = document.createAttribute("height");
+        anh.nodeValue = w;
+        canvas.setAttributeNode(anw);
+        canvas.setAttributeNode(anh);
+        ctx.transform(0, 1, 1, 0, 0, 0);
+        ctx.drawImage(that, 0, 0, w, h);
+        // 图像质量
+        if(obj.quality && obj.quality <= 1 && obj.quality > 0){
+          quality = obj.quality;
+        }
+        // quality值越小，所绘制出的图像越模糊
+        var base64 = canvas.toDataURL('image/jpeg', quality);
+        // 回调函数返回base64的值
+        console.log(base64);
+        callback(base64);
+      }
+    },
+    //上传头像
+    uploadPhoto(base,name){
+      const options = {
+        token :this.token,
+        comment_object:name,
+        filename :base
+      }
+      console.log(options)
+      orderUploadImg(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          var obj = {}
+          obj.name = base
+          obj.url = res.data.data
+          this.imgList.push(obj)
+          console.log(this.imgList,'this.imgList')
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //删除某个图片
+    delImg(url,index){
+      console.log(url)
+      var name = url.substring(url.lastIndexOf('/')+1)
+      const options = {
+        token :this.token,
+        comment_object:name,
+        comment_type :'image'
+      }
+      console.log(options)
+      orderDelComment(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.imgList.splice(index,1)
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //上传视频
+    tirggerVideo(e){
+      console.log(e,'e')
+      if(e.target.files[0].size>=1024*1024*1024){
+        this.$vux.toast.text('请选择2M以内的视频')
+      }else{
+         var video = e.target.files[0];  //选择的文件
+          var reader = new FileReader();  
+          var rs = reader.readAsDataURL(video); 
+          var name = e.target.files[0].name 
+          reader.onload = (event) =>{
+            var videoSrc = reader.result;
+            this.videoSrc1 = videoSrc
+            setTimeout(()=>{
+              var time = document.getElementById('videoPlayer').duration
+              console.log(time,'time')
+              if(time>15){
+                this.$vux.toast.text('请上传15s之内的视频')
+              }else{
+                  var video64=videoSrc.replace(/\+/g,'-');
+                  video64=video64.replace(/=/g,'')
+                  video64=video64.replace(/\//g,'_')
+                  console.log(111111111111111)
+                  this.uploadVodeo(video64,name)
+              }
+            },1000)         
+          }
+      }
+    },
+    uploadVodeo(video64,name){
+      const options = {
+        token :this.token,
+        comment_vidio:video64,
+        filename:name
+      }
+      orderUploadVidio(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.videoSrc = res.data.data
+          this.ifSuccess = true
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
     }
   }
 }
@@ -68,7 +243,6 @@ export default {
   padding l(10) 4.3%
   display flex
   flex-direction column
-  align-items center
   .e_h
     width 100%
     .box
@@ -170,20 +344,66 @@ export default {
   textarea::placeholder
     color: #999999;
   .up_file
-    width 100%
-    font-size: 14px;
-    color: #333333;
-    letter-spacing: 0.3px;
-    line-height l(15)
-    text-align left 
-  ul.up_img
-    width 100%
-    margin l(10) 0
-    disFlex ()
-    li
+    line-height l(30)
+    text-align left
+  .bigBox
+    overflow hidden
+    .up_file
+      width 100%
+      font-size: 14px;
+      color: #333333;
+      letter-spacing: 0.3px;
+      line-height l(15)
+      text-align left 
+    ul.up_img
+      //width 100%
+      margin l(10) 0
+      //overflow hidden
+      li
+        width l(100)
+        height l(80)
+        float left
+        position relative
+        margin-right l(10)
+        img 
+          display block
+          width 100%
+          height 100%
+        div
+          width l(18)
+          height l(18)
+          backgroundIcon ('close.png')
+          position absolute
+          top l(2)
+          right l(2)
+    .addphoto
       width l(100)
       height l(80)
+      float left
+      margin-right l(10)
       position relative
+      img 
+        display block
+        width 100%
+        height 100%
+      input 
+        position absolute
+        top 0
+        left 0
+        width 100%
+        height 100%
+        opacity 0
+    .vi
+      width l(100)
+      height l(80)
+      display inline-block
+      float left
+      position relative
+      video  
+        display block
+        width 100%
+        height 100%
+        object-fit: fill;
       img 
         display block
         width 100%
@@ -195,14 +415,14 @@ export default {
         position absolute
         top l(2)
         right l(2)
-  .vi
-    width l(100)
-    height l(80)
-    margin-right l(244)
-    img 
-      display block
-      width 100%
-      height 100%
+      input 
+        position absolute
+        top 0
+        left 0
+        display block
+        width 100%
+        opacity 0
+        height 100%
   .save
     display block
     width l(160)
@@ -214,4 +434,5 @@ export default {
     letter-spacing: 1.12px;
     line-height l(44)
     margin-top l(60)
+    margin-left 30%
 </style>
