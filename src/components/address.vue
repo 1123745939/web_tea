@@ -2,7 +2,7 @@
   <div class="con">
     <div class="content"  v-if="addressList.length>0">
       <ul>
-        <li v-for="(item,index) in addressList" :key="item.id">
+        <li v-for="(item,index) in addressList" :key="item.id" @click="go(item)">
           <div class="a_l">
             <div class="a">
               <p>收货人：</p>
@@ -13,18 +13,18 @@
               <p>地址：</p>
               <span class="add">{{item.addr_content}}{{item.addr_detail}}</span>
             </div>
-            <div class="default" @click="setDefault(item.id,index)">
+            <div class="default" @click.stop="setDefault(item.id,index)">
               <img src="../assets/img/c_blank.png" alt="" v-if="item.is_default==0">
               <img src="../assets/img/c_active.png" alt="" v-else>
               设为默认
             </div>
           </div>
           <div class="a_r">
-            <div @click="editAddress(item)">
-              <img src="../assets/img/edit.png" alt="">编辑
+            <div @click.stop="editAddress(item)">
+              <img src="../assets/img/edit.png" alt="">
             </div>
-            <div class="del" @click="delAddress(item.id)"> 
-              <img src="../assets/img/del.png" alt="">删除
+            <div class="del" @click.stop="delAddress(item.id)"> 
+              <img src="../assets/img/del.png" alt="">
             </div>
           </div>
         </li>
@@ -57,6 +57,17 @@ export default {
     this.getAddressList()
   },
   methods:{
+    go(item){
+      // if(this.$route.query.fromPage == 'pay'){
+      //   this.$router.push('/pay')
+      //   sessionStorage.address = JSON.stringify(item)
+      //   sessionStorage.is_from_addlist = true
+      // }
+      this.$router.push('/pay')
+      sessionStorage.address = JSON.stringify(item)
+      sessionStorage.is_from_addlist = true
+    },
+    //init
     getAddressList(){
       const options = {
         token:this.token

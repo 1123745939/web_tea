@@ -28,7 +28,8 @@ import changePass from '@/components/changePass'
 import register from '@/components/register'
 import personalInfo from '@/components/personalInfo'
 import changePhone from '@/components/changePhone'
-import discussAll from '@/components/discussAll'
+import discussAll from '@/components/discussAll' 
+import applySale from '@/components/applySale' //申请售后
 
 Vue.use(Router)
 
@@ -178,6 +179,11 @@ const router =  new Router({
       path: '/discussAll',
       name: 'discussAll',
       component: discussAll
+    },
+    {
+      path: '/applySale',
+      name: 'applySale',
+      component: applySale
     },
   ]
 })

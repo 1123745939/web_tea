@@ -3,22 +3,25 @@
     <swipeout class="vux-1px-tb">
       <swipeout-item transition-mode="follow" v-for="(i,index) in carList" :key="i.id">
         <div slot="right-menu">
-          <swipeout-button @click.native="show = true;id=i.id" type="warn">删除</swipeout-button>
+          <swipeout-button @click.native="show = true;id=i.tea_id" type="warn">删除</swipeout-button>
         </div>
         <div slot="content" class="demo-content vux-1px-t">
-          <li>
-            <img src="../assets/img/c_blank.png" alt="" class="car_s" v-if="i.active == false" @click="select(index)"> 
-            <img src="../assets/img/c_active.png" alt="" class="car_s" v-else  @click="select(index)"> 
+          <li :class="i.is_advance==1?'active':''">
+            <img src="../assets/img/c_blank.png" alt="" class="car_s" v-if="i.active == false" @click="select(index,i.tea_left_count)"> 
+            <img src="../assets/img/c_active.png" alt="" class="car_s" v-else  @click="select(index,tea_left_count)"> 
             <img src="../assets/img/list1.png" alt="" class="car_img">
             <div class="car_p">
-              <span>{{i.tea_title}}</span>
+              <div class="t_top">
+                <span>{{i.tea_title}}</span> <span class="ku" v-show="i.tea_left_count==0">库存不足</span>
+              </div>
               <p class="t_d">{{i.tea_date}} {{i.tea_period}}</p>
               <div class="t_num">
                 <p>￥<span>{{i.tea_price}}</span>.00</p>
                 <div>
-                  <p></p>{{i.tea_count}} <p></p>
+                  <p @click="reduce(i.id,index)"></p>{{i.tea_count}} <p  @click="add(i.id,index)"></p>
                 </div>
               </div>
+              <div class="yugoutime" v-if="i.is_advance==1">预计发货时间{{i.advance_date}}</div>
             </div>
          </li>
         </div>
@@ -41,7 +44,7 @@
       <img src="../assets/img/c_active.png" alt="" v-else  @click="selectAllAll">
       <span>全选</span>
       <div>
-        总计:<p>￥<span>1399</span>.00</p>
+        总计:<p>￥<span>{{totalP}}</span>.00</p>
       </div>
       <p class="goPay" @click="goPay">去结算</p>
     </div>
@@ -60,7 +63,7 @@
 
 <script>
 import {  Swipeout, SwipeoutItem, SwipeoutButton, XButton ,Confirm, TransferDomDirective as TransferDom} from 'vux'
-import {carList,delShop} from '../api/api.js'
+import {carList,delShop ,SaveShop,orderCheck} from '../api/api.js'
 export default {
   directives: {
     TransferDom
@@ -78,7 +81,8 @@ export default {
       selectAll :false,
       carList:[],
       show:false,
-      id:''
+      id:'',
+      totalP:0,
     }
   },
   created(){
@@ -86,13 +90,14 @@ export default {
     this.init()
   },
   methods:{
-    init(page){
+    init(){
       const options = {
         token:this.token,
       }
       carList(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.carList = res.data.data.result
+          console.log(this.carList)
           this.carList.forEach(item=>{
             item.active = false
           })
@@ -121,10 +126,20 @@ export default {
       })
     },
     //单个的选择
-    select(index){
+    select(index,count){
+      if(count ==0){
+        this.$vux.toast.text('库存不足,请删除该产品并重新选择')
+        return
+      }
       this.carList[index].active = !this.carList[index].active
      
       this.$forceUpdate()
+      this.totalP = 0
+      this.carList.forEach(item=>{
+        if(item.active == true){
+          this.totalP = Number(this.totalP) + Number(item.tea_count*item.tea_price)
+        }      
+      })
       var aa = this.carList.every(item=>{
         return item.active == true
       })
@@ -134,15 +149,54 @@ export default {
     selectAllAll(){
       if(this.selectAll){
         this.selectAll = false
+        this.totalP = 0
         this.carList.forEach(item=>{
           item.active = false
         })
       }else{
         this.selectAll = true
         this.carList.forEach(item=>{
-          item.active = true
+          if(item.tea_left_count!=0){
+            item.active = true
+            this.totalP +=item.tea_count*item.tea_price
+          }
+          
         })
       }
+    },
+    //减
+    reduce(id,index){
+
+      if(this.carList[index].tea_count > 1){
+        this.carList[index].tea_count -- 
+      }
+      this.shopCount(id,this.carList[index].tea_count)
+      if(!this.carList[index].active){return}
+      this.totalP = this.totalP - this.carList[index].tea_price
+      this.$forceUpdate()
+    },
+    //加
+    add(id,index){  
+      this.carList[index].tea_count ++ 
+      this.shopCount(id,this.carList[index].tea_count)
+      if(!this.carList[index].active){return}
+      this.totalP = this.totalP + this.carList[index].tea_price
+      this.$forceUpdate()
+    },
+    //掉接口，保存每次操作之后的购物车数量
+    shopCount(id,count){
+      const options = {
+        token :this.token,
+        id:id,
+        count :count
+      }
+      SaveShop(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
     },
     //去结算
     goPay(){
@@ -153,6 +207,36 @@ export default {
         this.$vux.toast.text('您还没有选择任何商品')
         return
       }
+      var ids = ''
+      var arr = []
+      this.carList.forEach(item=>{
+        if(item.active){
+          ids = ids + item.id +','
+          var obj = {}
+          obj.id = item.id
+          obj.count = item.tea_count
+          arr.push(obj)
+        }
+      })
+      ids = ids.slice(0,-1)
+      this.check(arr,ids)
+    },
+    //校验库存
+    check(arr,ids){
+      const options = {
+        token :this.token,
+        ids :JSON.stringify(arr)
+      }
+      orderCheck(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$router.push({path:'/pay',query:{ids:ids,type:'shop'}})
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+          setTimeout(()=>{
+            this.init()
+          },1000)
+        }
+      })
     }
   }
 }
@@ -175,6 +259,8 @@ export default {
     background #fff
     li.last
       border-bottom 0
+    li.active
+      backgroundIcon ('yugou@2x.png')
     li
       height l(126) 
       disFlex()
@@ -192,11 +278,20 @@ export default {
         width 54%
         height 100%
         text-align left 
-        span 
-          line-height l(22)
-          fz(16)
-          color: #333333
-          letter-spacing 0.3px
+        div.t_top
+          width 100%
+          display flex
+          justify-content space-between
+          align-items center
+          .ku
+            fz(14)
+            color: #E63443;
+            letter-spacing: 0.23px;
+          span 
+            line-height l(22)
+            fz(16)
+            color: #333333
+            letter-spacing 0.3px
         p.t_d
           line-height l(20)
           fz(14)
@@ -222,6 +317,10 @@ export default {
             p
               width l(25)
               height 100%
+        .yugoutime
+          font-size: 10px;
+          color: #E63443;
+          letter-spacing: 0.3px;
   .yun
     margin-top l(10)
     height l(64)

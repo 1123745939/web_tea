@@ -3,57 +3,57 @@
     <div class="content">
       <div class="c_h">
         <div class="photo">
-          <img src="../assets/img/photo.jpg" alt="">
-          豆小丫
+          <img :src="user.img_link" alt="">
+          {{user.username}}
         </div>
-        <span class="time">2018/09/08  14:20</span>
+        <span class="time">{{comment.created_at}}</span>
       </div>
-      <p class="te">大家好，我在这个平台买的西湖龙井，色香味俱全，超级好喝。推荐大家购买~~</p>
-      <ul class="d_ul">
-        <li>
-          <img src="../assets/img/list1.png" alt="" class="d_img">
-        </li>
-        <li>
-          <img src="../assets/img/list1.png" alt=""  class="d_img">
-        </li>
-        <li>
-          <img src="../assets/img/list1.png" alt=""  class="d_img">
+      <p class="te">{{comment.content}}</p>
+      <!-- 评论的图片 -->
+      <ul class="d_ul" v-show="commentObj.images">
+        <li v-for="(item,index) in commentObj.images" :key="index">
+          <img :src="item.image_link" alt="" class="d_img">
         </li>
       </ul>
-      <!-- 商品的视频 -->
+      <!-- 评论的视频 -->
+      <div class="vi" v-if="commentObj.vidio" v-for="item in commentObj.vidio">
+        <video :src="item.vidio_link" controls ></video>
+      </div>
+      <!-- 商品 -->
      <div class="d">
-      <div class="li_top">
+      <div class="li_top" :style="{background:'url(' + tea.tea_img_link +')'}">
         <div class="play"><span></span></div>
         <div class="data">
           <div class="d_l">
-            5万次播放
+           {{tea.tea_play_count}}次播放
           </div>
           <ul class="p_r">
-            <li><img src="../assets/img/star.png" alt="">300</li>
-            <li><img src="../assets/img/zan.png" alt="">260</li>
+            <li><img src="../assets/img/star.png" alt="">{{tea.tea_collect_count}}</li>
+            <li><img src="../assets/img/zan.png" alt="">{{tea.tea_thumb_count}}</li>
           </ul>
         </div>
       </div>
       <div class="li_mid">
         <div class="red"></div>
-        <span class="t_t">这道大红袍如此浓郁的花果香锐不可挡，你一定没喝过！</span>
+        <span class="t_t">{{tea.tea_title}}</span>
       </div>    
     </div>
+    <!-- 有用 & 我也要买 -->
       <ul class="use">
-        <li>
-          <img src="../assets/img/zan1.png" alt="">有用
+        <li @click="comThumb"  v-if="comment.is_thumb ==1">
+          <img src="../assets/img/zan1_active.png" alt="">有用
         </li>
-        <li>
+        <li @click="comThumb" v-else>
+          <img src="../assets/img/zan1_active.png" alt="">有用
+        </li>
+        <li @click="addCar()">
           <img src="../assets/img/car.png" alt="">我也要买
         </li>
       </ul>
       <!-- 点赞的人 -->
-      <ul class="have_zan">
-        <li>
-          <img src="../assets/img/photo.jpg" alt="">
-        </li>
-        <li>
-          <img src="../assets/img/photo.jpg" alt="">
+      <ul class="have_zan" v-show="commentObj.thumbs">
+        <li v-for="(item,index) in commentObj.thumbs" :key="index">
+          <img :src="item.img_link" alt="">
         </li>
       </ul>
       <!-- 收藏 & 分享 -->
@@ -65,59 +65,210 @@
       </div>
       <!-- 点赞内容 -->
       <div class="liuyan">
-        <span>留言：99+</span>
-        <img src="../assets/img/edit.png" alt="">
+        <span>留言：{{len>99 ? '99+' : len}}</span>
+        <img src="../assets/img/edit.png" alt="" @click="show5 = true">
       </div>
       <ul class="liu_list">
-        <li>
-          <div class="top">
-            <img src="../assets/img/photo.jpg" alt="">微微一笑
+        <li v-for="(item,index) in commentObj.replies" :key="item.id">
+          <div class="top" @click="show5 = true;replyId = item.id">
+            <img :src="item.user.img_link" alt="">{{item.user.username}}
           </div>
-          <p>看着不错哦，包装如何，打算买来送人。包装如何，打算买来送人。</p>
+          <p  @click="show5 = true;replyId = item.id">{{item.content}}=={{item.id}}</p>
           <div class="bot">
-            <span>三分钟前</span>
+            <span>{{item.created_at}}</span>
             <div>
-              <img src="../assets/img/zan1.png" alt="">50              
-              <img src="../assets/img/talk1.png" alt="">50
+              <img src="../assets/img/zan1.png" alt="" @click="zan(item.id)" v-if="item.is_thumb==0">
+              <img src="../assets/img/zan1_active.png" alt="" @click="zan(item.id)" v-else>
+              {{item.thumb_count}}             
+              <img src="../assets/img/talk1.png" alt="" @click="getZhuiList(item.id,index)">
+              {{item.reply_count}}
             </div>
           </div>
           <!-- 追评的人 -->
-          <ul class="zhui">
-            <li>
+          <ul class="zhui" v-show="item.zhuiList">
+            <li v-for="i in item.zhuiList" :key="i.user_id">
               <div>
-                晨曦<img src="../assets/img/photo.jpg" alt="">
+                {{i.user.username}}<img :src="i.user.img_link" alt="">
               </div>
-              <p class="zhuiP">我也买了，包装很好，茶很好喝</p>
-              <span>3分钟之前</span>
-            </li>
-            <li>
-              <div>
-                晨曦<img src="../assets/img/photo.jpg" alt="">
-              </div>
-              <p class="zhuiP">我也买了，包装很好，茶很好喝,包装如何，打算买来送人</p>
-              <span>3分钟之前</span>
+              <p class="zhuiP">{{i.content}}</p>
+              <span>{{i.created_at}}</span>
             </li>
           </ul>
         </li>
       </ul>
     </div>
+    <!-- 点击写评论出来的弹框 -->
+    <div v-transfer-dom>
+      <confirm v-model="show5" show-input ref="confirm5" title="请输入内容" @on-confirm="onConfirm5"></confirm>
+    </div>
   </div>
 </template>
 
 <script>
-import {Login} from '../api/api.js'
+import { Confirm, TransferDomDirective as TransferDom } from 'vux'
+import {commentDetail ,commentThumb ,commentReply ,commentReplyThumb,commentReplyReply ,commentReplyList ,addShop} from '../api/api.js'
 export default {
+   directives: {
+    TransferDom
+  },
+   components: {
+    Confirm,
+  },
   data () {
     return {
-     
+      token:sessionStorage.token || '',
+      commentObj:'',
+      comment :{},
+      tea:{},
+      user:{},
+      len :'',//评论的个数
+      show5 :false,
+      content:'',
+      replyId:''
     }
   },
   created(){
     document.title = '热评详情'
+    
+  },
+  mounted(){
+    this.init()
   },
   methods:{
-   
-  }
+    init(){
+      const options = {
+        token :this.token,
+        id:1
+      }
+      commentDetail(options).then(res=>{
+         if(res.data.code == 200 && !res.data.error_code){
+          this.commentObj = res.data.data
+          this.comment = res.data.data.comment
+          this.user = res.data.data.comment.user
+          this.tea = res.data.data.tea
+          this.len = res.data.data.replies.length
+          console.log(res,'res')
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //热评点赞
+    comThumb(){
+      const options = {
+        token :this.token,
+        id:this.comment.id,
+        tea_id:this.comment.tea_id
+      }
+      commentThumb(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('点赞成功')
+          this.init()
+        }else{  
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    onConfirm5 (value) {
+      this.$refs.confirm5.setInputValue('')
+      this.content = value
+      if(this.replyId){
+        this.reply()
+      }else{
+        this.comReply()
+      }
+     
+    },
+    //热评回复
+    comReply(){
+      if(!this.content){
+        this.$vux.toast.text('请输入内容')
+        return
+      }
+      const options = {
+        token :this.token,
+        id:this.comment.id,
+        content:this.content
+      }
+      commentReply(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('评论成功')
+          this.init()
+          this.content = ''
+        }else{  
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //回复点赞
+    zan(id){
+      const options = {
+        token :this.token,
+        id:id,
+        tea_id:this.comment.tea_id
+      }
+      commentReplyThumb(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('点赞成功')
+          this.init()
+        }else{  
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //回复回复
+    reply(){
+      if(!this.content){
+        this.$vux.toast.text('请输入内容')
+        return
+      }
+       const options = {
+        token :this.token,
+        id:this.replyId,
+        content:this.content
+      }
+      commentReplyReply(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('留言回复成功')
+          this.init()
+          this.replyId = ''
+        }else{  
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //获取追加留言的列表
+    getZhuiList(id,index){
+       const options = {
+        token :this.token,
+        id:id
+      }
+      commentReplyList(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          console.log(res)
+          this.commentObj.replies[index].zhuiList = res.data.data
+          this.$forceUpdate()
+        }else{  
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //加入购物车
+    addCar(){
+      const options = {
+        token :this.token,
+        id:this.tea.id
+      }
+      addShop(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('加入购物车成功')
+        }else{  
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    }
+  },
+  
 }
 </script>
 
@@ -176,6 +327,12 @@ export default {
           display block
           width 100%
           height l(180)
+    .vi
+      width 100%
+      padding 0 10%
+      video 
+        height 100%
+        object-fit fill 
     .d  
       background #fff 
       padding l(10) 0 l(20)
@@ -301,6 +458,7 @@ export default {
           display block
           width l(35)
           height l(35)
+          border-radius 50%
     .sha  
       background: #FFFFFF;
       box-shadow: 0 0 5px 0 #F3F3F3;

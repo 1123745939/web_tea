@@ -3,23 +3,23 @@
     <!-- 头部 -->
      <div class="e_h">
         <div class="box">
-          <div class="li_m"  @click="$router.push('/orderDetail')">
+          <div class="li_m">
             <div class="t_img">
               <img src="../assets/img/play.png" alt="">
             </div>
             <div class="t_info">
-              <p>安溪铁观音</p>
-              <span>2018/09/18 绿茶28期</span>
+              <p>{{goodObj.tea_title}}</p>
+              <span>{{goodObj.tea_date}} {{goodObj.tea_period}}</span>
               <div class="in_num">
-                <p>￥<span>1800</span>.00</p>
+                <p>￥<span>{{goodObj.tea_price|| goodObj.order_price}}</span>.00</p>
               </div>
             </div>
-           <img src="../assets/img/more1.png" alt="" class="j_r">
+           <img src="../assets/img/more1.png" alt="" class="j_r" v-show="ifFromMy" @click="nextOrder">
           </div>            
         </div>
      </div>
     <!-- 评论区 -->
-    <textarea placeholder="请输入评价"></textarea>
+    <textarea placeholder="请输入评价" v-model="txt"></textarea>
     <!-- 图片 -->
     <div class="up_file">图片（可选，最多三张）</div>
     <div class="bigBox">
@@ -39,30 +39,70 @@
       </div>    
       <div class="vi" v-else>
         <video :src="videoSrc"></video>
-        <div></div>
+        <div @click="delVideo"></div>
       </div>  
       <video :src="videoSrc1" style="display:none" id="videoPlayer"></video>   
     </div>
-    <span class="save">保存</span>
+    <span class="save" @click="submit()">保存</span>
   </div>
 </template>
 
 <script>
-import { orderUploadImg , orderUploadVidio ,orderDelComment } from '../api/api.js'
+import { orderUploadImg , orderUploadVidio ,orderDelComment ,orderAddComment ,orderCanComment} from '../api/api.js'
 export default {
   data () {
     return {
       token: sessionStorage.token || '',
+      txt:'',
       imgList:[],
+      imgUrlList:[],
       videoSrc:'',
       videoSrc1:'',
-      ifSuccess:false
+      ifSuccess:false,
+      goodObj:{},
+      ifFromMy:false,
+      index :0,
+      commentList:[]
     }
   },
   created(){
+     console.log(this.token)
     document.title = '发表评价'
+    this.init()
   },
   methods:{
+    //渲染需要评价的产品
+    init(){
+      if(!sessionStorage.orderComment){
+        this.ifFromMy = true
+        this.orderComment(this.index)
+      }else{
+        this.ifFromMy = false
+        this.goodObj = JSON.parse(sessionStorage.orderComment)
+      }
+    },
+    //当从我的页面点击进来的话 ，此页面的渲染需要从后台获取可评价订单的数据
+    orderComment(){
+      console.log(this.token)
+      orderCanComment({token:this.token}).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.commentList = res.data.data
+          this.goodObj = this.commentList[0]
+          console.log(res,'res')
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //点击右箭头 切换至下一个可以评论的订单
+    nextOrder(){
+      ++this.index  
+      if(this.index == this.commentList.length){
+        this.$vux.toast.text('已经是最后一个可以评价的订单了')
+        return
+      }
+      this.goodObj = this.commentList[this.index]
+    },
     //上传图片
     tirggerFile:function(e){
       var that=this;
@@ -162,6 +202,7 @@ export default {
           var obj = {}
           obj.name = base
           obj.url = res.data.data
+          this.imgUrlList.push(obj.url)
           this.imgList.push(obj)
           console.log(this.imgList,'this.imgList')
         }else{
@@ -230,7 +271,58 @@ export default {
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
       })
+    },
+    //删除视频
+    delVideo(){
+      var name = this.videoSrc.substring(this.videoSrc.lastIndexOf('/')+1)
+      const options = {
+        token :this.token,
+        comment_object:name,
+        comment_type :'video'
+      }
+      orderDelComment(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.videoSrc1 = ''
+          this.videoSrc = ''
+          this.ifSuccess = false
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //发表评价
+    submit(){
+      if(!this.txt){
+        this.$vux.toast.text('请输入内容')
+        return
+      }
+      var a = this.videoSrc ? this.videoSrc.substring(this.videoSrc.lastIndexOf('/')+1) :''
+      var images = JSON.stringify(this.imgUrlList)
+      const options = {
+        token  :this.token,
+        tea_id : this.goodObj.tea_id,
+        content:this.txt,
+        order_id:this.goodObj.id,
+        vidio :a,
+        images:images
+      }
+      console.log(options)
+      orderAddComment(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('评价成功')
+          sessionStorage.removeItem('orderComment')
+          setTimeout(()=>{
+            this.$router.push('/orders')
+          },1000)
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
     }
+  },
+  beforeRouteLeave(to,from,next){
+    sessionStorage.removeItem('orderComment')
+    next()
   }
 }
 </script>

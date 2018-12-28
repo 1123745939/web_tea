@@ -5,24 +5,10 @@
       <div class="bt">同一批茶</div>
       <div class="t_b">
         <ul>
-          <li>
-            <img src="../assets/img/list1.png" alt="" class="goodimg">
-            <img src="../assets/img/play.png" alt="" class="play">
-          </li>
-          <li>
-            <img src="../assets/img/list1.png" alt="" class="goodimg">
-            <img src="../assets/img/play.png" alt="" class="play">
-          </li>
-          <li>
-            <img src="../assets/img/list1.png" alt="" class="goodimg">
-            <img src="../assets/img/play.png" alt="" class="play">
-          </li>
-          <li>
-            <img src="../assets/img/list1.png" alt="" class="goodimg">
-          </li>
-          <li>
-            <img src="../assets/img/list1.png" alt="" class="goodimg">
-            <img src="../assets/img/play.png" alt="" class="play">
+          <li v-for="(i,index) in topArr" :key="index">
+            <img :src="i.image_url" alt="" class="goodimg previewer-demo-img"  v-if="!i.tea_play_count" @click="show(index)">
+            <video :src="i.vidio_url" v-else></video>
+            <!-- <img src="../assets/img/play.png" alt="" class="play" v-show="i.tea_play_count"> -->
           </li>
         </ul>
       </div>
@@ -72,65 +58,33 @@
       </div>    
     </div>
     <!-- 评价 -->
-    <div class="pre">
+    <div class="pre" v-show="comment">
       <div class="pr_m">
-        <span>评论：45</span>
-        <span class="pr_ms" @click="$router.push('/discussAll')">更多&nbsp;&nbsp;<img src="../assets/img/more.png" alt=""></span>
+        <span>评论：{{detailObj.tea_comment_count}}</span>
+        <span class="pr_ms" @click="$router.push({path:'/discussAll',query:{id:id}})">更多&nbsp;&nbsp;<img src="../assets/img/more.png" alt=""></span>
       </div>
       <ul class="pr_list">
-        <li class="pr_li">
+        <li class="pr_li" v-for="i in comment" :key="i.id">
           <div class="li_t">
-            <img src="../assets/img/photo.jpg" alt="">&nbsp;
-            微微一笑
+            <img :src="i.user.img_link" alt="">&nbsp;
+            {{i.user.username}}
           </div>
-          <p>有没有关于果糖不耐的基因分析？有没有关于果糖不耐的基因分析？</p>
+          <p>{{i.content}}</p>
+          <div class="a_b">
+            <ul class="d_img" v-show="i.image">
+              <li class="d_li" v-for="(item,index) in i.image" :key="index">
+                <img :src="item.image_link" alt="">
+              </li>
+             </ul>
+             <div class="vi" v-if="i.vidio">
+               <video :src="i.vidio.vidio_link"></video>
+             </div>
+          </div>
           <div class="li_bt">
-            <span>2018/09/08  14:20</span>
-            <span><img src="../assets/img/zanb.png" alt="">&nbsp;&nbsp;50</span>
-          </div>
-        </li>
-        <li class="pr_li">
-          <div class="li_t">
-            <img src="../assets/img/photo.jpg" alt="">&nbsp;
-            微微一笑
-          </div>
-          <p>有没有关于果糖不耐的基因分析？有没有关于果糖不耐的基因分析？</p>
-          <ul class="d_img">
-            <li class="d_li">
-              <img src="../assets/img/list1.png" alt="">
-            </li>
-             <li class="d_li">
-              <img src="../assets/img/list1.png" alt="">
-            </li>
-             <li class="d_li">
-              <img src="../assets/img/list1.png" alt="">
-            </li>
-          </ul>
-          <div class="li_bt">
-            <span>2018/09/08  14:20</span>
-            <span><img src="../assets/img/zanb.png" alt="">&nbsp;&nbsp;50</span>
-          </div>
-        </li>
-         <li class="pr_li">
-          <div class="li_t">
-            <img src="../assets/img/photo.jpg" alt="">&nbsp;
-            微微一笑
-          </div>
-          <p>有没有关于果糖不耐的基因分析？有没有关于果糖不耐的基因分析？</p>
-          <ul class="d_img">
-            <li class="d_li">
-              <img src="../assets/img/list1.png" alt="">
-            </li>
-             <li class="d_li">
-              <img src="../assets/img/list1.png" alt="">
-            </li>
-             <li class="d_li">
-              <img src="../assets/img/list1.png" alt="">
-            </li>
-          </ul>
-          <div class="li_bt">
-            <span>2018/09/08  14:20</span>
-            <span><img src="../assets/img/zanb.png" alt="">&nbsp;&nbsp;50</span>
+            <span>{{i.created_at}}</span>
+            <span><img src="../assets/img/zanb.png" alt="" v-if="i.is_thumb==0">
+            <img src="../assets/img/zan1_active.png" alt="" v-else>
+            &nbsp;&nbsp;{{i.thumb_count}}</span>
           </div>
         </li>
       </ul>
@@ -179,7 +133,7 @@
       </div>
       <div class="buy_box">
         <p @click="token? addCar():loginMaskShow = true">加入购物车</p>
-        <p class="buy" @click="$router.push('/pay')">我要购买</p>
+        <p class="buy" @click="token == ''? loginMaskShow=true : $router.push({path:'/pay',query:{id:id,type:'buy'}})">我要购买</p>
       </div>
     </div>
     <!-- 提示去登录的弹框 -->
@@ -188,11 +142,15 @@
         <p style="text-align:center;">现在去登录?</p>
       </confirm>
     </div>
+    <!-- 图片放大之后的展示 -->
+    <div v-transfer-dom>
+      <previewer :list="list" ref="previewer" :options="options" @on-index-change="logIndexChange"></previewer>
+    </div>
   </div>
 </template>
 
 <script>
-import { Confirm,TransferDomDirective as TransferDom } from 'vux'
+import { Confirm,Previewer,TransferDomDirective as TransferDom } from 'vux'
 import Swiper from 'swiper' 
 import 'swiper/dist/css/swiper.min.css'
 import {getGoodDetail,carList,addShop} from '../api/api.js'
@@ -202,6 +160,7 @@ export default {
   },
   components: {
     Confirm,
+    Previewer
   },
   data () {
     return {
@@ -209,8 +168,29 @@ export default {
       detailObj:{},
       sameList:[],
       likeList:[],
+      comment:[],
       loginMaskShow:false,
-      carNum:''
+      carNum:'',
+      topArr:[],
+      list:[],
+      idd:'',
+
+      options: {
+        getThumbBoundsFn (index) {
+          // find thumbnail element
+          let thumbnail = document.querySelectorAll('.previewer-demo-img')[index]
+          // get window scroll Y
+          let pageYScroll = window.pageYOffset || document.documentElement.scrollTop
+          // optionally get horizontal scroll
+          // get position of element relative to viewport
+          let rect = thumbnail.getBoundingClientRect()
+          // w = width
+          return {x: rect.left, y: rect.top + pageYScroll, w: rect.width}
+          // Good guide on how to get element coordinates:
+          // http://javascript.info/tutorial/coordinates
+        }
+      },
+
     }
   },
   created(){
@@ -230,6 +210,7 @@ export default {
             speed:500
         })
     var id  = this.$route.query.id
+    this.id = id
     this.init(id)
     this.getcarNum()
   },
@@ -241,6 +222,18 @@ export default {
           this.detailObj = res.data.data.detail
           this.sameList = res.data.data.same
           this.likeList = res.data.data.like 
+          this.comment = res.data.data.comments
+          this.topArr = res.data.data.detail.images.concat(res.data.data.detail.vidio)
+          if(res.data.data.detail.images.length){
+            res.data.data.detail.images.forEach(item=>{
+              var obj = {}
+              obj.src = item.image_url
+              obj.msrc = item.image_url
+              obj.h = 1200
+              obj.w = 900
+              this.list.push(obj)
+            })
+          }
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -270,7 +263,13 @@ export default {
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
       })
-    }
+    },
+    show (index) {
+      this.$refs.previewer.show(index)
+    },
+    logIndexChange (arg) {
+      console.log(arg)
+    },
   },
   
 }
@@ -309,6 +308,9 @@ export default {
           height l(48)
           margin-right l(10)
           position relative
+          video     
+            width 100%
+            height 100%
           img.goodimg
             display block
             width 100%
@@ -508,20 +510,28 @@ export default {
           line-height l(20)
           text-align left 
           padding 0 10%
-        ul.d_img
-          width 100%
-          display flex
-          justify-content flex-start
-          flex-wrap wrap
-          padding l(10) 10%
-          li.d_li:nth-of-type(3n)
-            margin-right 0
-          li.d_li 
+        div.a_b
+          overflow hidden
+          ul.d_img
+            display flex
+            justify-content flex-start
+            flex-wrap wrap
+            float left
+            li.d_li:nth-of-type(3n)
+              margin-right 0
+            li.d_li 
+              width l(85)
+              height l(65)
+              margin-right l(9)
+              img 
+                display block
+                width 100%
+                height 100%
+          .vi
             width l(85)
             height l(65)
-            margin-right l(9)
-            img 
-              display block
+            float left 
+            video 
               width 100%
               height 100%
         .li_bt

@@ -142,6 +142,19 @@ export const thumbsList = function (params) {
 export const slotsList = function (params) {
   return axios.get(`${baseUrl}`+"/my/data/slots", {params});
 } 
+    //通知列表
+export const infos = function (params) {
+  return axios.post(`${baseUrl}`+"/notify", jsonToQuery(params));
+} 
+    //单条删除/notify/delete
+export const infosDelOne = function (params) {
+  return axios.post(`${baseUrl}`+"/notify/read", jsonToQuery(params));
+} 
+    //单条删除
+export const infosDelAll = function (params) {
+  return axios.post(`${baseUrl}`+"/notify/delete", jsonToQuery(params));
+} 
+
 
 
 //首页数据
@@ -202,13 +215,17 @@ export const getSearch = function (params) {
 export const getGoodDetail = function (params) {
   return axios.get(`${baseUrl}`+"/index/tea/detail", {params});
 }
+     //全部评价
+export const commentAll = function (params) {
+  return axios.post(`${baseUrl}`+"/comment", jsonToQuery(params));
+}
 
 //购物车相关
       //购物车列表
 export const carList = function (params) {
   return axios.get(`${baseUrl}`+"/shop", {params});
 }
-      //购物车列表
+      //加入购物车
 export const addShop = function (params) {
   return axios.post(`${baseUrl}`+"/shop/create", jsonToQuery(params));
 }
@@ -216,8 +233,32 @@ export const addShop = function (params) {
 export const delShop = function (params) {
   return axios.post(`${baseUrl}`+"/shop/delete", jsonToQuery(params));
 }
+      //保存购物车的数量
+export const SaveShop = function (params) {
+  return axios.post(`${baseUrl}`+"/shop/count", jsonToQuery(params));
+}
+    //购物车结算时 校验库存
+export const orderCheck = function (params) {
+  return axios.post(`${baseUrl}`+"/order/settle/check", jsonToQuery(params));
+} 
+    //直接购买时 校验库存
+export const orderBuyCheck = function (params) {
+  return axios.post(`${baseUrl}`+"/order/buy/check", jsonToQuery(params));
+} 
+      //购物车下单
+export const orderPay = function (params) {
+  return axios.post(`${baseUrl}`+"/order/order", jsonToQuery(params));
+}
+    //直接下单
+export const orderBuy = function (params) {
+  return axios.post(`${baseUrl}`+"/order/buy", jsonToQuery(params));
+}
 
 //订单相关
+      //订单详情
+export const orderDetail= function (params) {
+  return axios.get(`${baseUrl}`+"/order/detail", {params});
+}
       //订单列表
 export const orderList = function (params) {
   return axios.post(`${baseUrl}`+"/order", jsonToQuery(params));
@@ -250,3 +291,42 @@ export const orderUploadVidio = function (params) {
 export const orderDelComment = function (params) {
   return axios.post(`${baseUrl}`+"/order/comment/delete", jsonToQuery(params));
 }
+     //发表评论
+export const orderAddComment = function (params) {
+  return axios.post(`${baseUrl}`+"/order/comment/create", jsonToQuery(params));
+}
+     //可评价订单
+export const orderCanComment = function (params) {
+  return axios.post(`${baseUrl}`+"/order/comments", jsonToQuery(params));
+}
+
+//热评
+      //热评详情
+export const commentDetail = function (params) {
+  return axios.get(`${baseUrl}`+"/comment/detail", {params});
+}
+     //点赞当前热评/comment/reply/thumb
+export const commentThumb = function (params) {
+  return axios.post(`${baseUrl}`+"/comment/thumb", jsonToQuery(params));
+}
+     //回复当前热评
+export const commentReply = function (params) {
+  return axios.post(`${baseUrl}`+"/comment/reply", jsonToQuery(params));
+}
+     //点赞留言
+export const commentReplyThumb = function (params) {
+  return axios.post(`${baseUrl}`+"/comment/reply/thumb", jsonToQuery(params));
+}
+     //留言回复
+export const commentReplyReply = function (params) {
+  return axios.post(`${baseUrl}`+"/comment/reply/reply", jsonToQuery(params));
+}  
+     //回复的回复列表
+export const commentReplyList = function (params) {
+  return axios.post(`${baseUrl}`+"/comment/reply/list", jsonToQuery(params));
+}   
+
+   //去支付页面 验证库存
+export const orderSettle = function (params) {
+  return axios.post(`${baseUrl}`+"/order/settle", jsonToQuery(params));
+} 

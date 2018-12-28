@@ -50,19 +50,14 @@
             </div>
             <div class="b_b" v-if="item.order_status == 3">
               <p @click="delShow = true;id=item.id">删除订单</p>
-              <p @click="$router.push('/evaluate')">评价</p>
+              <p @click="goEvluate(item)">评价</p>
               <p>再次购买</p>
             </div>
             <div class="b_b" v-if="item.order_status == 4">
-              <p @click="delShow = true;id=item.id">删除订单</p>
-              <p>再次评价</p>
-              <p>再次购买</p>
-            </div>
-            <div class="b_b" v-if="item.order_status == 5">
               <p>查看详情</p>
               <p>取消退款</p>
             </div>
-            <div class="b_b" v-if="item.order_status == 6">
+            <div class="b_b" v-if="item.order_status == 5">
               <p>查看详情</p>
             </div>
                 <!-- 是否删除的弹框 -->
@@ -128,7 +123,7 @@ export default {
       token:sessionStorage.token,
       status:1,
       selectIndex:0,
-      tabs:[{id:1,name:'全部'},{id:2,name:'待付款'},{id:3,name:'待发货'},{id:4,name:'待收货'},{id:5,name:'待评价'},{id:6,name:'售后'}],
+      tabs:[{id:1,name:'全部'},{id:2,name:'待付款'},{id:3,name:'待发货'},{id:4,name:'待收货'},{id:5,name:'已完成'},{id:6,name:'售后'}],
       orderList:[],
       orderList1:[],
       page:1,
@@ -157,7 +152,7 @@ export default {
     this.selectIndex = 0
     this.init(1)
   },
-   computed:{
+  computed:{
     pullDownRefreshObj: function () {
       return this.pullDownRefresh ? {
         threshold: parseInt(this.pullDownRefreshThreshold),
@@ -184,22 +179,13 @@ export default {
             this.orderList = []
             this.ifRefrush = false
           }
-
           this.orderList = this.orderList.concat(res.data.data.result)
           if(this.selectIndex==0){
             this.orderList1 = this.orderList
             console.log(this.orderList1)
-            }else if(this.selectIndex==4){
-                this.orderList1 = this.orderList.filter(item=>{
-                  return item.order_status == 3 || item.order_status == 4
-                })
-            }else if(this.selectIndex==5){
-              this.orderList1 = this.orderList.filter(item=>{
-                return item.order_status == 5
-              })
             }else{
               this.orderList1 = this.orderList.filter(item=>{
-                return item.order_status == index-1
+                return item.order_status == this.selectIndex-1
               })
             }
         }else{
@@ -210,16 +196,9 @@ export default {
     //点击tab切换
     onItemClick(id,index){
       this.selectIndex = index
+      //this.orderList1 = []
       if(this.selectIndex==0){
         this.orderList1 = this.orderList
-      }else if(this.selectIndex==4){
-        this.orderList1 = this.orderList.filter(item=>{
-          return item.order_status == 3 || item.order_status == 4
-        })
-      }else if(this.selectIndex==5){
-        this.orderList1 = this.orderList.filter(item=>{
-          return item.order_status == 5
-        })
       }else{
          this.orderList1 = this.orderList.filter(item=>{
           return item.order_status == index-1
@@ -241,7 +220,7 @@ export default {
           this.orderList = []
           this.init(1)
           this.$forceUpdate()
-          this.scroll.scrollTo(0, 0, 500)
+          //this.scroll.scrollTo(0, 0, 500)
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -274,11 +253,16 @@ export default {
           this.orderList = []
           this.init(1)
           this.$forceUpdate()
-          this.scroll.scrollTo(0, 0, 500)
+          //this.scroll.scrollTo(0, 0, 500)
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
       })
+    },
+    //去评价
+    goEvluate(item){
+      this.$router.push('/evaluate');
+      sessionStorage.orderComment = JSON.stringify(item)
     },
     onPullingDown() {
       // 模拟更新数据

@@ -2,9 +2,6 @@
   <div class="con">
     <div class="o_h">
       <div class="o_state">{{order.status_text}}</div>
-      <!-- <div class="o_state" v-if="status==2">已发货，等待收货</div>
-      <div class="o_state" v-if="status==3">已完成</div> -->
-      <!-- 地址 -->
       <div class="add">
          <!-- 退款信息 -->
         <div class="tui" v-if="order.order_status==4">
@@ -14,27 +11,10 @@
           <div>
             <span>退款原因</span><span>{{order.order_reject_reason}}</span>
           </div>
-          <div v-if="order.reject_status==3">
+          <!-- <div v-if="order.reject_status==3">
             <span>失败原因</span><span>已经开封</span>
-          </div>
-        </div>
-        <!-- 地址 -->
-        <div class="a_bor" v-if="order.reject_status!=4">
-          <div class="a_t">
-          <div class="red"></div>
-          <span>收货人信息</span>
-          <span>{{address.username}}</span>
-          <span>{{address.mobile}}</span>
-        </div>
-        <p>{{address.addr_content}}{{address.addr_detail}}</p>
-        </div>
-      </div>
-      <!-- 留言 -->
-      <div class="word"  v-if="order.reject_status!=4">
-        <div class="red"></div>
-        <span>买家留言</span>
-        <p>{{order.order_remark}}</p>
-      </div>   
+          </div> -->
+        </div>  
     </div>
     <ul class="o_l">
       <li>
@@ -81,53 +61,19 @@
     </div>
     <div class="foot">
       <img src="../assets/img/kefu1.png" alt="" v-if="order.order_status==0">
-      <div  v-if="order.order_status==0">
-        <p @click="cancel">取消订单</p>
-        <p>立即支付</p>
-      </div>
-      <div  v-if="order.order_status==1">
-        <p @click="cancel">取消订单</p>
-      </div>
-      <div  v-if="order.order_status==2">
-        <p>申请售后</p>
-        <p>查看物流</p>
-        <p @click="confirm">确认收货</p>
-      </div>
-      <div v-if="order.order_status==3">
-        <p @click="evluate"> 评价</p>
-        <p  @click="showHideOnBlur=true">不喜欢</p>
-        <p @click="buy">继续喝</p>
-      </div>
-      <div  v-if="order.reject_status==3 || order.reject_status==4 ">
+      <div>
         <p>联系客服</p>
+        <p>确认提交</p>
       </div>
     </div>
 
-    <!-- 不喜欢的弹窗 -->
-    <div v-transfer-dom>
-      <x-dialog v-model="showHideOnBlur" class="dialog-demo" hide-on-blur>
-        <div class="img-box">
-          <span class="title">不喜欢的原因</span>
-          <ul class="no_ul">
-            <li v-for="(item,index) in dislikeYL" :key="item.id" @click="selY(index)">
-              <img src="../assets/img/c_blank.png" alt="" v-show="!item.active">
-              <img src="../assets/img/c_active.png" alt="" v-show="item.active">{{item.txt}}
-            </li>
-          </ul>
-          <textarea type="text" placeholder="请输入" v-model="txt"></textarea>
-          <span class="submit" @click="submit">提交</span>
-        </div>
-        <div @click="showHideOnBlur=false">
-          <span class="vux-close"></span>
-        </div>
-      </x-dialog>
     </div>
   </div>
 </template>
 
 <script>
 import { XDialog,TransferDomDirective as TransferDom } from 'vux'
-import {orderUnlike , orderDetail ,orderCancel} from '../api/api.js'
+import {orderDetail} from '../api/api.js'
 export default {
   directives: {
     TransferDom
@@ -138,119 +84,27 @@ export default {
   data () {
     return {
       token:sessionStorage.token || '',
-      id:'',
-      tea_id:'',
-      txt:'',
-      status: 3,
-      tea:{},
+      id:21,
+      tea_id:8,
       order:{},
-      address:{},
-      showHideOnBlur:false,
-      dislikeYL:[{id:1,txt:'太苦了',active:false},{id:2,txt:'口味不好',active:false},{id:3,txt:'冲泡次数太少',active:false},{id:4,txt:'其他',active:false}]
+      tea:{}
     }
   },
   created(){
-    document.title = '订单详情'
-    this.tea_id = this.$route.query.tea_id
-    this.id = this.$route.query.id
-    this.init()
+    document.title = '申请售后'
   },
   methods:{
     init(){
       const options = {
         id : this.id,
-        // tea_id:this.tea_id,
+        tea_id:this.tea_id,
         token : this.token,
       }
       orderDetail(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           console.log(res.data.data)
           this.order = res.data.data.order
-          this.address = res.data.data.order.address
           this.tea = res.data.data.tea
-        }else{
-          this.$vux.toast.text(res.data.error_message||res.data.message)
-        }
-      })
-    },
-    selY(index){
-      this.dislikeYL.forEach((element,i) => {
-        if(index==i){
-          element.active = !element.active
-        }
-      });
-    },
-    //不喜欢 提交
-    submit(){
-      console.log(this.dislikeYL)
-      var arr = []
-      this.dislikeYL.forEach(item=>{
-        if(item.active == true){
-          var obj = {}
-          obj.reason = item.txt
-          arr.push(JSON.stringify(obj))
-        }
-      })
-      if(!arr.length && !this.txt){
-        this.$vux.toast.text('请勾选原因或者写入原因')
-        return
-      }
-      const options = {
-        token:this.token,
-        tea_id:this.tea_id,
-        reason:arr,
-        order_id:this.id,
-        user_reason:this.txt
-      }
-      orderUnlike(options).then(res=>{
-        if(res.data.code == 200 && !res.data.error_code){
-          this.$vux.toast.text('提交成功')
-          this.showHideOnBlur = false
-        }else{
-          this.$vux.toast.text(res.data.error_message||res.data.message)
-        }
-      })
-    },
-    //去评价
-    evluate(){
-      this.$router.push('/evaluate');
-      sessionStorage.orderComment = JSON.stringify(this.tea)
-    },
-    //继续喝 跳转至下单页面
-    buy(){
-      var arr = []
-      arr.push(this.tea)
-      sessionStorage.payInfo = JSON.stringify(arr)
-      this.$router.push('/pay')   
-    },
-    //取消订单
-    cancel(){
-      const options = {
-        token :this.token,
-        id:this.id
-      }
-      orderCancel(options).then(res=>{
-        if(res.data.code == 200 && !res.data.error_code){
-          this.$vux.toast.text('订单已取消成功')
-        }else{
-          this.$vux.toast.text(res.data.error_message||res.data.message)
-        }
-      })
-    },
-    //确认收货
-    confirm(){
-       const options = {
-        token :this.token,
-        id:this.id
-      }
-      orderConfirm(options).then(res=>{
-        if(res.data.code == 200 && !res.data.error_code){
-          this.$vux.toast.text('已经确认收货')
-          this.selectIndex = 4
-          this.orderList = []
-          this.init(1)
-          this.$forceUpdate()
-          //this.scroll.scrollTo(0, 0, 500)
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }

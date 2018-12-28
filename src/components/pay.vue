@@ -1,56 +1,31 @@
 <template>
   <div class="con">
     <!-- 有地址 -->
-    <div class="add" v-if="hasAddress">
+    <div class="add" v-if="address.id != ''">
       <span class="add_l">收货地址</span>
-      <div class="add_r"  @click="$router.push('/address')">
-        <span>刘湘燕&nbsp;15966622119</span>
-        <p>山东省济南市历下区经十路街道玉兰广场5号楼23层</p>
+      <div class="add_r"  @click="$router.push({path:'/address'})">
+        <span>{{address.username}}&nbsp;{{address.mobile}}</span>
+        <p>{{address.addr_content || address.addr_province+address.addr_city+address.addr_distinct}}{{address.addr_detail}}</p>
       </div>
-      <img src="../assets/img/more1.png" alt="" class="add_m" @click="$router.push('/address')">
+      <img src="../assets/img/more1.png" alt="" class="add_m" @click="$router.push({path:'/address'})">
     </div>
-    <div class="addNo" v-else>
+    <div class="addNo" @click="$router.push('/address')" v-else>
       无收货地址，去添加<img src="../assets/img/more1.png" alt="">
     </div>
     <ul>
-      <li>
-        <img src="../assets/img/list1.png" alt="" class="car_img">
+      <li v-for="item in arr" :key="item.id">
+        <img :src="item.tea_img_link" alt="" class="car_img">
         <div class="car_p">
-          <span>安溪铁观音</span>
-          <p class="t_d">2018/09/18 绿茶18期</p>
+          <span>{{item.tea_title}}</span>
+          <p class="t_d">{{item.tea_date}} {{item.tea_period}}</p>
           <div class="t_num">
-            <p>￥<span>1399</span>.00</p>
+            <p>￥<span>{{item.tea_price}}</span>.00</p>
             <div>
-              <p></p>3 <p></p>
+              <p></p>X{{item.tea_count ? item.tea_count : 1}}<p></p>
             </div>
           </div>
         </div>
       </li>
-       <li>
-        <img src="../assets/img/list1.png" alt="" class="car_img">
-        <div class="car_p">
-          <span>安溪铁观音</span>
-          <p class="t_d">2018/09/18 绿茶18期</p>
-          <div class="t_num">
-            <p>￥<span>1399</span>.00</p>
-            <div>
-              <p></p>3 <p></p>
-            </div>
-          </div>
-        </div>
-      </li>
-      <li class="last">
-        <img src="../assets/img/list1.png" alt="" class="car_img">
-        <div class="car_p">
-          <span>安溪铁观音</span>
-          <p class="t_d">2018/09/18 绿茶18期</p>
-          <div class="t_num">
-            <p>￥<span>1399</span>.00</p>
-            <div>数量*3 </div>
-          </div>
-        </div>
-      </li>
- 
     </ul>
     <div class="yun">
       运费
@@ -60,7 +35,7 @@
     <div class="word">
       <div>
         <span>买家留言</span>
-        <input type="text" placeholder="请输入">
+        <input type="text" placeholder="请输入" v-model="txt">
       </div>
     </div>
     <!-- 微信支付 -->
@@ -81,25 +56,257 @@
     </div>
     <div class="blank"></div>
     <!-- 底部 -->
-    <div class="footer">去付款</div>
+    <div class="footer" @click="pay">去付款</div>
+    <!-- 提示库存不足的弹框  并且调回上一页 -->
+     <div v-transfer-dom>
+      <alert v-model="show" title="您购买的产品库存不足"  @on-hide="onHide">{{alertTxt}}</alert>
+    </div>
   </div>
 </template>
 
 <script>
-import {Login} from '../api/api.js'
+import {  Alert, TransferDomDirective as TransferDom } from 'vux'
+import {getAddress,orderSettle,orderCheck,orderPay,orderBuy,orderBuyCheck} from '../api/api.js'
 export default {
+  directives: {
+    TransferDom
+  },
+  components: {
+    Alert,
+  },
   data () {
     return {
-      hasAddress:false
+      hasAddress:false,
+      token:sessionStorage.token || '',
+      arr:[],
+      address:{},
+      txt:'',
+      type:'',
+      show:false,
+      alertTxt:''
     }
   },
   created(){
-    document.title = '结算'
+    document.title = '结算'  
+    this.getData()
   },
   methods:{
-    goDetail(){
-      this.$router.push('/goodDetail')
-    }
+    //获取数据
+    getData(){
+      // var arr = []
+      // var id = ''
+      // this.type = this.$route.query.type
+      // sessionStorage.type = this.$route.query.type
+      // if(this.$route.query){
+      //   if(this.$route.query.type=='shop'){
+      //     arr = this.$route.query.ids.split(',')
+      //     sessionStorage.payIds = this.$route.query.ids
+      //   }else{
+      //     id=  this.$route.query.id
+      //     sessionStorage.tea_id = this.$route.query.id
+      //   }
+        
+      // }else{
+      //   this.type = sessionStorage.type
+      //   if(sessionStorage.payIds){
+      //     arr = sessionStorage.payIds.split(',')
+      //   }else{
+      //     arr = []
+      //   }
+      //   if(sessionStorage.tea_id ){
+      //     id =  sessionStorage.tea_id 
+      //   }else{
+      //     id=  ''
+      //   }  
+      // }
+      var arr = []
+      var id = ''
+      var type = ''
+      if(this.$route.query.type){
+        if(this.$route.query.ids){
+          var ids = this.$route.query.ids
+          arr = this.$route.query.ids.split(',')
+          var type = this.$route.query.type
+          this.type = type
+          sessionStorage.ids = JSON.stringify(arr)
+          sessionStorage.type = type
+        }else if(this.$route.query.id){
+          id =  this.$route.query.id
+          type = this.$route.query.type
+          this.type = type
+          sessionStorage.id = id
+          sessionStorage.type = type
+        }
+      }else{
+         type = sessionStorage.type 
+         this.type = type
+        if(sessionStorage.ids){
+          arr = JSON.parse(sessionStorage.ids)
+        }
+        id = sessionStorage.id
+       
+      }
+      
+      var options = {}
+      if(type == 'buy'){
+        this.alertTxt = '请重新选择产品'
+        options = {
+          token : this.token,
+          type : 'buy',
+          id:id
+        }
+      }else{
+        this.alertTxt = '请重新从购物车选择下单产品'
+        options = {
+          token : this.token,
+          type : 'shop',
+          ids:JSON.stringify(arr)
+        }
+      }
+    
+      orderSettle(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.arr = res.data.data.result
+          this.address = res.data.data.address
+          if(sessionStorage.is_from_addlist){
+            this.txt = sessionStorage.input
+            this.address =  JSON.parse(sessionStorage.address)
+          }
+          console.log(res,'res')
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //点击付款
+    pay(){
+      if(!this.address.id){
+        this.$vux.toast.text('地址不能为空')
+        return
+      }else if(!this.txt){
+        this.$vux.toast.text('留言不能为空')
+        return
+      } 
+      if(this.type=='shop'){
+        this.check()
+      }else if(this.type=='buy'){
+        this.checkBuy()
+      }
+      
+    },
+    //购物车购买  校验库存
+    check(arr,ids){
+      var arr = []
+      this.arr.forEach(item=>{
+        var obj = {}
+        obj.id = item.id
+        obj.count = item.tea_count
+        arr.push(obj)
+      })
+      const options = {
+        token :this.token,
+        ids :JSON.stringify(arr)
+      }
+      // console.log(options)
+      // return
+      orderCheck(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.orderOrder()
+        }else{
+          //this.$vux.toast.text(res.data.error_message||res.data.message)
+          this.show = true
+        }
+      })
+    },
+    //直接购买 校验库存
+    checkBuy(){
+      const options = {
+        token :this.token,
+        id : this.arr[0].id,
+        count :1,
+      }
+      orderBuyCheck(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          return
+          this.orderOrderBuy()
+        }else{
+          // this.$vux.toast.text(res.data.error_message||res.data.message)
+          this.show = true
+        }
+      })
+    },
+    //下单接口
+    orderOrder(){
+      var arr = []
+      var totalMoney = 0
+      this.arr.forEach(item=>{
+        var obj = {}
+        obj.id = item.id
+        obj.price = item.tea_price
+        obj.count = item.tea_count
+        obj.total = item.tea_price*item.tea_count
+        arr.push(obj)
+        totalMoney += obj.total
+      })
+      var targetObj = {}
+      targetObj.total = totalMoney
+      targetObj.products  = arr
+      console.log(targetObj)
+      const options = {
+          token :this.token,
+          data : JSON.stringify(targetObj),
+          o_username:this.address.username,
+          o_mobile:this.address.mobile,
+          o_addr_id:this.address.id,
+          o_remark :this.txt
+      }
+      console.log(options)
+      orderPay(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          window.location.href = res.data.data.mweb_url   
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+
+    },
+    //直接购买 下单
+    orderOrderBuy(){
+       const options = {
+        token :this.token,
+        id : this.arr[0].id,
+        o_price :this.arr[0].tea_price,
+        o_count:1,
+        o_total :this.arr[0].tea_price,
+        o_username:this.address.username,
+        o_mobile:this.address.mobile,
+        o_addr_id:this.address.id,
+        o_remark :this.txt
+      }
+      orderBuy(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          window.location.href = res.data.data.mweb_url   
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+
+    },
+    //
+    onHide () {
+      console.log(this.type)
+      if(this.type=='shop'){
+        this.$router.push('/car')
+      }else if(this.type=='buy'){
+        this.$router.push({path:'/goodDetail',query:{id:this.arr[0].id}})
+      }
+    },
+  },
+  
+  beforeRouteLeave(to, from, next){
+    sessionStorage.removeItem('is_from_addlist')
+    sessionStorage.input = this.txt
+    next()
   }
 }
 </script>
@@ -162,7 +369,7 @@ export default {
   ul
     padding 0 4.3%
     background #fff
-    li.last
+    li:last-of-type
       border-bottom none
     li
       height l(126) 

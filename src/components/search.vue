@@ -43,8 +43,9 @@
             <li v-for="year in filterArr.makes" :key="year.id"  @click.stop="makeShow=false;filter('tea_make',year.id,year.name)">{{year.name}}</li>
           </ul>
         </li>
-        <li  class="tab_li" :class="selectLi == 4 ?'active':''" @click.stop="selectLi=4;searchResultList = [];sort(1,'tea_price')">价格
-          <img src="../assets/img/jian_up.png" alt="">
+        <li  class="tab_li" :class="selectLi == 4 ?'active':''" @click.stop="selectLi=4;searchResultList = [];sortP(1,'tea_price')">价格
+          <img src="../assets/img/jian_up.png" alt="" v-if="priceUp">
+          <img src="../assets/img/jian_down.png" alt="" v-else>
         </li>
         <li  class="tab_li" :class="selectLi == 5 ?'active':''" @click.stop="yearShow = !yearShow;selectLi=5">年份
           <ul class="liMore" v-show="yearShow">
@@ -281,30 +282,55 @@ export default {
       console.log(this.tea_type_id)
       this.searchCon(1,2,'',this.tea_type_id,0,'','')
     },
-    //搜索结果页  期数 排序
+    //  期数排序   搜索结果页  期数 排序
     sort(type,key){
       this.type = type
       this.key = key
       if(this.tea_type_id && !this.searchTxt){
         if(this.preiodUp){// 只有类型  没有关键字  升序
-          this.searchCon(1,2,'',this.tea_type_id,this.type,this.key,'asc',)
-        }else{// 只有类型  没有关键字  降序
           this.searchCon(1,2,'',this.tea_type_id,this.type,this.key,'desc',)
+        }else{// 只有类型  没有关键字  降序
+          this.searchCon(1,2,'',this.tea_type_id,this.type,this.key,'asc',)
         }
       }else if(this.tea_type_id && this.searchTxt){
         if(this.preiodUp){// 有类型  有关键字  升序
-          this.searchCon(1,0,this.searchTxt,this.tea_type_id,this.type,this.key,'asc',)
-        }else{// 有类型  有关键字  降序
           this.searchCon(1,0,this.searchTxt,this.tea_type_id,this.type,this.key,'desc',)
+        }else{// 有类型  有关键字  降序
+          this.searchCon(1,0,this.searchTxt,this.tea_type_id,this.type,this.key,'asc',)
         }
       }else if(!this.tea_type_id && this.searchTxt){
         if(this.preiodUp){// 没有类型  有关键字  升序
-          this.searchCon(1,1,this.searchTxt,this.tea_type_id,this.type,this.key,'asc',)
-        }else{// 没有类型  有关键字  降序
           this.searchCon(1,1,this.searchTxt,this.tea_type_id,this.type,this.key,'desc',)
+        }else{// 没有类型  有关键字  降序
+          this.searchCon(1,1,this.searchTxt,this.tea_type_id,this.type,this.key,'asc',)
         }
       }
-      this.preiodUp = false
+      this.preiodUp =!this.preiodUp
+    },
+    //  价格排序   搜索结果页  期数 排序
+    sortP(type,key){
+      this.type = type
+      this.key = key
+      if(this.tea_type_id && !this.searchTxt){
+        if(this.priceUp){// 只有类型  没有关键字  升序
+          this.searchCon(1,2,'',this.tea_type_id,this.type,this.key,'desc',)
+        }else{// 只有类型  没有关键字  降序
+          this.searchCon(1,2,'',this.tea_type_id,this.type,this.key,'asc',)
+        }
+      }else if(this.tea_type_id && this.searchTxt){
+        if(this.priceUp){// 有类型  有关键字  升序
+          this.searchCon(1,0,this.searchTxt,this.tea_type_id,this.type,this.key,'desc',)
+        }else{// 有类型  有关键字  降序
+          this.searchCon(1,0,this.searchTxt,this.tea_type_id,this.type,this.key,'asc',)
+        }
+      }else if(!this.tea_type_id && this.searchTxt){
+        if(this.priceUp){// 没有类型  有关键字  升序
+          this.searchCon(1,1,this.searchTxt,this.tea_type_id,this.type,this.key,'desc',)
+        }else{// 没有类型  有关键字  降序
+          this.searchCon(1,1,this.searchTxt,this.tea_type_id,this.type,this.key,'asc',)
+        }
+      }
+      this.priceUp =!this.priceUp
     },
     //搜索结果页   筛选
     filter(key,id,name){

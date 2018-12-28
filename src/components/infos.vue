@@ -1,52 +1,67 @@
 <template>
   <div class="con">
     <scroll ref="scroll"
-            :data="newsList"
-            :pullDownRefresh="pullDownRefreshObj"
-            :pullUpLoad="pullUpLoadObj"
-            :startY="parseInt(startY)"
-            @pullingDown="onPullingDown"
-            @pullingUp="onPullingUp">
-            
-            <swipeout class="vux-1px-tb">
-              <swipeout-item transition-mode="follow" v-for="i in 3" :key="i">
-                <div slot="right-menu">
-                  <swipeout-button type="warn" @click.native="handle(i)">删除</swipeout-button>
-                </div>
-                <div slot="content" class="demo-content vux-1px-t">
-                  <li>
-                    <img src="../assets/img/logo2.png" alt="" class="logo">
-                    <div class="li_r">
-                      <div class="li_mm">
-                        <p>通知</p>
-                        <span class="t">您奶德碧螺春发货了</span>
-                        <span class="ti">3分钟之前</span>
-                      </div>
-                      <div class="li_img">
-                        <img src="../assets/img/list1.png" alt="" class="img1">
-                        <img src="../assets/img/play.png" alt="" class="img2">
-                      </div>
-                    </div>      
-                  </li>
-                </div>
-              </swipeout-item>
-            </swipeout>
+        :data="newsList"
+        :pullDownRefresh="pullDownRefreshObj"
+        :pullUpLoad="pullUpLoadObj"
+        :startY="parseInt(startY)"
+        @pullingDown="onPullingDown"
+        @pullingUp="onPullingUp">
+        
+        <swipeout class="vux-1px-tb">
+          <swipeout-item transition-mode="follow" v-for="(item,index) in newsList" :key="item.id">
+            <div slot="right-menu">
+              <swipeout-button type="warn" @click.native="handle(item.id,index)">删除</swipeout-button>
+            </div>
+            <div slot="content" class="demo-content vux-1px-t">
+              <li @click="linker(item.target_type,item.notify_target_id,item.sender_id)">
+                <img src="../assets/img/logo2.png" alt="" class="logo" v-if="item.target_type !='friend'">
+                <img :src="item.user.img_link" alt="" class="logo" v-else>
+                <div class="li_r">
+                  <div class="li_mm">
+                    <p  v-if="item.target_type == 'product '">通知</p>
+                    <p  v-if="item.target_type == 'order'">订单</p>
+                    <p  v-if="item.target_type == 'friend'">{{item.user.username}}</p>
+                    <span class="t">{{item.notify_content}}</span>
+                    <span class="ti">{{item.created_at}}</span>
+                  </div>
+                  <div class="li_img" v-if="item.target_type !='friend'">
+                    <img :src="item.tea_img_link" alt="" class="img1">
+                    <img src="../assets/img/play.png" alt="" class="img2">
+                  </div>
+                </div>      
+              </li>
+            </div>
+          </swipeout-item>
+        </swipeout>
            
 		    <div class="order-list" v-if="newsList.length == 0 && !loading">
 		    	<load-more :show-loading="false" tip="暂无数据" background-color="#f0f7f5"></load-more>
 		    </div>
 
     </scroll>
-    
+    <div class="del" @click="loginMaskShow = true" v-show="len">
+      <img src="../assets/img/quanbushanchu@2x.png" alt="">
+    </div>
+     <!-- 提示是否全部删除的弹框 -->
+    <div v-transfer-dom>
+      <confirm v-model="loginMaskShow"  @on-confirm="delAll">
+        <p style="text-align:center;">确定要全部删除吗</p>
+      </confirm>
+    </div>
   </div>
 </template>
 
 <script>
-import {  Swipeout, SwipeoutItem, SwipeoutButton, XButton ,LoadMore } from 'vux'
+import {  Swipeout, SwipeoutItem, SwipeoutButton, XButton ,LoadMore ,Confirm,TransferDomDirective as TransferDom ,} from 'vux'
 import Scroll from './scroll/scroll'
-import {Login} from '../api/api.js'
+import {infos,infosDelOne,infosDelAll} from '../api/api.js'
 export default {
+    directives: {
+    TransferDom
+  },
   components: {
+    Confirm,
     Scroll,
     Swipeout,
     SwipeoutItem,
@@ -56,9 +71,13 @@ export default {
   },
   data () {
     return {
+      token:sessionStorage.token || '',
       newsList:[],
-      loading :true,
-
+      len:'',
+      loading :false,
+      page:1,
+      is_pull :false,
+      loginMaskShow:false,
       
       pullUpLoadThreshold: 0,
       pullDownRefresh: true,
@@ -76,6 +95,7 @@ export default {
   },
   created(){
     document.title = '通知'
+    this.init(1)
   },
   computed:{
     pullDownRefreshObj: function () {
@@ -92,38 +112,75 @@ export default {
     }
   },
   methods:{
-    handle(i){
-      console.log(i)
+    init(page){
+      const options = {
+        token :this.token,
+        page :page,
+        rows:10,
+      }
+      infos(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          if(this.is_pull){
+            this.newsList = []
+            this.pullUpLoadMoreTxt = '数据加载中'
+          }
+          this.newsList = this.newsList.concat(res.data.data.result)
+          console.log(this.newsList)
+          this.is_pull = false
+          this.len = res.data.data.count
+          if(this.len == this.newsList.length){
+            this.pullUpLoadMoreTxt = '没有更多数据了'
+          }
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
     },
+    //单个删除
+    handle(id,index){
+      const options = {
+        token :this.token,
+        id:id
+      }
+      infosDelOne(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('删除成功')
+          this.newsList.splice(index,1)
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //全部删除
+    delAll(){
+      infosDelAll({token:this.token}).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('删除成功')
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //跳转至订单详情或者产品详情
+    linker(type,id,Fid){
+      if(type=='friend'){
+        this.$router.push({path:"/teaFriend",query:{id:Fid}})
+      }else if(type=='order'){
+        this.$router.push({path:"/orderDetail",query:{id:id}})
+      }else if(type=='product'){
+        this.$router.push({path:"/goodDetail",query:{id:id}})
+      }
+    },  
     //下拉刷新
     onPullingDown() {
-      // 模拟更新数据
-      console.log('pulling down and load data')
-      setTimeout(() => {
-        if (Math.random() > 0.5) {
-          this.$refs.scroll.forceUpdate()
-          // 如果有新数据
-          //this.items.unshift(this.$i18n.t('normalScrollListPage.newDataTxt') + +new Date())
-        } else {
-          // 如果没有新数据
-          this.$refs.scroll.forceUpdate()
-        }
-      }, 2000)
-     },
+      this.is_pull =true
+      this.page =1
+      this.init(this.page)
+    },
      //上拉加载
     onPullingUp() {
-      // 更新数据
-      console.log('pulling up and load data')
-      setTimeout(() => {
-        if (Math.random() > 0.5) {
-          // 如果有新数据
-
-         this.$refs.scroll.forceUpdate()
-        } else {
-          // 如果没有新数据
-          this.$refs.scroll.forceUpdate()
-        }
-      }, 1500)
+      this.page ++ 
+      this.init(this.page)
     },
     rebuildScroll() {
       Vue.nextTick(() => {
@@ -133,28 +190,28 @@ export default {
     }
   },
   watch: {
-      scrollbarObj: {
-        handler() {
-          this.rebuildScroll()
-        },
-        deep: true
-      },
-      pullDownRefreshObj: {
-        handler() {
-          this.rebuildScroll()
-        },
-        deep: true
-      },
-      pullUpLoadObj: {
-        handler() {
-          this.rebuildScroll()
-        },
-        deep: true
-      },
-      startY() {
+    scrollbarObj: {
+      handler() {
         this.rebuildScroll()
-      }
+      },
+      deep: true
     },
+    pullDownRefreshObj: {
+      handler() {
+        this.rebuildScroll()
+      },
+      deep: true
+    },
+    pullUpLoadObj: {
+      handler() {
+        this.rebuildScroll()
+      },
+      deep: true
+    },
+    startY() {
+      this.rebuildScroll()
+    }
+  }
 }
 </script>
 
@@ -168,6 +225,16 @@ export default {
   overflow-y scroll
   border-top 1px solid  #E8E8E8
   padding-top l(10)
+  .del
+    width l(44)
+    height l(44)
+    position fixed
+    right l(16)
+    bottom l(40)
+    img 
+      display block
+      width 100%
+      height 100%
   ul,.demo-content
     padding 0 4.3%
     background #fff
