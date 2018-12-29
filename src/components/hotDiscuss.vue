@@ -136,9 +136,10 @@ export default {
   },
   methods:{
     init(){
+      var id = this.$route.query.id
       const options = {
         token :this.token,
-        id:1
+        id:id
       }
       commentDetail(options).then(res=>{
          if(res.data.code == 200 && !res.data.error_code){

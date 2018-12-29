@@ -51,8 +51,8 @@
     </div>
     <!-- 合计 -->
     <div class="total">
-      <span>共4件商品</span>
-      <div>合计：￥<span>1399</span>.00</div>
+      <span>共{{totalNum}}件商品</span>
+      <div>合计：￥<span>{{totalP}}</span>.00</div>
     </div>
     <div class="blank"></div>
     <!-- 底部 -->
@@ -83,7 +83,9 @@ export default {
       txt:'',
       type:'',
       show:false,
-      alertTxt:''
+      alertTxt:'',
+      totalNum:0,
+      totalP:0
     }
   },
   created(){
@@ -167,6 +169,10 @@ export default {
       orderSettle(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.arr = res.data.data.result
+          this.arr.forEach(item=>{
+            this.totalNum += item.tea_count
+            this.totalP += item.tea_count*item.tea_price
+          })
           this.address = res.data.data.address
           if(sessionStorage.is_from_addlist){
             this.txt = sessionStorage.input

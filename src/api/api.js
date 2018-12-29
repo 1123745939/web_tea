@@ -1,7 +1,7 @@
-import axios from 'axios'
+import axios from './index'
 
 // import domain from './domain.js'
-let baseUrl = 'http://fef9efe1dbfd5199.natapp.cc'+'/v1'
+let baseUrl = 'http://uat.api.chajisong.com'+'/v1'     //  http://fef9efe1dbfd5199.natapp.cc
 const jsonToQuery = function (JSON, isEncode) {
   var _fdata = function (data, isEncode) {
     data = data == null ? '' : data;
@@ -75,6 +75,10 @@ export const loginOut = function (params) {
   return axios.post(`${baseUrl}`+"/auth/logout", jsonToQuery(params));
 }
 //我的相关
+    //我的页面   相关数据
+export const myData = function (params) {
+  return axios.get(`${baseUrl}`+"/my", {params});
+}    
     //地址相关
 export const getAddress = function (params) {
   return axios.get(`${baseUrl}`+"/my/address", {params});
@@ -330,3 +334,9 @@ export const commentReplyList = function (params) {
 export const orderSettle = function (params) {
   return axios.post(`${baseUrl}`+"/order/settle", jsonToQuery(params));
 } 
+
+
+    //客服/custom
+export const custom = function (params) {
+  return axios.get(`${baseUrl}`+"/custom", {params});
+}

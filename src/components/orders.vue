@@ -51,14 +51,14 @@
             <div class="b_b" v-if="item.order_status == 3">
               <p @click="delShow = true;id=item.id">删除订单</p>
               <p @click="goEvluate(item)">评价</p>
-              <p>再次购买</p>
+              <p @click="$router.push({path:'/goodDetail',query:{id:item.tea_id}})">再次购买</p>
             </div>
             <div class="b_b" v-if="item.order_status == 4">
-              <p>查看详情</p>
+              <p  @click="$router.push({path:'/orderDetail',query:{id:item.id,tea_id:item.tea_id}})">查看详情</p>
               <p>取消退款</p>
             </div>
             <div class="b_b" v-if="item.order_status == 5">
-              <p>查看详情</p>
+              <p  @click="$router.push({path:'/orderDetail',query:{id:item.id,tea_id:item.tea_id}})">查看详情</p>
             </div>
                 <!-- 是否删除的弹框 -->
                 <div v-transfer-dom>

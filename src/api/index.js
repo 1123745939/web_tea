@@ -2,8 +2,10 @@ import Vue from 'vue'
 import axios from 'axios'
 //import router from '.././router/index'
 
-Vue.prototype.axios = axios;
-axios.defaults.withCredentials = true;
+// Vue.prototype.axios = axios;
+// axios.defaults.withCredentials = true;
+
+
 // Add a request interceptor
 axios.interceptors.request.use(function (config) {
     // Do something before request is sent

@@ -2,81 +2,57 @@
   <div class="con">
     <!-- 头部 -->
      <div class="content">
-      <div class="car"></div>
+      <div class="car" @click="connectCustom"></div>
       <div class="tab">
         <div class="tab_top">
           <img :src="infoObj.img_link" alt="" @click="$router.push('/personalInfo')">
-          <p>{{infoObj.nickname}}</p>
+          <p>{{infoObj.username}}</p>
         </div>
         <ul class="leb">
-          <li @click="$router.push('/collection')"><p>97</p>收藏</li>
-          <li @click="$router.push('/thumbs')"><p>10</p>点赞</li>
-          <li @click="$router.push('/slots')"><p>30</p>足迹</li>
+          <li @click="$router.push('/collection')"><p>{{count.collect_count}}</p>收藏</li>
+          <li @click="$router.push('/thumbs')"><p>{{count.thumb_count}}</p>点赞</li>
+          <li @click="$router.push('/slots')"><p>{{count.slot_count}}</p>足迹</li>
         </ul>
       </div>
     </div>
     <!-- 通知 -->
-    <div class="order">
-      <div class="o_h">
+    <div class="order" v-if="notifies.length">
+      <div class="o_h"  @click="$router.push('/infos')">
         <div class="oh_l">
           <img src="../assets/img/logo.png" alt="">通知
         </div>
-        <img src="../assets/img/more2.png" alt="" @click="$router.push('/infos')">
+        <img src="../assets/img/more2.png" alt="">
       </div>
       <ul class="tips">
-        <li>
-          <span></span>您买过的碧螺春来新货啦
-        </li>
-        <li>
-          <span></span>您买过的碧螺春来新货啦
+        <li v-for="item in notifies" :key="item.notify_target_id">
+          <span></span>{{item.notify_content}}
         </li>
       </ul>
     </div>
     <!-- 订单 -->
-    <div class="order">
-      <div class="o_h">
+    <div class="order" v-if="orders.length">
+      <div class="o_h"  @click="$router.push('/orders')">
         <div class="oh_l">
           <img src="../assets/img/order.png" alt="">订单
         </div>
-        <img src="../assets/img/more2.png" alt="" @click="$router.push('/orders')">
+        <img src="../assets/img/more2.png" alt="">
       </div>
       <ul class="o_l">
-        <li>
+        <li v-for="item in orders" :key="item.id"  @click="$router.push({path:'/orderDetail',query:{id:item.id}})">
           <div class="li_h">
-            <p class="time">2018/10/16 14:18</p>
-            <p>等待付款</p>
+            <p class="time">{{item.created_at}}</p>
+            <p>{{item.status_text}}</p>
           </div>
-          <div class="li_m"  @click="$router.push('/orderDetail')">
+          <div class="li_m" >
             <div class="t_img">
               <img src="../assets/img/play.png" alt="">
             </div>
             <div class="t_info">
-              <p>安溪铁观音</p>
-              <span>2018/09/18 绿茶28期</span>
+              <p>{{item.tea_title}}</p>
+              <span>{{item.tea_date}} {{item.tea_period}}</span>
               <div class="in_num">
-                <p>￥<span>1800</span>.00</p>
-                <span>X1</span>
-              </div>
-            </div>
-            <div class="red">去评价</div>
-          </div>
-            
-        </li>
-        <li style="border-bottom:0">
-          <div class="li_h">
-            <p class="time">2018/10/16 14:18</p>
-            <p>等待付款</p>
-          </div>
-          <div class="li_m"  @click="$router.push('/orderDetail')">
-            <div class="t_img">
-              <img src="../assets/img/play.png" alt="">
-            </div>
-            <div class="t_info">
-              <p>个人基因检测标准版</p>
-              <span>2018/09/18 绿茶28期</span>
-              <div class="in_num">
-                <p>￥<span>1800</span>.00</p>
-                <span>X1</span>
+                <p>￥<span>{{item.tea_price}}</span>.00</p>
+                <span>X{{item.order_count}}</span>
               </div>
             </div>
             <div class="red">去评价</div>
@@ -123,29 +99,21 @@
       <!-- <img src="../assets/img/hobbym.png" alt="" class="hobbym"> -->
     </div>
     <!-- 热评 -->
-    <div class="order hot">
-      <div class="o_h">
+    <div class="order hot" v-if="comments.length">
+      <div class="o_h"  @click="$router.push('/evaluate')">
         <div class="oh_l">
           <img src="../assets/img/hot.png" alt="">热评
         </div>
-        <img src="../assets/img/edit.png" alt="" @click="$router.push('/evaluate')">
+        <img src="../assets/img/edit.png" alt="">
       </div>
       <ul class="h_d">
-        <li @click="$router.push('/hotDiscuss')">
+        <li @click="$router.push({path:'/hotDiscuss',query:{id:item.id}})" v-for="item in comments" :key="item.id">
           <div class="li_top">
             <div></div>
-            <span>2018/08/28  09:20:09</span>
+            <span>{{item.created_at}}</span>
           </div>
-          <p>安溪铁观音安溪铁观音安溪铁观音安溪铁观音还付钱回去了空雾峰就完了放得开好伐啦回复看擦刻录机佛.</p>
-          <span class="li_u">有用180&nbsp;&nbsp;&nbsp;评价99</span>
-        </li>
-         <li style="border-bottom:0">
-          <div class="li_top">
-            <div></div>
-            <span>2018/08/28  09:20:09</span>
-          </div>
-          <p>安溪铁观音安溪铁观音安溪铁观音安溪铁观音还付钱回去了空雾峰就完了放得开好伐啦回复看擦刻录机佛.</p>
-          <span class="li_u">有用180&nbsp;&nbsp;&nbsp;评价99</span>
+          <p>{{item.content}}.</p>
+          <span class="li_u">有用{{item.thumb_count}}&nbsp;&nbsp;&nbsp;评价{{item.comment_count}}</span>
         </li>
       </ul>
     </div>
@@ -153,12 +121,17 @@
 </template>
 
 <script>
-import {getMyInfo} from '../api/api.js'
+import RCS from '../custom/sobot/cs.js'
+import { myData , custom } from '../api/api.js'
 export default {
   data () {
     return {
       token:sessionStorage.token,
-      infoObj:{}
+      infoObj:{},
+      comments:[],
+      count:{},
+      notifies:[],
+      orders:[]
     }
   },
   created(){
@@ -168,14 +141,59 @@ export default {
   methods:{
     init(){
       //个人信息
-      getMyInfo({token:this.token}).then(res=>{
+      myData({token:this.token}).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          this.infoObj = res.data.data
-          this.infoObj.nickname = this.infoObj.nickname ? this.infoObj.nickname : '您还没有昵称哦'
-          console.log(this.infoObj)  
+          this.infoObj = res.data.data.info
+          this.comments = res.data.data.comments
+          this.count = res.data.data.count
+          this.notifies = res.data.data.notifies
+          this.orders = res.data.data.orders
+
+          console.log(res,'res')  
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
+      })
+    },
+    //链接客服
+    connectCustom(){
+      custom({token:'aKbhzqzFPoUIQRL4oiZa956TTHXNZWtM'}).then(res=>{
+        console.log(res)
+        RCS.init({
+        appKey: "e0x9wycfe4eoq",
+        token: res.data.data,
+        target: document.getElementsByClassName('con'),
+        customerServiceId: "KEFU154276502494257", // 客服Id
+        userIcon: 'http://xianwei-image.oss-cn-beijing.aliyuncs.com/psb.jpeg',//用户默认头像，在用户没有头像的时候显示
+        csIcon: 'http://fsprodrcx.cn.ronghub.com/UQRxDVEHcD6_gHENUQRxDUs9XOZRBH25PGECfjBjFA/base64.png',//客服默认头像，在客服没有头像的时候显示,建议线上地址
+        showButton: false,
+        //是否需要按钮主动发起，设为false的时候，init()方法直接唤起聊天窗口,需客户自己编写按钮，点击之后调用init(),templates中的button模板不可用;设为true的时候，init()首先唤起客服咨询按钮，点击之后才连接客服，唤起聊天窗口，在进入页面之后就需调用init()方法。此参数是为了方便客户在点击客服按钮后自行获取token，在获取到token之后，执行init()即可。
+        connectingCallback: function(){
+            console.log('连接中');
+        },//连接中的执行的方法，例如显示加载页面,可不传
+        connectedCallback: function(){},//连接成功之后的方法，例如关闭加载页面,可不传
+        disconnectedCallback: function(){
+            alert('连接断开');
+        },//断开连接之后的操作,可不传
+        templates: {
+            button: [
+                '<div class="rongcloud-consult">',
+                '   <button onclick="RCS.showCommon()"><span>客服咨询</span></button>',
+                '</div>',
+                '<div class="customer-service" style="display: none;"></div>'].join(''),//"templates/button.html",
+            // chat: "{{route('chat')}}",
+            // closebefore: 'templates/closebefore.html',
+            // conversation: 'templates/conversation.html',
+            // endconversation: 'templates/endconversation.html',
+            // evaluate: 'templates/evaluate.html',
+             imageView: 'templates/imageview.html',
+            // leaveword: 'templates/leaveword.html',
+            // main: 'templates/main.html',
+            // message: 'templates/message.html',
+            // messageTemplate: 'templates/messageTemplate.html',
+            // userInfo: 'templates/userInfo.html',
+        }
+    });
       })
     }
   }
