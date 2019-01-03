@@ -9,7 +9,7 @@
             <span>退款金额</span><span class="money">￥{{order.order_total}}</span>
           </div>
           <div>
-            <span>退款原因</span><span>{{order.order_reject_reason}}</span>
+            <span>退款原因</span><input type="text" placeholder="请输入退款原因" v-model="reason">
           </div>
           <!-- <div v-if="order.reject_status==3">
             <span>失败原因</span><span>已经开封</span>
@@ -62,8 +62,8 @@
     <div class="foot">
       <img src="../assets/img/kefu1.png" alt="" v-if="order.order_status==0">
       <div>
-        <p>联系客服</p>
-        <p>确认提交</p>
+        <p @click="connectCustom">联系客服</p>
+        <p @click="submit">确认提交</p>
       </div>
     </div>
 
@@ -73,7 +73,7 @@
 
 <script>
 import { XDialog,TransferDomDirective as TransferDom } from 'vux'
-import {orderDetail} from '../api/api.js'
+import { orderDetail , orderApply } from '../api/api.js'
 export default {
   directives: {
     TransferDom
@@ -84,20 +84,21 @@ export default {
   data () {
     return {
       token:sessionStorage.token || '',
-      id:21,
-      tea_id:8,
+      id:'',
+      reason:'',
       order:{},
       tea:{}
     }
   },
   created(){
     document.title = '申请售后'
+    this.id = this.$route.query.id
+    this.init()
   },
   methods:{
     init(){
       const options = {
         id : this.id,
-        tea_id:this.tea_id,
         token : this.token,
       }
       orderDetail(options).then(res=>{
@@ -110,6 +111,28 @@ export default {
         }
       })
     },
+    //联系客服
+    connectCustom(){
+      window.location.href = `http://uat.api.chajisong.com/v1/custom?token=${this.token}`
+    },
+    //提交
+    submit(){
+      if(!this.reason){
+        this.$vux.toast.text('请输入退款原因')
+        return
+      }
+      const options = {
+        id:this.id,
+        reason:this.reason
+      }
+      orderApply(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$router.push("/orders")
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    }
   }
 }
 </script>

@@ -15,7 +15,7 @@
                   <swipeout-button type="warn" @click.native="handle(i)">取消收藏</swipeout-button>
                 </div>
                 <div slot="content" class="demo-content vux-1px-t">
-                  <li class="h_li">
+                  <li class="h_li" @click="$router.push({path:'/goodDetail',query:{id:i.id}})">
                     <div class="left">
                       <img src="../assets/img/play.png" alt="">
                       <span class="time">{{i.tea_date}} {{i.tea_period}}</span>
@@ -40,7 +40,7 @@
                         <div class="pri_l">
                           ￥<p>{{i.tea_price}}.</p>00 <span>/{{i.tea_format}}g</span>
                         </div>
-                        <div class="pri_r">马上抢</div>
+                        <div class="pri_r" @click.stop="$router.push({path:'/pay',query:{id:i.id,tsype:'buy'}})">马上抢</div>
                       </div>
                     </div>
                   </li>

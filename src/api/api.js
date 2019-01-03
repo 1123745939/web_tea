@@ -303,6 +303,10 @@ export const orderAddComment = function (params) {
 export const orderCanComment = function (params) {
   return axios.post(`${baseUrl}`+"/order/comments", jsonToQuery(params));
 }
+    //申请售后
+export const orderApply = function (params) {
+  return axios.post(`${baseUrl}`+"/order/apply", jsonToQuery(params));
+}
 
 //热评
       //热评详情

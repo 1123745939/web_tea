@@ -29,25 +29,25 @@
     <div class="big_box" v-if="conShow " style="position:relative" @click="makeShow = false;placeShow=false;yearShow=false">
         <!-- tab选项 -->
       <ul class="tab">
-        <li class="tab_li" :class="selectLi == 1 ?'active':''" @click.stop="selectLi=1;searchResultList = [];sort(1,'tea_period')">期数
+        <li class="tab_li" :class="selectLi == 1 ?'active':''" @click.stop="selectLi=1;searchResultList = [];sort(1,'tea_period');yearShow=false;makeShow=false;placeShow=false">期数
           <img src="../assets/img/jian_up.png" alt="" v-if="preiodUp">
           <img src="../assets/img/jian_down.png" alt="" v-else>
         </li>
-        <li  class="tab_li" :class="selectLi == 2 ?'active':''" @click.stop="placeShow = !placeShow;selectLi=2" >产地
+        <li  class="tab_li" :class="selectLi == 2 ?'active':''" @click.stop="placeShow = !placeShow;selectLi=2; preiodUp=true;priceUp=true;yearShow=false;makeShow=false" >产地
           <ul class="liMore" v-show="placeShow">
             <li v-for="year in filterArr.places" :key="year.id" @click.stop="placeShow=false;filter('tea_place_id',year.id,year.name)">{{year.name}}</li>
           </ul>
         </li>
-        <li  class="tab_li" :class="selectLi == 3 ?'active':''" @click.stop="makeShow = !makeShow;selectLi=3">制茶方法
+        <li  class="tab_li" :class="selectLi == 3 ?'active':''" @click.stop="makeShow = !makeShow;selectLi=3;preiodUp=true;priceUp=true;placeShow=false;yearShow=false">制茶方法
           <ul class="liMore" v-show="makeShow">
             <li v-for="year in filterArr.makes" :key="year.id"  @click.stop="makeShow=false;filter('tea_make',year.id,year.name)">{{year.name}}</li>
           </ul>
         </li>
-        <li  class="tab_li" :class="selectLi == 4 ?'active':''" @click.stop="selectLi=4;searchResultList = [];sortP(1,'tea_price')">价格
+        <li  class="tab_li" :class="selectLi == 4 ?'active':''" @click.stop="selectLi=4;searchResultList = [];sortP(1,'tea_price');yearShow=false;makeShow=false;placeShow=false">价格
           <img src="../assets/img/jian_up.png" alt="" v-if="priceUp">
           <img src="../assets/img/jian_down.png" alt="" v-else>
         </li>
-        <li  class="tab_li" :class="selectLi == 5 ?'active':''" @click.stop="yearShow = !yearShow;selectLi=5">年份
+        <li  class="tab_li" :class="selectLi == 5 ?'active':''" @click.stop="yearShow = !yearShow;selectLi=5;preiodUp=true;priceUp=true;placeShow=false;makeShow=false">年份
           <ul class="liMore" v-show="yearShow">
             <li v-for="year in filterArr.years" :key="year.id"  @click.stop="yearShow=false;filter('tea_year',year.id,year.name)">{{year.year}}>{{year.year}}</li>
           </ul>
@@ -70,7 +70,7 @@
           @pullingUp="onPullingUp">
 
           <ul class="goodsList">    
-            <li v-for="item in searchResultList" :key="item.id">
+            <li v-for="(item,index) in searchResultList" :key="item.id" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">
               <div class="li_top">
                 <div class="play"><span></span></div>
                 <div class="data">
@@ -91,7 +91,8 @@
                 <ul class="mark">
                   <li v-for="i in item.tea_score" :key="i"></li>
                 </ul>
-                <img src="../assets/img/share.png" alt="">
+                <input type="text" style="opacity:0;" v-model='urls+item.id' id="foo">
+                <img src="../assets/img/share.png" alt=""  @click.stop="share(item.id,index)" ref='copy' data-clipboard-action="copy" data-clipboard-target="#foo" class="aaa">
               </div>
               <div class="li_bot">
                 <div class="lt_l">
@@ -164,7 +165,7 @@ export default {
       priceUp:true,
       type:'',//0 无需筛选 1 排序 2 筛选
       threeArr:[{id:6,name:'播放量最高',eng:'tea_play_count '},{id:7,name:'收藏最多',eng:'tea_collect_count'},{id:8,name:'点赞最多',eng:'tea_thumb_count '}],
-
+      urls:'http://uat.chajisong.com/#/goodDetail?id=',
 
 
       pullUpLoadThreshold: 0,
@@ -189,6 +190,13 @@ export default {
     //this.historyArr = util.getHistory('teaSearch')
 
   },
+  mounted() {
+    this.$nextTick(() => {
+      setTimeout(()=>{
+        this.copyBtn = new this.clipboard(this.$refs.copy[0]);
+      },10)
+    })
+  },
   computed:{
     pullDownRefreshObj: function () {
       return this.pullDownRefresh ? {
@@ -204,6 +212,19 @@ export default {
     }
   },
   methods:{
+    share(id,index) {
+     
+      this.copyBtn = new this.clipboard(this.$refs.copy[index]);
+      let _this = this;
+      let clipboard = this.copyBtn;
+      console.log(clipboard,'clipboard')
+      clipboard.on('success', function() {
+         _this.$vux.toast.text('复制成功，可直接粘贴给好友！')
+      });
+      clipboard.on('error', function() {
+          _this.$vux.toast.text('复制失败，请重新复制！')
+      });
+    },
     init(){
       //茶的数据
       getSearchDate().then(res=>{
@@ -335,15 +356,19 @@ export default {
     //搜索结果页   筛选
     filter(key,id,name){
       this.key = key
+      console.log(key,this.key)
       this.value = id
-      this.searchResultList = []
-     
+      this.searchResultList = []     
+      
       if(this.tea_type_id && !this.searchTxt){
          //只有类型的筛选 
         this.searchCon(1,2,'',this.tea_type_id,2,this.key,name)
       }else if(this.tea_type_id && this.searchTxt){
         //类型和关键字都有的筛选
         this.searchCon(1,0,this.searchTxt,this.tea_type_id,2,this.key,name)
+      }else if(!this.tea_type_id && this.searchTxt){
+        //只有关键字的筛选
+        this.searchCon(1,1,this.searchTxt,'',2,this.key,name)
       }
      
     },
@@ -359,6 +384,7 @@ export default {
         key:key,//筛选的key 当type=1,2时必传  tea_period(期数)/tea_price(价格)/tea_place_id(产地id)/tea_make(制茶方法)/tea_year(年份)
         value:value//	筛选的key对应的值 当type=1,2时必传
       }
+      console.log(options)
       getSearch(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           console.log(res)

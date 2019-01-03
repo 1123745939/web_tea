@@ -57,12 +57,12 @@
         </li>
       </ul>
       <!-- 收藏 & 分享 -->
-      <div class="sha">
+      <!-- <div class="sha">
         <div>
           <img src="../assets/img/starb.png" alt="">收藏
           <img src="../assets/img/share.png" alt="">分享
         </div>
-      </div>
+      </div> -->
       <!-- 点赞内容 -->
       <div class="liuyan">
         <span>留言：{{len>99 ? '99+' : len}}</span>

@@ -15,11 +15,11 @@
             <span>退款原因</span><span>{{order.order_reject_reason}}</span>
           </div>
           <div v-if="order.reject_status==3">
-            <span>失败原因</span><span>已经开封</span>
+            <span>失败原因</span><span>{{order.order_reject_reason}}</span>
           </div>
         </div>
         <!-- 地址 -->
-        <div class="a_bor" v-if="order.reject_status!=4">
+        <div class="a_bor" v-if="order.order_status!=4">
           <div class="a_t">
           <div class="red"></div>
           <span>收货人信息</span>
@@ -99,7 +99,7 @@
         <p @click="buy">继续喝</p>
       </div>
       <div  v-if="order.reject_status==3 || order.reject_status==4 ">
-        <p>联系客服</p>
+        <p @click="connectCustom">联系客服</p>
       </div>
     </div>
 
@@ -256,6 +256,10 @@ export default {
         }
       })
     },
+     //联系客服
+    connectCustom(){
+      window.location.href = `http://uat.api.chajisong.com/v1/custom?token=${this.token}`
+    }
   }
 }
 </script>

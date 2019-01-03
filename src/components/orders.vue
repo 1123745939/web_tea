@@ -37,15 +37,17 @@
               <span>共{{item.order_count}}件商品</span>
               <p>合计：￥<span>{{item.order_total}}</span>.00</p>
             </div>
-            <div class="b_b" v-if="item.order_status == 0">
+            <!-- <div class="b_b" v-if="item.order_status == 0">
               <p @click="cancelShow = true;id=item.id">取消订单</p>
               <p>立即支付</p>
-            </div>
+            </div> -->
             <div class="b_b" v-if="item.order_status == 1">
-              <p @click="cancelShow = true;id=item.id">取消订单</p>
+              <p @click="$router.push({path:'/applySale',query:{id:item.tea_id}})">申请售后</p>
+              <!-- <p @click="cancelShow = true;id=item.id">取消订单</p> -->
             </div>
             <div class="b_b" v-if="item.order_status == 2">
               <p>查看物流</p>
+              <p @click="$router.push({path:'/applySale',query:{id:item.tea_id}})">申请售后</p>
               <p @click="confirmShow = true;id=item.id">确认收货</p>
             </div>
             <div class="b_b" v-if="item.order_status == 3">
@@ -123,7 +125,7 @@ export default {
       token:sessionStorage.token,
       status:1,
       selectIndex:0,
-      tabs:[{id:1,name:'全部'},{id:2,name:'待付款'},{id:3,name:'待发货'},{id:4,name:'待收货'},{id:5,name:'已完成'},{id:6,name:'售后'}],
+      tabs:[{id:1,name:'全部'},{id:3,name:'待发货'},{id:4,name:'待收货'},{id:5,name:'已完成'},{id:6,name:'售后'}],//{id:2,name:'待付款'}
       orderList:[],
       orderList1:[],
       page:1,
@@ -185,7 +187,7 @@ export default {
             console.log(this.orderList1)
             }else{
               this.orderList1 = this.orderList.filter(item=>{
-                return item.order_status == this.selectIndex-1
+                return item.order_status == this.selectIndex
               })
             }
         }else{
@@ -201,7 +203,7 @@ export default {
         this.orderList1 = this.orderList
       }else{
          this.orderList1 = this.orderList.filter(item=>{
-          return item.order_status == index-1
+          return item.order_status == index
         })
       }
       console.log(this.orderList1)
@@ -249,7 +251,7 @@ export default {
       orderConfirm(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.$vux.toast.text('已经确认收货')
-          this.selectIndex = 4
+          this.selectIndex = 3
           this.orderList = []
           this.init(1)
           this.$forceUpdate()

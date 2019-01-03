@@ -55,9 +55,8 @@
                 <span>X{{item.order_count}}</span>
               </div>
             </div>
-            <div class="red">去评价</div>
-          </div>
-            
+            <div class="red" @click.stop="evluate(item)">去评价</div>
+          </div>          
         </li>
       </ul>
     </div>
@@ -121,7 +120,6 @@
 </template>
 
 <script>
-import RCS from '../custom/sobot/cs.js'
 import { myData , custom } from '../api/api.js'
 export default {
   data () {
@@ -155,46 +153,14 @@ export default {
         }
       })
     },
-    //链接客服
+    //去评价
+    evluate(item){
+      this.$router.push('/evaluate');
+      sessionStorage.orderComment = JSON.stringify(item)
+    },
+    //联系客服
     connectCustom(){
-      custom({token:'aKbhzqzFPoUIQRL4oiZa956TTHXNZWtM'}).then(res=>{
-        console.log(res)
-        RCS.init({
-        appKey: "e0x9wycfe4eoq",
-        token: res.data.data,
-        target: document.getElementsByClassName('con'),
-        customerServiceId: "KEFU154276502494257", // 客服Id
-        userIcon: 'http://xianwei-image.oss-cn-beijing.aliyuncs.com/psb.jpeg',//用户默认头像，在用户没有头像的时候显示
-        csIcon: 'http://fsprodrcx.cn.ronghub.com/UQRxDVEHcD6_gHENUQRxDUs9XOZRBH25PGECfjBjFA/base64.png',//客服默认头像，在客服没有头像的时候显示,建议线上地址
-        showButton: false,
-        //是否需要按钮主动发起，设为false的时候，init()方法直接唤起聊天窗口,需客户自己编写按钮，点击之后调用init(),templates中的button模板不可用;设为true的时候，init()首先唤起客服咨询按钮，点击之后才连接客服，唤起聊天窗口，在进入页面之后就需调用init()方法。此参数是为了方便客户在点击客服按钮后自行获取token，在获取到token之后，执行init()即可。
-        connectingCallback: function(){
-            console.log('连接中');
-        },//连接中的执行的方法，例如显示加载页面,可不传
-        connectedCallback: function(){},//连接成功之后的方法，例如关闭加载页面,可不传
-        disconnectedCallback: function(){
-            alert('连接断开');
-        },//断开连接之后的操作,可不传
-        templates: {
-            button: [
-                '<div class="rongcloud-consult">',
-                '   <button onclick="RCS.showCommon()"><span>客服咨询</span></button>',
-                '</div>',
-                '<div class="customer-service" style="display: none;"></div>'].join(''),//"templates/button.html",
-            // chat: "{{route('chat')}}",
-            // closebefore: 'templates/closebefore.html',
-            // conversation: 'templates/conversation.html',
-            // endconversation: 'templates/endconversation.html',
-            // evaluate: 'templates/evaluate.html',
-             imageView: 'templates/imageview.html',
-            // leaveword: 'templates/leaveword.html',
-            // main: 'templates/main.html',
-            // message: 'templates/message.html',
-            // messageTemplate: 'templates/messageTemplate.html',
-            // userInfo: 'templates/userInfo.html',
-        }
-    });
-      })
+      window.location.href = `http://uat.api.chajisong.com/v1/custom?token=${this.token}`
     }
   }
 }

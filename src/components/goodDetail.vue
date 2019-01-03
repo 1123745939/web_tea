@@ -17,7 +17,7 @@
 
     <div class="d">
       <span class="d_t">{{detailObj.tea_date}} {{detailObj.tea_period}}</span>
-      <div class="li_top" @click="$router.push('/videoPlay')">
+      <div class="li_top" @click="$router.push({path:'/videoPlay',query:{id:id}})">
         <div class="play"><span></span></div>
         <div class="data">
           <div class="d_l">

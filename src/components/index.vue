@@ -57,7 +57,7 @@
             <div class="li_mid">
               <div class="red"></div>
               <span class="t_t">{{item.tea_title}}</span>
-              <input type="text" style="display:none" v-model="urls" id="foo">
+              <input type="text" style="opacity:0;" v-model='urls+item.id' id="foo">
               <img src="../assets/img/share.png" alt="" @click.stop="share(item.id,index)" ref='copy' data-clipboard-action="copy" data-clipboard-target="#foo" class="aaa">
             </div>
             <div class="li_bot">
@@ -160,7 +160,7 @@ export default {
       startY: 0,
       scrollToTime: 700,
       copyBtn: null,
-      urls:'121212121',
+      urls:'http://uat.chajisong.com/#/goodDetail?id=',
     }
     
   },
@@ -196,11 +196,11 @@ export default {
     }
   },
   mounted() {
-    // this.$nextTick(() => {
-    //   setTimeout(()=>{
-    //     this.copyBtn = new this.clipboard(this.$refs.copy[0]);
-    //   },10)
-    // })
+    this.$nextTick(() => {
+      setTimeout(()=>{
+        this.copyBtn = new this.clipboard(this.$refs.copy[0]);
+      },10)
+    })
   },
   methods:{
     //购物车数量

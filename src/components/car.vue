@@ -8,7 +8,7 @@
         <div slot="content" class="demo-content vux-1px-t">
           <li :class="i.is_advance==1?'active':''">
             <img src="../assets/img/c_blank.png" alt="" class="car_s" v-if="i.active == false" @click="select(index,i.tea_left_count)"> 
-            <img src="../assets/img/c_active.png" alt="" class="car_s" v-else  @click="select(index,tea_left_count)"> 
+            <img src="../assets/img/c_active.png" alt="" class="car_s" v-else  @click="select(index,i.tea_left_count)"> 
             <img src="../assets/img/list1.png" alt="" class="car_img">
             <div class="car_p">
               <div class="t_top">
@@ -155,6 +155,7 @@ export default {
         })
       }else{
         this.selectAll = true
+        this.totalP = 0
         this.carList.forEach(item=>{
           if(item.tea_left_count!=0){
             item.active = true
