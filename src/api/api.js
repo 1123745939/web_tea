@@ -223,7 +223,14 @@ export const getGoodDetail = function (params) {
 export const commentAll = function (params) {
   return axios.post(`${baseUrl}`+"/comment", jsonToQuery(params));
 }
-
+    //相似的茶
+export const teaLike = function (params) {
+  return axios.get(`${baseUrl}`+"/index/tea/like", {params});
+}
+    //同款茶
+export const teaSame = function (params) {
+  return axios.get(`${baseUrl}`+"/index/tea/same", {params});
+}
 //购物车相关
       //购物车列表
 export const carList = function (params) {
@@ -279,7 +286,7 @@ export const orderConfirm = function (params) {
 export const orderDel = function (params) {
   return axios.get(`${baseUrl}`+"/order/delete", {params});
 }
-    //不喜欢/order/unlike/create
+    //不喜欢
 export const orderUnlike = function (params) {
   return axios.post(`${baseUrl}`+"/order/unlike/create", jsonToQuery(params));
 }
@@ -339,6 +346,10 @@ export const orderSettle = function (params) {
   return axios.post(`${baseUrl}`+"/order/settle", jsonToQuery(params));
 } 
 
+    //茶友主页
+export const friend = function (params) {
+  return axios.post(`${baseUrl}`+"/friend", jsonToQuery(params));
+}   
 
     //客服/custom
 export const custom = function (params) {

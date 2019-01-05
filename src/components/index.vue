@@ -68,7 +68,7 @@
                 </div>
                 <div>￥<span class="p1">{{item.tea_price}}</span>.00 <span class="p2">/{{item.tea_format}}g</span></div>
               </div>
-              <img src="../assets/img/l1.png" alt="" v-if="item.tea_count/item.tea_total && !item.isAdvance">
+              <img src="../assets/img/l1.png" alt="" v-if="item.tea_count/item.tea_total && item.isAdvance==1">
               <img src="../assets/img/l2.png" alt="" v-else>
             </div>
           </li>

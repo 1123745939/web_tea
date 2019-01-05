@@ -4,12 +4,12 @@
      <div class="content">
       <div class="tab">
         <div class="tab_top">
-          <img src="../assets/img/photo.jpg" alt="">
-          <p>似水流年</p>
+          <img :src="info.img_link" alt="">
+          <p>{{info.username}}</p>
         </div>
         <div class="leb">
          <img src="../assets/img/cha.png" alt="">
-         买过57次茶，发过8个热评
+         买过{{info.buy_count}}次茶，发过{{info.comment_count}}个热评
         </div>
       </div>
     </div>
@@ -22,11 +22,8 @@
         <img src="" alt="">
       </div>
       <ul class="tips">
-        <li>
-          <span></span>您买过的碧螺春来新货啦
-        </li>
-        <li>
-          <span></span>您买过的碧螺春来新货啦
+        <li v-for="item in notifies" :key="item.notify_target_id">
+          <span></span>{{item.notify_content}}
         </li>
       </ul>
     </div>
@@ -39,28 +36,16 @@
         <img src="" alt="">
       </div>
        <ul class="o_l">
-        <li class="li_f">
+        <li class="li_f" v-for="item in hobbies" :key="item.id">
           <div class="li_m">
-            <div class="t_img">
+            <div class="t_img" :style="{background:'url('+item.tea_img_link+')'}">
               <img src="../assets/img/play.png" alt="">
             </div>
             <div class="t_info">
-              <p>安溪铁观音</p>
-              <span class="t_f">3个共同茶朋友</span>
+              <p>{{item.tea_title}}</p>
+              <span class="t_f">{{item.friend_count}}个共同茶朋友</span>
             </div>
-            <div class="red">我要买</div>
-          </div>           
-        </li>
-        <li class="li_f">
-          <div class="li_m"  @click="$router.push('/orderDetail')">
-            <div class="t_img">
-              <img src="../assets/img/play.png" alt="">
-            </div>
-            <div class="t_info">
-              <p>安溪铁观音</p>
-              <span class="t_f">3个共同茶朋友</span>
-            </div>
-            <div class="red">我要买</div>
+            <div class="red" @click="$router.push({path:'/goodDetail',query:{id:item.tea_id}})">我要买</div>
           </div>           
         </li>
       </ul>
@@ -75,21 +60,13 @@
         <img src="" alt="">
       </div>
       <ul class="h_d">
-        <li @click="$router.push('/hotDiscuss')">
+        <li v-for="item in comments" :key="item.id">
           <div class="li_top">
             <div></div>
-            <span>2018/08/28  09:20:09</span>
+            <span>{{item.created_at}}</span>
           </div>
-          <p>安溪铁观音安溪铁观音安溪铁观音安溪铁观音还付钱回去了空雾峰就完了放得开好伐啦回复看擦刻录机佛.</p>
-          <span class="li_u">有用180&nbsp;&nbsp;&nbsp;评价99</span>
-        </li>
-         <li style="border-bottom:0">
-          <div class="li_top">
-            <div></div>
-            <span>2018/08/28  09:20:09</span>
-          </div>
-          <p>安溪铁观音安溪铁观音安溪铁观音安溪铁观音还付钱回去了空雾峰就完了放得开好伐啦回复看擦刻录机佛.</p>
-          <span class="li_u">有用180&nbsp;&nbsp;&nbsp;评价99</span>
+          <p>{{item.content}}</p>
+          <span class="li_u">有用{{item.thumb_count}}&nbsp;&nbsp;&nbsp;评价{{item.comment_count}}</span>
         </li>
       </ul>
     </div>
@@ -97,19 +74,40 @@
 </template>
 
 <script>
-import {Login} from '../api/api.js'
+import {friend} from '../api/api.js'
 export default {
   data () {
     return {
-      msg: ''
+      token : sessionStorage.token || '',
+      id:'',
+      info:{},
+      notifies:[],
+      hobbies:[],
+      comments:[]
     }
   },
   created(){
     document.title = '茶友主页'
+    this.id = this.$route.query.id
+    this.init()
   },
   methods:{
-    goDetail(){
-      this.$router.push('/goodDetail')
+    init(){
+      const options = {
+        token:this.token,
+        id:this.id,
+      }
+      friend(options).then(res=>{
+         if(res.data.code == 200 && !res.data.error_code){
+          console.log(res.data.data)
+          this.info = res.data.data.info
+          this.notifies = res.data.data.notifies
+          this.hobbies = res.data.data.hobbies
+          this.comments = res.data.data.comments
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
     }
   }
 }

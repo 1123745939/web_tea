@@ -10,14 +10,12 @@
         controls="controls"
         autoplay="autoplay">
       </video>
-      <!-- 遮罩 -->
-
-        <div class="left">
-          立即购买
-        </div>
-        <div class="right">
-          点赞
-        </div>
+      <div class="left">
+        立即购买
+      </div>
+      <div class="right">
+        点赞
+      </div>
       <!-- <video src="../assets/img/A-TEEN.mp4" autoplay width="100%" controls x5-video-player-type="h5" x5-video-orientation="landscape"></video> -->
     </div>
   </div>
@@ -38,6 +36,19 @@ export default {
     document.title = '视频'
     this.id = this.$route.query.id
     this.init(this.id)
+
+    var evt = "onorientationchange" in window ? "orientationchange" : "resize";
+      window.addEventListener(evt,resize,false);
+        function resize(fals) {
+          if(window.orientation == 0 || window.orientation == 180) {
+              alert("竖屏");
+            }else {
+              alert("横屏");
+          }
+        }
+      resize(true);
+
+
   },
   methods:{
     init(id){

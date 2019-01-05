@@ -60,7 +60,7 @@
     <!-- 评价 -->
     <div class="pre" v-show="comment">
       <div class="pr_m">
-        <span>评论：{{detailObj.tea_comment_count}}</span>
+        <span>评论：{{comment.length || 0}}</span>
         <span class="pr_ms" @click="$router.push({path:'/discussAll',query:{id:id}})">更多&nbsp;&nbsp;<img src="../assets/img/more.png" alt=""></span>
       </div>
       <ul class="pr_list">
@@ -91,11 +91,11 @@
     </div>
     <!-- 同一款茶 -->
     <div class="one_t" v-if="sameList.length">
-      <div class="ont_tt">
+      <div class="ont_tt" @click="goSame">
         同一款茶<img src="../assets/img/more.png" alt="">                                                 
       </div>
       <ul style="border-bottom:1px solid #ccc">
-        <li v-for="item in sameList" :key="item.tea_title">
+        <li v-for="item in sameList" :key="item.tea_title" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">
           <div :style="{background:'url('+item.tea_img_link+')'}">
             <img src="../assets/img/play.png" alt="">
             <span>{{item.tea_date}} {{item.tea_period}}</span>
@@ -106,11 +106,11 @@
     </div>
     <!-- 相似的茶 -->
     <div class="one_t" v-if="likeList.length">
-      <div class="ont_tt">
+      <div class="ont_tt" @click="goLike">
         相似的茶<img src="../assets/img/more.png" alt="">                                                 
       </div>
       <ul>
-        <li v-for="item in likeList" :key="item.tea_title">
+        <li v-for="item in likeList" :key="item.tea_title" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">
           <div :style="{background:'url('+item.tea_img_link+')'}">
             <img src="../assets/img/play.png" alt="">
             <span>{{item.tea_date}} {{item.tea_period}}</span>
@@ -122,14 +122,14 @@
     <!-- 底部 -->
     <div class="blank"></div>
     <div class="foot">
-      <div class="f1">
+      <div class="f1" @click="token? connectCustom():loginMaskShow = true">
         <img src="../assets/img/kefu1.png" alt="">
         客服
       </div>
-      <div  class="f1" @click="$router.push('/car')">
+      <div  class="f1" @click="token? $router.push('/car'):loginMaskShow = true">
         <img src="../assets/img/car.png" alt="">
         购物车
-        <span>{{carNum}}</span>
+        <span v-show="token">{{carNum}}</span>
       </div>
       <div class="buy_box">
         <p @click="token? addCar():loginMaskShow = true">加入购物车</p>
@@ -195,7 +195,6 @@ export default {
   },
   created(){
     document.title = '详情'
-    
   },
   mounted(){
     var mySwiper = new Swiper('.swiper-container', {
@@ -212,6 +211,7 @@ export default {
     var id  = this.$route.query.id
     this.id = id
     this.init(id)
+    this.$forceUpdate()
     this.getcarNum()
   },
   methods:{
@@ -241,6 +241,7 @@ export default {
     },
     //购物车的数量
     getcarNum(){
+      if(!this.token){return}
       carList({token:this.token}).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.carNum = res.data.data.count
@@ -270,7 +271,27 @@ export default {
     logIndexChange (arg) {
       console.log(arg)
     },
+    //去同款茶列表
+    goSame(){
+      this.$router.push({path:'/teaSame',query:{id:this.detailObj.id,tea_id:this.detailObj.tea_type_id}})
+    },
+    //去相似茶列表
+    goLike(){
+      this.$router.push({path:'/teaLike',query:{id:this.detailObj.id,tea_id:this.detailObj.tea_type_id}})
+    },
+    //联系客服
+    connectCustom(){
+      window.location.href = `http://uat.api.chajisong.com/v1/custom?token=${this.token}`
+    }
   },
+  watch: {
+    '$route' (to, from) {
+        if (to.name === 'goodDetail') {
+                console.log(to.query.id)     // 在此调用函数
+                this.init(to.query.id)
+        }
+      }
+  }
   
 }
 </script>
@@ -503,6 +524,7 @@ export default {
             display block
             width l(31)
             height l(31)
+            border-radius 50%
         p
           fz(14)
           color: #333333;

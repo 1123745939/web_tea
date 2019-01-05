@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import index from '@/components/index'
 import goodDetail from '@/components/goodDetail'
+import teaSame from '@/components/teaSame'
+import teaLike from '@/components/teaLike'
 import car from '@/components/car'
 import pay from '@/components/pay'
 import orders from '@/components/orders'
@@ -44,6 +46,16 @@ const router =  new Router({
       path: '/goodDetail',
       name: 'goodDetail',
       component: goodDetail
+    },
+    {
+      path: '/teaSame',
+      name: 'teaSame',
+      component: teaSame
+    },
+    {
+      path: '/teaLike',
+      name: 'teaLike',
+      component: teaLike
     },
     {
       path: '/car',
