@@ -8,7 +8,7 @@
             <div :class="i.if_select?'active':''"></div><p>{{i.value}}</p>
           </li>
         </ul>
-        <textarea  v-else @change="write(index)" v-model="item.values[0].value"></textarea>
+        <textarea  v-else @change="write(index)" v-model="item.value" placeholder="请输入"></textarea>
       </div>
     </div>
     <div class="sub" @click="checkCode">保存并提交</div>

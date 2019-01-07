@@ -2,62 +2,36 @@
   <div class="con">
     <div class="content">
       <ul class="h_list">
-        <li class="h_li">
-          <div class="left">
+        <li class="h_li" v-for="(i) in list" :key="i.id" @click.stop="$router.push({path:'/goodDetail',query:{id:i.id}})">
+          <div class="left" :style="{background:'url('+i.tea_img_link+')'}">
             <img src="../assets/img/play.png" alt="">
-            <span class="time">2018/09/18 绿茶28期</span>
-            <span class="p_n">5万次播放</span>
+            <span class="time">{{i.tea_date}} {{i.tea_period}}</span>
+            <span class="p_n">{{i.tea_play_count}}次播放</span>
           </div>
           <div class="right">
-            <p class="name">这道大红袍如此浓郁的花味道真的是相当好</p>
-            <p class="intro">介绍：日寇甘甜</p>
+            <p class="name">{{i.tea_title}}</p>
+            <p class="intro">介绍：{{i.tea_desc}}</p>
             <div class="mark">
-              评分
+              评分:
               <ul class="tea">
-                <li class="img">
+                <li class="img" v-for="x in i.tea_score" :key="x">
                   <img src="../assets/img/tea.png" alt="">
                 </li>
               </ul>
             </div>
             <div class="rest_n">
-              <div class="rest_box">仅剩18份</div>
+              <div class="num_n">仅剩{{i.tea_count}}份</div>
+              <div class="rest_box" :style="{width:i.tea_count/i.tea_total*100+'%'}"></div>
             </div>
             <div class="pri">
               <div class="pri_l">
-                ￥<p>1800.</p>00 <span>/50g</span>
+                ￥<p>{{i.tea_price}}.</p>00 <span>/{{i.tea_format}}g</span>
               </div>
-              <div class="pri_r">马上抢</div>
+              <div class="pri_r" @click.stop="$router.push({path:'/pay',query:{id:i.id,type:'buy'}})" v-if="i.tea_count!=0">马上抢</div>
+              <div class="pri_r" @click.stop="$router.push({path:'/teaLike',query:{id:i.id}})" v-else>查看相似</div>
             </div>
           </div>
-        </li>
-        <li class="h_li">
-          <div class="left">
-            <img src="../assets/img/play.png" alt="">
-            <span class="time">2018/09/18 绿茶28期</span>
-            <span class="p_n">5万次播放</span>
-          </div>
-          <div class="right">
-            <p class="name">这道大红袍如此浓郁的花...</p>
-            <p class="intro">介绍：日寇甘甜</p>
-            <div class="mark">
-              评分
-              <ul class="tea">
-                <li class="img">
-                  <img src="../assets/img/tea.png" alt="">
-                </li>
-              </ul>
-            </div>
-            <div class="rest_n">
-              <div class="rest_box">仅剩18份</div>
-            </div>
-            <div class="pri">
-              <div class="pri_l">
-                ￥<p>1800.</p>00 <span>/50g</span>
-              </div>
-              <div class="pri_r">马上抢</div>
-            </div>
-          </div>
-        </li>
+        </li>  
       </ul>
     </div>
     <div class="xuan" @click="$router.push('/myInfo')">
@@ -67,18 +41,29 @@
 </template>
 
 <script>
-import {Login} from '../api/api.js'
+import {hobbiesList} from '../api/api.js'
 export default {
   data () {
     return {
-      msg: ''
+      token:sessionStorage.token ||"",
+      list:[]
     }
   },
   created(){
     document.title = '爱好'
+    this.init()
   },
   methods:{
-    
+    init(){
+      hobbiesList({token:this.token}).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.list = res.data.data
+          console.log(this.list)
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    }
   }
 }
 </script>
@@ -106,6 +91,7 @@ export default {
     background #F7F7F7
     overflow-y scroll
     box-shadow: 0 0 5px 0 #E8E8E8;
+    position relative
     ul.h_list
       
       .h_li
@@ -194,16 +180,26 @@ export default {
             border-radius: 4px;  
             position relative 
             margin l(5) 0
+            font-size: 10px;
+            color: #FFFFFF;
+            letter-spacing: 0.21px;
+            line-height l(17)
+            text-align center
+            .num_n
+              position absolute
+              height 100%
+              left 0
+              top 0
+              z-index 99
+              padding-left 5px
             .rest_box
+              position absolute
+              left 0
+              top 0px
               width 80%
               height 100%
               background: #E63443;
               border-radius: 4px 0 0 4px;
-              font-size: 10px;
-              color: #FFFFFF;
-              letter-spacing: 0.21px;
-              line-height l(17)
-              text-align center
           div.pri
             disFlex ()
             .pri_l

@@ -1,33 +1,6 @@
 <template>
   <div class="con">
-    <!-- 头部 -->
-    <div class="content" @click.stop="moreShow = moreShow ? !moreShow : moreShow">
-      <div class="search" @click="$router.push('/search')"></div>
-      <div class="car" @click="token == ''? loginMaskShow=true : $router.push('/car')"><span class="carNum" v-show="carNum">{{carNum}}</span></div>
-      <ul class="tab">
-        <li  class="tabli" @click="goAll()">
-          <img src="../assets/img/tab1_active.png" alt="" v-if="tabIndex==1">
-          <img src="../assets/img/tab1.png" alt="" v-else>全部
-        </li>
-         <li  class="tabli" @click="token == ''? loginMaskShow=true :GOrecommand('','',0)">
-          <img src="../assets/img/tab2_active.png" alt="" v-if="tabIndex==2">
-          <img src="../assets/img/tab2.png" alt="" v-else>推荐
-        </li>
-         <li  class="tabli" @click="GOadvance('','',0)" >
-          <img src="../assets/img/tab3_active.png" alt="" v-if="tabIndex==3">
-          <img src="../assets/img/tab3.png" alt="" v-else>预告
-        </li>
-        <li class="tabli" @click="token == ''? loginMaskShow=true : $router.push('/collection') ">
-          <img src="../assets/img/tab4.png" alt="">收藏
-        </li>
-         <li  class="tabli" @click.stop="moreShow = !moreShow">
-          <img src="../assets/img/tab5.png" alt="">更多 
-          <ul class="more" v-if="moreShow">
-            <li v-for="i in moreLists" :key="i.id" @click.stop="shilter(i.id)" :class="filterId==i.id ? 'active' :''">{{i.name}}</li>
-          </ul>
-        </li>
-      </ul>
-    </div>
+    
     <!-- 列表 -->
   <div class="box">
     <scroll ref="scroll"
@@ -37,18 +10,48 @@
         :startY="parseInt(startY)"
         @pullingDown="onPullingDown"
         @pullingUp="onPullingUp">
+
+        <!-- 头部 -->
+        <div class="content" @click.stop="moreShow = moreShow ? !moreShow : moreShow">
+          <div class="search" @click="$router.push('/search')"></div>
+          <div class="car" @click="token == ''? loginMaskShow=true : $router.push('/car')"><span class="carNum" v-show="carNum">{{carNum}}</span></div>
+          <ul class="tab">
+            <li  class="tabli" @click="goAll()">
+              <img src="../assets/img/tab1_active.png" alt="" v-if="tabIndex==1">
+              <img src="../assets/img/tab1.png" alt="" v-else>全部
+            </li>
+            <li  class="tabli" @click="token == ''? loginMaskShow=true :GOrecommand('','',0)">
+              <img src="../assets/img/tab2_active.png" alt="" v-if="tabIndex==2">
+              <img src="../assets/img/tab2.png" alt="" v-else>推荐
+            </li>
+            <li  class="tabli" @click="GOadvance('','',0)" >
+              <img src="../assets/img/tab3_active.png" alt="" v-if="tabIndex==3">
+              <img src="../assets/img/tab3.png" alt="" v-else>预告
+            </li>
+            <li class="tabli" @click="token == ''? loginMaskShow=true : $router.push('/collection') ">
+              <img src="../assets/img/tab4.png" alt="">收藏
+            </li>
+            <li  class="tabli" @click.stop="moreShow = !moreShow">
+              <img src="../assets/img/tab5.png" alt="">更多 
+              <ul class="more" v-if="moreShow">
+                <li v-for="i in moreLists" :key="i.id" @click.stop="shilter(i.id)" :class="filterId==i.id ? 'active' :''">{{i.name}}</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
         <ul class="goodsList" id="lists">     
           <li v-for="(item,index) in list" :key="index" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">
             <div class="li_top">
               <div class="play"><span></span></div>
               <div class="data">
                 <div class="d_l">
-                  5次播放
+                  {{item.tea_play_count}}次播放
                 </div>
                 <ul class="p_r">
-                  <li @click.stop="collect(item.id,index)"><img src="../assets/img/star.png" alt="">{{item.tea_collect_count}}</li>
-                  <li @click.stop="thumb(item.id,index)"><img src="../assets/img/zan.png" alt="">{{item.tea_thumb_count}}</li>
-                  <li><img src="../assets/img/talk.png" alt="">{{item.tea_comment_count}}</li>
+                  <li @click.stop="collect(item.id,index)"><img src="../assets/img/star.png" alt="">{{Number(item.tea_collect_count) < Number(10000) ? Number(item.tea_collect_count) : (Number(item.tea_collect_count)/10000).toFixed(2)}}</li>
+                  <li @click.stop="thumb(item.id,index)"><img src="../assets/img/zan.png" alt="">{{Number(item.tea_thumb_count) < Number(10000) ? Number(item.tea_thumb_count) : (Number(item.tea_thumb_count)/10000).toFixed(2)}}</li>
+                  <li><img src="../assets/img/talk.png" alt="">{{Number(item.tea_comment_count) < Number(10000) ? Number(item.tea_comment_count) : (Number(item.tea_comment_count)/10000).toFixed(2)}}</li>
                 </ul>
               </div>
               <div class="time" v-if="!item.isAdvance">{{item.tea_date}} {{item.tea_period}}</div>
@@ -68,6 +71,7 @@
                 </div>
                 <div>￥<span class="p1">{{item.tea_price}}</span>.00 <span class="p2">/{{item.tea_format}}g</span></div>
               </div>
+              
               <img src="../assets/img/l1.png" alt="" v-if="item.tea_count/item.tea_total && item.isAdvance==1">
               <img src="../assets/img/l2.png" alt="" v-else>
             </div>
@@ -147,6 +151,7 @@ export default {
       is_order : 0,
       topArr:[],//置顶和预售的数组
       carNum:'',
+      is_ref:false,
 
       
       pullUpLoadThreshold: 0,
@@ -229,6 +234,10 @@ export default {
     },
     //收藏
     collect(id,index){
+      if(!this.token){
+        this.$vux.toast.text('请登录后再操作')
+        return
+      }
       console.log(id)
       const options = {
         token :this.token,
@@ -237,6 +246,7 @@ export default {
       vidioCollect(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.$vux.toast.text('+1') 
+          this.list[index].tea_collect_count+=1
           }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -244,6 +254,10 @@ export default {
     },
     //点赞
     thumb(id,index){
+      if(!this.token){
+        this.$vux.toast.text('请登录后再操作')
+        return
+      }
       const options = {
         token :this.token,
         id:id
@@ -251,6 +265,7 @@ export default {
       vidioThumb(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.$vux.toast.text('+1') 
+          this.list[index].tea_thumb_count+=1
           }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -328,9 +343,13 @@ export default {
       }
       getRecommand(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
+          if(this.is_ref){
+            this.list = []
+          }
           this.recommendCount = res.data.data.count
           if(res.data.data.result.length){
             this.list = this.list.concat(res.data.data.result)
+            this.is_ref = false
              console.log(this.list,111111)
           }          
         }else{
@@ -365,10 +384,17 @@ export default {
       }
       getAdvance(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
+          if(this.is_ref){
+            this.list = []
+          }
           this.advanceCount = res.data.data.count
           if(res.data.data.result.length){
             this.list = this.list.concat(res.data.data.result)
+            this.list.forEach(item=>{
+              item.isAdvance = true
+            })
             console.log(this.list,222222)
+            this.is_ref = []
           }        
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
@@ -393,11 +419,14 @@ export default {
     },
        //下拉刷新
     onPullingDown() {
-      // 模拟更新数据
-      if(this.tabIndex == 2){
-        //this.recommand(1)
+      // 模拟更新数据is_ref
+      this.is_ref = true
+      if(this.tabIndex==1){
+        
+      }else if(this.tabIndex == 2){
+        this.GOrecommand('','',0)
       }else if(this.tabIndex == 3){
-        //this.advance(1)
+        this.GOadvance('','',0)
       }
      },
      //上拉加载
@@ -550,7 +579,8 @@ export default {
           height l(24)
   .box
     position relative
-    height l(350)
+    //height l(350)
+    height 100vh
     ul.goodsList
       width l(375)
       background #F7F7F7
@@ -620,9 +650,10 @@ export default {
             position absolute
             top l(5)   
             right l(8)  
+            text-align right
         .li_mid
           background: #F7F7F7;
-          height l(97)
+          min-height l(70)
           position relative
           font-family: PingFangSC-Medium;
           fz(16)
@@ -632,6 +663,7 @@ export default {
           padding 0.9% 0 0 2.4%
           text-align left 
           padding-top l(10)
+          padding-bottom l(5)
           .red
             width l(4)
             height l(16)
@@ -644,13 +676,16 @@ export default {
             -webkit-box-orient: vertical;
             -webkit-line-clamp: 2;
             overflow: hidden;
+            line-height l(16)
           img 
             display block
             width l(22)
             height l(22)
-            position absolute
-            right 2.7%
-            bottom 20%
+            // position absolute
+            // right 2.7%
+            // bottom 20%
+            margin-left 90%
+            margin-bottom l(5)
         .li_bot
           height l(90)
           display flex

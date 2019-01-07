@@ -68,6 +68,7 @@
           <img src="../assets/img/dizhi@1x.png" alt="">收货地址
         </div>
         <div class="right">
+          <span>{{ifHasAddress ? '查看':'去添加'}}</span>
           <img src="../assets/img/more1.png" alt="">
         </div>
       </div>
@@ -96,7 +97,7 @@
 
 <script>
 import utils from '../utils/js/style.js'
-import {addressInfo,getMyInfo,updataPhoto,updataName,updataSex,updataAddress,loginOut} from '../api/api.js'
+import {addressInfo,getMyInfo,updataPhoto,updataName,updataSex,updataAddress,loginOut,getAddress} from '../api/api.js'
 import {  Actionsheet ,Confirm,TransferDomDirective as TransferDom} from 'vux'
 export default {
   directives: {
@@ -120,12 +121,14 @@ export default {
       tel:'',
       address:'',
       showLoginOut:false,
-      img:''
+      img:'',
+      ifHasAddress:false,
     }
   },
   created(){
     document.title = '个人信息'
     this.getUserInfo()
+    this.getAddressList()
   },
   methods:{    
     getUserInfo(){
@@ -147,6 +150,23 @@ export default {
         res.data.data.nickname ? this.nickname = res.data.data.nickname : this.nickname ="请设置"
         res.data.data.address ? this.address = res.data.data.address : this.address ="请完善地址"
         
+      })
+    },
+    //init  有没有地址
+    getAddressList(){
+      const options = {
+        token:this.token
+      }
+      console.log(this.token)
+      getAddress(options).then(res=>{
+        console.log(res)
+        if(res.data.code == 200 && !res.data.error_code){    
+          if(res.data.data.address.length){
+            this.ifHasAddress = true
+          }
+        }else{
+          this.$vux.toast.text(res.data.message, 'middle')
+        }
       })
     },
     //头像   
@@ -347,14 +367,14 @@ export default {
     background: #FFFFFF;
     box-shadow: 0 0 5px 0 #E8E8E8;
     border-radius 10px 10px  0 0 
-    padding l(10) 3% 0
+    padding 0 3% 0
     .photo
       display flex
       justify-content space-between
       align-items center
-      border-bottom 2px solid #E8E8E8
+      border-bottom 1px solid #E8E8E8
       padding l(10) 0
-      height l(60)
+      height l(70)
       position relative
       #photoInput
         display block
@@ -374,8 +394,8 @@ export default {
         letter-spacing: 0.3px;
         img 
           display block
-          width l(24)
-          height l(24)
+          width l(20)
+          height l(20)
           margin-right l(15)
       .right
         height 100%
@@ -424,7 +444,7 @@ export default {
     letter-spacing: 1.12px;
     line-height l(44)
     margin-left 28.8%
-    margin-top l(90)
+    margin-top l(80)
     text-align center
 .province>div {
     height: 30px;

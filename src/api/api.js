@@ -182,7 +182,16 @@ export const getRecommand = function (params) {
     //我的收藏(主页)
 export const myCollect = function (params) {
   return axios.post(`${baseUrl}`+"/index/tea/collect", jsonToQuery(params));
-}
+} 
+
+   //茶友列表
+export const friendsList = function (params) {
+  return axios.get(`${baseUrl}`+"/friend/friend", {params});
+}  
+   //爱好
+export const hobbiesList = function (params) {
+  return axios.get(`${baseUrl}`+"/my/hobbies", {params});
+}  
     //点赞
 export const vidioThumb = function (params) {
   return axios.post(`${baseUrl}`+"/index/vidio/thumb", jsonToQuery(params));
@@ -191,6 +200,11 @@ export const vidioThumb = function (params) {
 export const vidioCollect = function (params) {
   return axios.post(`${baseUrl}`+"/index/vidio/collect", jsonToQuery(params));
 }  
+    //取消收藏/index/vidio/collect/cancel
+export const collectCancel = function (params) {
+  return axios.post(`${baseUrl}`+"/index/vidio/collect/cancel", jsonToQuery(params));
+}  
+    
     //搜索界面数据
 export const getSearchDate = function (params) {
   return axios.get(`${baseUrl}`+"/index/search", {params});

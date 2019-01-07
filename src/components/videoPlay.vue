@@ -41,9 +41,9 @@ export default {
       window.addEventListener(evt,resize,false);
         function resize(fals) {
           if(window.orientation == 0 || window.orientation == 180) {
-              alert("竖屏");
+              
             }else {
-              alert("横屏");
+              
           }
         }
       resize(true);
@@ -85,6 +85,7 @@ export default {
       position absolute
       top 0px
       left 0
+      object-fit fill
     
     .left
       position absolute

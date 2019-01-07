@@ -10,8 +10,8 @@
             @pullingDown="onPullingDown"
             @pullingUp="onPullingUp">
                      
-              <li class="h_li">
-                <div class="left">
+              <li class="h_li" @click.stop="$router.push({path:'/goodDetail',query:{id:i.id}})">
+                <div class="left" :style="{background:'url('+i.tea_img_link+')'}">
                   <img src="../assets/img/play.png" alt="">
                   <span class="time">{{i.tea_date}} {{i.tea_period}}</span>
                   <span class="p_n">{{i.tea_play_count}}次播放</span>
@@ -20,7 +20,7 @@
                   <p class="name">{{i.tea_title}}</p>
                   <p class="intro">介绍：{{i.tea_desc}}</p>
                   <div class="mark">
-                    评分
+                    评分:
                     <ul class="tea">
                       <li class="img" v-for="x in i.tea_score" :key="x">
                         <img src="../assets/img/tea.png" alt="">
@@ -35,7 +35,8 @@
                     <div class="pri_l">
                       ￥<p>{{i.tea_price}}.</p>00 <span>/{{i.tea_format}}g</span>
                     </div>
-                    <div class="pri_r">马上抢</div>
+                    <div class="pri_r" @click.stop="$router.push({path:'/pay',query:{id:i.id,type:'buy'}})" v-if="i.tea_count!=0">马上抢</div>
+                    <div class="pri_r" @click.stop="$router.push({path:'/teaLike',query:{id:i.id}})" v-else>查看相似</div>
                   </div>
                 </div>
               </li>          
@@ -116,16 +117,17 @@ export default {
       }
       slotsList(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
+          if(page==1){
+            this.list = res.data.data.result
+            this.page=1
+            return
+          }
           this.list = this.list.concat(res.data.data.result)
           console.log(this.list)
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
       })
-    },
-    //取消收藏
-    handle(i){
-
     },
     //下拉刷新
     onPullingDown() {
@@ -139,7 +141,6 @@ export default {
       console.log('pulling up and load data')
       this.page ++
       this.init(this.page)
-
       this.$refs.scroll.forceUpdate()
     },
     rebuildScroll() {
@@ -188,6 +189,7 @@ export default {
     background #F7F7F7
     overflow-y scroll
     box-shadow: 0 0 5px 0 #E8E8E8;
+    position relative
     ul.h_list,.demo-content
       
       .h_li

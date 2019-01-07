@@ -46,7 +46,7 @@ export default {
       uphone:'',
       uaddress:'',
       udetail:'',
-      value: ["110000", "110100", "110101"],
+      value: [],
       addressData: ChinaAddressV4Data,
       showAddress: false,
       province:'',
@@ -193,7 +193,7 @@ export default {
           color: #333333;
           letter-spacing: 0.19px;
           line-height l(22)
-          font-weight bold
+          
         input 
           display block
           width 75%
@@ -201,7 +201,7 @@ export default {
           outline none 
           border none
           color: #666;
-          line-height l(60)
+          line-height l(20)
           fz(16)
         input::placeholder
           fz(14)

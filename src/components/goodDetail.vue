@@ -17,7 +17,7 @@
 
     <div class="d">
       <span class="d_t">{{detailObj.tea_date}} {{detailObj.tea_period}}</span>
-      <div class="li_top" @click="$router.push({path:'/videoPlay',query:{id:id}})">
+      <div class="li_top" @click.stop="$router.push({path:'/videoPlay',query:{id:id}})">
         <div class="play"><span></span></div>
         <div class="data">
           <div class="d_l">
@@ -58,7 +58,7 @@
       </div>    
     </div>
     <!-- 评价 -->
-    <div class="pre" v-show="comment">
+    <div class="pre" v-show="comment.length">
       <div class="pr_m">
         <span>评论：{{comment.length || 0}}</span>
         <span class="pr_ms" @click="$router.push({path:'/discussAll',query:{id:id}})">更多&nbsp;&nbsp;<img src="../assets/img/more.png" alt=""></span>
@@ -363,7 +363,7 @@ export default {
       height l(190)
       backgroundIcon('list1.png')
       position relative
-      border-radius 3% 0 3% 0
+      // border-radius 3% 0 3% 0
       .play
         opacity: 0.3;
         backgroundIcon('play.png')
@@ -457,6 +457,7 @@ export default {
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
+          line-height l(16)
         div.t_star
           width 100%
           display flex

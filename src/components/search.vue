@@ -33,12 +33,12 @@
           <img src="../assets/img/jian_up.png" alt="" v-if="preiodUp">
           <img src="../assets/img/jian_down.png" alt="" v-else>
         </li>
-        <li  class="tab_li" :class="selectLi == 2 ?'active':''" @click.stop="placeShow = !placeShow;selectLi=2; preiodUp=true;priceUp=true;yearShow=false;makeShow=false" >产地
+        <li  class="tab_li" :class="selectLi == 2 ?'active':''" @click.stop="placeShow = !placeShow;selectLi=2; preiodUp=true;priceUp=true;yearShow=false;makeShow=false;moreShow=false" >产地
           <ul class="liMore" v-show="placeShow">
             <li v-for="year in filterArr.places" :key="year.id" @click.stop="placeShow=false;filter('tea_place_id',year.id,year.name)">{{year.name}}</li>
           </ul>
         </li>
-        <li  class="tab_li" :class="selectLi == 3 ?'active':''" @click.stop="makeShow = !makeShow;selectLi=3;preiodUp=true;priceUp=true;placeShow=false;yearShow=false">制茶方法
+        <li  class="tab_li" :class="selectLi == 3 ?'active':''" @click.stop="makeShow = !makeShow;selectLi=3;preiodUp=true;priceUp=true;placeShow=false;yearShow=false;moreShow=false">制茶方法
           <ul class="liMore" v-show="makeShow">
             <li v-for="year in filterArr.makes" :key="year.id"  @click.stop="makeShow=false;filter('tea_make',year.id,year.name)">{{year.name}}</li>
           </ul>
@@ -47,12 +47,12 @@
           <img src="../assets/img/jian_up.png" alt="" v-if="priceUp">
           <img src="../assets/img/jian_down.png" alt="" v-else>
         </li>
-        <li  class="tab_li" :class="selectLi == 5 ?'active':''" @click.stop="yearShow = !yearShow;selectLi=5;preiodUp=true;priceUp=true;placeShow=false;makeShow=false">年份
+        <li  class="tab_li" :class="selectLi == 5 ?'active':''" @click.stop="yearShow = !yearShow;selectLi=5;preiodUp=true;priceUp=true;placeShow=false;makeShow=false;moreShow=false">年份
           <ul class="liMore" v-show="yearShow">
-            <li v-for="year in filterArr.years" :key="year.id"  @click.stop="yearShow=false;filter('tea_year',year.id,year.name)">{{year.year}}>{{year.year}}</li>
+            <li v-for="year in filterArr.years" :key="year.id"  @click.stop="yearShow=false;filter('tea_year',year.id,year.name)">{{year.year}}</li>
           </ul>
         </li>
-        <li class="tab_li" @click.stop="moreShow = !moreShow">
+        <li class="tab_li" @click.stop="moreShow = !moreShow;placeShow=false;yearShow=false;makeShow=false">
           <img src="../assets/img/tab5.png" alt="" class="more">
           <ul class="more" v-if="moreShow">
             <li v-for="item in threeArr" :key="item.id" @click="searchResultList = [];filter(item.eng,'','asc')">{{item.name}}</li>
@@ -573,7 +573,7 @@ export default {
             line-height l(30)
             margin-bottom l(10)
             fz(14)
-            color: #333333;
+            color: #83271F;
             letter-spacing: 0.2px;
             margin-right l(10) 
           li:nth-of-type(4n)
@@ -634,6 +634,8 @@ export default {
           padding-top l(3)
           background rgba(0,0,0,0.5)
           border-radius 3px
+          li
+            line-height l(26)
         img 
           display block
           width l(13)

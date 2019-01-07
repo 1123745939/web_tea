@@ -1,6 +1,6 @@
 <template>
   <div class="con">
-    <div class="content" v-if="list.length>0">
+    <div class="content" v-if="list.length">
       <ul class="h_list">
         <scroll ref="scroll"
             :data="list"
@@ -17,7 +17,7 @@
                 </div>
                 <div slot="content" class="demo-content vux-1px-t"> -->
                   <li class="h_li" v-for="i in list" :key="i.id" @click="$router.push({path:'/goodDetail',query:{id:i.id}})">
-                    <div class="left">
+                    <div class="left" :style="{background:'url('+i.tea_img_link+')'}">
                       <img src="../assets/img/play.png" alt="">
                       <span class="time">{{i.tea_date}} {{i.tea_period}}</span>
                       <span class="p_n">{{i.tea_play_count}}次播放</span>
@@ -48,10 +48,6 @@
                 <!-- </div>
               </swipeout-item>
             </swipeout> -->
-           
-		    <div class="order-list" v-if="list.length == 0 && !loading">
-		    	<load-more :show-loading="false" tip="暂无数据" background-color="#f0f7f5"></load-more>
-		    </div>
       </scroll>
     </ul>
       
@@ -86,7 +82,6 @@ export default {
       loading :true,
       id:'',
       tea_type_id:'',
-      is_ref:false,
 
       
       pullUpLoadThreshold: 0,
@@ -134,8 +129,11 @@ export default {
       }
       teaLike(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          if(this.is_ref){
-            this.list = []
+          if(page==1){
+            this.list = res.data.data
+            console.log(this.list)
+            this.page=1
+            return
           }
           this.list = this.list.concat(res.data.data)
           this.is_ref = false
@@ -151,8 +149,6 @@ export default {
     },
     //下拉刷新
     onPullingDown() {
-      // 模拟更新数据
-      this.is_ref = true
       this.init(1)
      },
      //上拉加载
@@ -210,6 +206,7 @@ export default {
     background #F7F7F7
     overflow-y scroll
     box-shadow: 0 0 5px 0 #E8E8E8;
+    position relative
     ul.h_list,.demo-content
       
       .h_li

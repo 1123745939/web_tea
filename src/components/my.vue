@@ -44,7 +44,7 @@
             <p>{{item.status_text}}</p>
           </div>
           <div class="li_m" >
-            <div class="t_img">
+            <div class="t_img"  :style="{background:'url('+item.tea_img_link+')'}">
               <img src="../assets/img/play.png" alt="">
             </div>
             <div class="t_info">
@@ -69,30 +69,17 @@
         <img src="../assets/img/more2.png" alt="" >
       </div>
        <ul class="o_l">
-        <li class="li_f">
-          <div class="li_m"  @click="$router.push('/orderDetail')">
-            <div class="t_img">
+        <li class="li_f" v-for="item in hobbies" :key="item.id">
+          <div class="li_m">
+            <div class="t_img" :style="{background:'url('+item.tea_img_link+')'}">
               <img src="../assets/img/play.png" alt="">
             </div>
             <div class="t_info">
-              <p>安溪铁观音</p>
-              <span class="t_f">3个共同茶朋友</span>
+              <p>{{item.tea_title}}</p>
+              <span class="t_f">{{item.friend_count}}个共同茶朋友</span>
             </div>
-            <div class="red">我要买</div>
+            <div class="red" @click="$router.push({path:'/goodDetail',query:{id:item.tea_id}})">我要买</div>
           </div>            
-        </li>
-        <li class="li_f">
-          <div class="li_m"  @click="$router.push('/orderDetail')">
-            <div class="t_img">
-              <img src="../assets/img/play.png" alt="">
-            </div>
-            <div class="t_info">
-              <p>安溪铁观音</p>
-              <span class="t_f">3个共同茶朋友</span>
-            </div>
-            <div class="red">我要买</div>
-          </div>
-            
         </li>
       </ul>
       <!-- <img src="../assets/img/hobbym.png" alt="" class="hobbym"> -->
@@ -129,7 +116,8 @@ export default {
       comments:[],
       count:{},
       notifies:[],
-      orders:[]
+      orders:[],
+      hobbies:[]
     }
   },
   created(){
@@ -146,6 +134,7 @@ export default {
           this.count = res.data.data.count
           this.notifies = res.data.data.notifies
           this.orders = res.data.data.orders
+          this.hobbies = res.data.data.hobbies
 
           console.log(res,'res')  
         }else{
@@ -181,7 +170,7 @@ export default {
     height l(230)
     backgroundIcon ('mybg.png')
     position relative
-    margin-bottom l(80)
+    margin-bottom l(66)
     .car
       width l(21)
       height l(21)
@@ -192,9 +181,9 @@ export default {
       z-index 3
     .tab
       width l(343)
-      height l(187)
+      height l(158)
       position absolute
-      top 50%
+      top 56%
       left 4.3%
       background: #FFFFFF;
       box-shadow: 0 0 2px 0 #F2F2F2;
@@ -203,7 +192,7 @@ export default {
       .tab_top
         width 100%
         position absolute
-        top -20%
+        top -30%
         display flex
         flex-direction column
         justify-content center

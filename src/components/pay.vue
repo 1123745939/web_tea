@@ -126,6 +126,7 @@ export default {
       var type = ''
       if(this.$route.query.type){
         if(this.$route.query.ids){
+          console.log('ids')
           var ids = this.$route.query.ids
           arr = this.$route.query.ids.split(',')
           var type = this.$route.query.type
@@ -133,6 +134,8 @@ export default {
           sessionStorage.ids = JSON.stringify(arr)
           sessionStorage.type = type
         }else if(this.$route.query.id){
+          console.log('id')
+
           id =  this.$route.query.id
           type = this.$route.query.type
           this.type = type
@@ -439,7 +442,7 @@ export default {
     background #fff
     height l(64)
     div
-      border: 2px solid #E8E8E8;
+      border: 1px solid #E8E8E8;
       border-left 0
       border-right 0
       height 100%
@@ -471,7 +474,7 @@ export default {
       disFlex()
       width 100%
       height 100%
-      border-bottom 2px solid #E8E8E8
+      border-bottom 1px solid #E8E8E8
       .wx2
         width 55%
         disFlex ()

@@ -2,24 +2,25 @@
   <div class="con">
     <div class="table">
       <div class="input">
-        <img src="../assets/img/tel.png" alt="">
+        <img src="../assets/img/tel.png" alt="" class="img1">
         <x-input placeholder="请输入手机号" :show-clear="true"  v-model="tel"></x-input>
       </div>
       <div class="input">
-        <img src="../assets/img/yanzhengma@1x.png" alt="">
+        <img src="../assets/img/yanzhengma@1x.png" alt="" class="img2">
         <input type="text" placeholder="请输入验证码" v-model="code">
         <p @click="getCode">{{cored}}</p>
       </div>
       <div class="input">
-        <img src="../assets/img/shezhi@1x.png" alt="">
+        <img src="../assets/img/shezhi@1x.png" alt="" class="img3">
         <input type="password" placeholder="请设置6-20位密码" v-model="pass1">
       </div>
       <div class="input">
-        <img src="../assets/img/mima@1x.png" alt="">
+        <img src="../assets/img/mima@1x.png" alt="" class="img4">
         <input type="password"  placeholder="确认密码"  v-model="pass2">
       </div>
     </div>
     <div class="sub" @click="checkCode">提交</div>
+    <a href="tel:18560039957" class="tel">如有问题，请拨打客服电话18560039957</a>
   </div>
 </template>
 
@@ -176,14 +177,18 @@ export default {
       justify-content flex-start
       align-items center
       border-bottom 1px solid #E8E8E8
+      img.img1
+        width l(16)
+      img.img2
+        width l(20)
       img 
         display block
-        width l(16)
-        height l(18)
+        width l(20)
+        height l(20)
         margin-right l(10)
       input 
         display block
-        width 60%
+        width 59%
         height 100%
         line-height l(60)
         font-size: 16px;
@@ -219,10 +224,19 @@ export default {
     height l(44)
     background: #83271F;
     border-radius: 100px;
-    font-size: 18px;
+    font-size: l(18);
     color: #FFFFFF;
     letter-spacing: 1.12px;
     line-height l(44)
     margin-left 28.8%
     margin-top l(100)
+  .tel
+    display block
+    color #83271F
+    font-size: l(12);
+    letter-spacing: 1.12px;
+    line-height l(44)
+    margin-left 5%
+    margin-top l(200)
+    text-align left 
 </style>

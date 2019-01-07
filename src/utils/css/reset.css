@@ -127,7 +127,7 @@ datepicker::-webkit-input-placeholder {
 /* 添加地址页面左边的label */
 .address .weui-label{
   font-size: 16px;
-  font-weight: bold;
+  /* font-weight: bold; */
 }
 .address .vux-popup-picker-select{
   display: flex;

@@ -1,6 +1,7 @@
 <template>
   <div class="con">
-    <scroll ref="scroll"
+     <div class="content" v-if="newsList.length>0">
+      <scroll ref="scroll"
         :data="newsList"
         :pullDownRefresh="pullDownRefreshObj"
         :pullUpLoad="pullUpLoadObj"
@@ -35,11 +36,12 @@
           </swipeout-item>
         </swipeout>
            
-		    <div class="order-list" v-if="newsList.length == 0 && !loading">
+		    <!-- <div class="order-list" v-if="newsList.length == 0 && !loading">
 		    	<load-more :show-loading="false" tip="暂无数据" background-color="#f0f7f5"></load-more>
-		    </div>
+		    </div> -->
 
     </scroll>
+
     <div class="del" @click="loginMaskShow = true" v-show="len">
       <img src="../assets/img/quanbushanchu@2x.png" alt="">
     </div>
@@ -48,6 +50,13 @@
       <confirm v-model="loginMaskShow"  @on-confirm="delAll">
         <p style="text-align:center;">确定要全部删除吗</p>
       </confirm>
+    </div>
+  </div>
+    <div class="noList" v-else>
+      <div class="box">
+        <img src="../assets/img/symbols-order.png" alt="">
+        <span>暂无数据</span>
+      </div>
     </div>
   </div>
 </template>
@@ -302,5 +311,39 @@ export default {
             bottom 0
             right 0
             margin auto
+  .noList
+    width l(175)
+    height l(200)
+    position absolute
+    top 0
+    bottom 0
+    left 0
+    right 0
+    margin auto
+    div
+      width 100%
+      height 100%
+      display flex
+      flex-direction column
+      justify-content space-between
+      align-items center
+      img 
+        display block
+        width l(176)
+        height l(147)
+      span 
+        font-family: PingFangSC-Regular;
+        font-size: 14px;
+        color: #BABABA;
+        letter-spacing: 1px;
+      p
+        width l(160)
+        height l(44)
+        background: #83271F;
+        border-radius: 100px;
+        font-size: 18px;
+        color: #FFFFFF;
+        letter-spacing: 1.12px;
+        line-height l(44)
 
 </style>
