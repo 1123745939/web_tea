@@ -21,7 +21,7 @@
           @pullingUp="onPullingUp">
 
           <ul class="pr_list">
-            <li class="pr_li" v-for="item in result" :key="item.id">
+            <li class="pr_li" v-for="(item,index) in result" :key="item.id">
               <div class="li_t">
                 <img :src="item.user.img_link" alt="">&nbsp;
                 {{item.user.username}}
@@ -39,14 +39,14 @@
               </div>
               <div class="li_bt">
                 <span>{{item.created_at}}</span>
-                <span><img src="../assets/img/zanb.png" alt="" v-if="item.is_thumb==0">
+                <span @click="zan(item.id,index)"><img src="../assets/img/zanb.png" alt="" v-if="item.is_thumb==0">
                 <img src="../assets/img/zan1_active.png" alt="" v-else>
                 &nbsp;&nbsp;{{item.thumb_count}}</span>
               </div>
               <!-- 追评 -->
               <div class="zhui" v-show="item.append">
                 <div class="li_t zhui">用户追评</div>
-                <li class="pr_li" style="padding-top:0" v-for="i in item.append" :key="i.id">             
+                <li class="pr_li" style="padding-top:0" v-for="(i,index1) in item.append" :key="i.id">             
                   <div class="li_t">
                     <img :src="i.user.img_link" alt="">&nbsp;
                     {{i.user.username}}
@@ -64,7 +64,10 @@
                   </div>
                   <div class="li_bt">
                     <span>{{i.created_at}}</span>
-                    <span><img src="../assets/img/zanb.png" alt="">&nbsp;&nbsp;{{i.thumb_count}}</span>
+                    <span @click="zan1(i.id,index,index1)">
+                      <img src="../assets/img/zanb.png" alt="" v-if="i.is_thumb==1">
+                     <img src="../assets/img/zan1_active.png" alt="" v-else>
+                    &nbsp;&nbsp;{{i.thumb_count}}</span>
                   </div>
                 </li>
               </div>
@@ -88,7 +91,7 @@
 
 <script>
 import Scroll from './scroll/scroll'
-import {commentAll} from '../api/api.js'
+import {commentAll , commentThumb ,commentReplyThumb } from '../api/api.js'
 export default {
   components: {
     Scroll
@@ -146,7 +149,7 @@ export default {
         key:key,
         first:first,
         page:page,
-        rows:2
+        rows:10
       }
       commentAll(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
@@ -181,6 +184,38 @@ export default {
       this.first = first
       this.result = []
       this.init(this.key,this.first,1)
+    },
+    //点赞某一条评论
+    zan(id,index){
+      const options = {
+        token :this.token,
+        id:id,
+        tea_id:this.is,
+      }
+      commentThumb(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          //  this.result[index].thumb_count+=1
+          // this.result[index].is_thumb=1
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //点赞回复
+    zan1(id,index,index1){
+      const options = {
+        id:id,
+        tea_id:this.id,
+        token :this.token
+      }
+      commentReplyThumb(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          //  this.result[index].append[index1].is_thumb=1
+          //  this.result[index].append[index1].thumb_count+=1
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
     },
     onPullingDown() {
       // 模拟更新数据
@@ -239,6 +274,7 @@ export default {
 .con
   background #F7F7F7
   box-shadow: 0 0 5px 0 #F3F3F3;
+  height 100vh
   // 评论列表
   .pre
     background #F7F7F7
@@ -272,7 +308,7 @@ export default {
         li.pr_li:last-of-type
           border-bottom 0
         li.pr_li
-          border-bottom 1px solid #cccccc
+          border-bottom 1px solid #E8E8E8
           padding l(20) 0 l(10)
           div.li_t.zhui
             font-size: 14px;
@@ -324,6 +360,7 @@ export default {
               video 
                 width l(85)
                 height l(65)
+                margin-top l(5)
           .li_bt
             padding l(10) 10%
             display flex

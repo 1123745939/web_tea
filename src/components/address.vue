@@ -135,9 +135,10 @@ export default {
 .con
   background #F7F7F7
   border-top 1px solid  #E8E8E8
-  padding  l(10) 0 l(20)
+  height 100vh
+  padding  l(10) 0 0
   .content
-    height l(636)
+    height 100%
     background #fff
     overflow-y scroll
     box-shadow: 0 0 5px 0 #E8E8E8;

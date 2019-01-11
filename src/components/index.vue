@@ -72,8 +72,9 @@
                 <div>￥<span class="p1">{{item.tea_price}}</span>.00 <span class="p2">/{{item.tea_format}}g</span></div>
               </div>
               
-              <img src="../assets/img/l1.png" alt="" v-if="item.tea_count/item.tea_total && item.isAdvance==1">
-              <img src="../assets/img/l2.png" alt="" v-else>
+              <img src="../assets/img/l1.png" alt="" v-if="item.tea_count/item.tea_total!=0 && item.isAdvance!=1">
+              <img src="../assets/img/l2.png" alt="" v-if="item.tea_count/item.tea_total==0">
+              <img src="../assets/img/l3.png" alt="" v-if="item.isAdvance==1">
             </div>
           </li>
         </ul>
@@ -88,7 +89,7 @@
       <div class="f_l"  @click="token == ''? loginMaskShow=true : $router.push('/my') ">
         <img src="../assets/img/photo-no.png" alt="" v-if="!img_link">
         <img :src="img_link" alt="" v-else>
-        {{this.username}} 
+        <!-- {{this.username}}  -->
       </div>
       <ul class="f_r">
         <li  @click="token == ''? loginMaskShow=true : $router.push('/infos') ">
@@ -170,6 +171,9 @@ export default {
     
   },
   created(){
+    if(this.$route.query.oid){
+      sessionStorage.oid = this.$route.query.oid
+    }
     document.title = '茶急送'
     this.init()
     if(!sessionStorage.tabIndex){
@@ -287,7 +291,7 @@ export default {
             })
           }
           this.topArr = res.data.data.advance.concat(res.data.data.top)
-            console.log(res.data,'getAlltop')
+            console.log(this.topArr,'预售+置顶')
           }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -299,21 +303,27 @@ export default {
         rows:10,
       }
       await this.topData()
-      getAll(options).then(res=>{      
-        if(res.data.code == 200 && !res.data.error_code){
-          if(this.page==1){
-            this.list = this.list.concat(res.data.data.tea)
-            this.list = this.topArr.concat(this.list)
-          }else{
-            this.list = this.list.concat(res.data.data.tea)
+      setTimeout(()=>{
+        getAll(options).then(res=>{      
+          if(res.data.code == 200 && !res.data.error_code){
+            if(this.page==1){
+              // this.list = this.list.concat(res.data.data.tea)
+              // this.list = this.topArr.concat(this.list)
+              console.log(this.topArr)
+              this.list = this.topArr.concat(res.data.data.tea)
+              console.log(this.list,'所有的1')
+            }else{
+              this.list = this.list.concat(res.data.data.tea)
+              console.log(this.list,'所有的不是1')
+            }
+            // console.log(this.list,'所有的')
+            }else{
+            this.$vux.toast.text(res.data.error_message||res.data.message)
           }
-          console.log(this.list)
-            console.log(res.data.data.tea,'allll')
-          }else{
-          this.$vux.toast.text(res.data.error_message||res.data.message)
-        }
+        
+        })
+      },300)
       
-      })
     },
     GOrecommand(key,order,is_order){
       this.tabIndex = 2
@@ -384,18 +394,24 @@ export default {
       }
       getAdvance(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          if(this.is_ref){
-            this.list = []
-          }
-          this.advanceCount = res.data.data.count
-          if(res.data.data.result.length){
+           if(page==1){
+            this.list = res.data.data.result
+            this.page=1       
+          }else{
             this.list = this.list.concat(res.data.data.result)
-            this.list.forEach(item=>{
+            console.log(this.list)
+          }
+          this.list.forEach(item=>{
               item.isAdvance = true
             })
-            console.log(this.list,222222)
-            this.is_ref = []
-          }        
+          this.advanceCount = res.data.data.count
+          // if(res.data.data.result.length){
+          //   this.list = this.list.concat(res.data.data.result)
+          //   this.list.forEach(item=>{
+          //     item.isAdvance = true
+          //   })
+            
+          // }        
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -422,7 +438,7 @@ export default {
       // 模拟更新数据is_ref
       this.is_ref = true
       if(this.tabIndex==1){
-        
+        return
       }else if(this.tabIndex == 2){
         this.GOrecommand('','',0)
       }else if(this.tabIndex == 3){
@@ -494,15 +510,17 @@ export default {
 @import '../utils/css/util.styl';
 .con
   background #F7F7F7
+  // height 100vh
+  // position relative
   .content
-    width l(375)
+    width 100%
     height l(230)
     backgroundIcon ('banner.png')
     position relative
     margin-bottom l(20)
     .search
-      width l(21)
-      height l(21)
+      width l(20)
+      height l(20)
       position absolute
       left 5.6%
       top 4.8%
@@ -582,7 +600,7 @@ export default {
     //height l(350)
     height 100vh
     ul.goodsList
-      width l(375)
+      width 100%
       background #F7F7F7
       margin-top l(20)
       li
@@ -734,16 +752,17 @@ export default {
             width l(95)
             height l(40)
   .no_use
-    height l(64)
+    height l(50)
   .footer
     position fixed
     bottom 0
     left 0
-    height l(64)
+    height l(55)
     display flex
     justify-content space-between
     width 100%
-    background #fff
+    background #f7f7f7
+    padding-top l(5)
     .f_l
       width 26.1%
       display flex
@@ -752,6 +771,7 @@ export default {
       align-items center
       fz(10)
       color: #666666;
+      background #ffffff
       img 
         display block
         width l(41)
@@ -760,7 +780,8 @@ export default {
     .f_r  
       display flex
       justify-content space-between
-      width 85.3%
+      width 73.7%
+      background #fff
       li  
         width 33%
         display flex
@@ -772,7 +793,7 @@ export default {
         letter-spacing: 1px;
         img
           width l(26)
-          height l(30)
+          height l(26)
           display block
 
 

@@ -184,6 +184,7 @@ export default {
   background #F7F7F7
   border-top 1px solid  #E8E8E8
   padding  l(10) 0 0
+  height 100vh
   .content
     height l(656)
     background #F7F7F7
@@ -341,7 +342,7 @@ export default {
       align-items center
       img 
         display block
-        width l(176)
+        width l(150)
         height l(147)
       span 
         font-family: PingFangSC-Regular;

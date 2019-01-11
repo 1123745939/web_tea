@@ -14,7 +14,7 @@
       </div>
     </div>
     <!-- 通知 -->
-    <div class="order">
+    <div class="order" v-show="notifies.length">
       <div class="o_h">
         <div class="oh_l">
           <img src="../assets/img/logo.png" alt="">动态
@@ -28,7 +28,7 @@
       </ul>
     </div>
     <!-- 爱好 -->
-    <div class="order hobby">
+    <div class="order hobby" v-show="hobbies.length">
       <div class="o_h">
         <div class="oh_l">
           <img src="../assets/img/hobby.png" alt="">爱好
@@ -52,7 +52,7 @@
       <img src="../assets/img/hobbym.png" alt="" class="hobbym">
     </div>
     <!-- 热评 -->
-    <div class="order hot">
+    <div class="order hot" v-show="comments.length">
       <div class="o_h">
         <div class="oh_l">
           <img src="../assets/img/hot.png" alt="">热评
@@ -123,7 +123,7 @@ export default {
   flex-direction column
   justify-content flex-start
   align-items center
-  padding-bottom l(20)
+  // padding-bottom l(20)
   .content
     width l(375)
     height l(230)

@@ -8,7 +8,7 @@
           <input type="tel" placeholder="请输入手机号" v-model="tel">
         </div>
          <div class="tel">
-          <img src="../assets/img/genghuanmima@1x.png" alt="">
+          <img src="../assets/img/suo.png" alt="">
           <input type="password" placeholder="请输入密码" v-model="pass">
         </div>
         <p @click="$router.push('/forgetPass')">忘记密码？</p>
@@ -42,10 +42,19 @@ export default {
         this.$vux.toast.text('请输入正确手机号!', 'middle')
         return
       }
-      const options = {
-        mobile : this.tel,
-        password : md5(this.pass)
-      }
+      var options = {}
+      if(sessionStorage.iod){
+          options = {
+          mobile : this.tel,
+          password : md5(this.pass),
+          openid:sessionStorage.iod
+        }
+      }else{
+        options = {
+          mobile : this.tel,
+          password : md5(this.pass)
+        }
+      }   
       Login(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           sessionStorage.token = res.data.data.access_token
@@ -72,8 +81,9 @@ export default {
 <style lang="stylus" scoped>
 @import '../utils/css/util.styl';
 .con
-  height l(667)
+  height 100vh
   backgroundIcon ('loginbg.png')
+  background-size 100% 100%
   .content
     width 100%
     height 100%
@@ -102,7 +112,7 @@ export default {
         padding l(50) 0 l(30)
         img 
           display block
-          width l(16)
+          width l(18)
           height l(18)
           margin-right l(15)
         input 
@@ -112,7 +122,7 @@ export default {
           display block
           height l(30)
           width 90%
-          line-height l(40)
+          line-height l(30)
           fz(16)
           letter-spacing: 0.2px;
           color rgba(255,255,255,0.70)
@@ -121,7 +131,7 @@ export default {
           fz(16)
           color: rgba(255,255,255,0.70);
           letter-spacing: 0.2px;
-          line-height l(22)
+          line-height l(30)
       p
         width 100%
         font-size: 12px;

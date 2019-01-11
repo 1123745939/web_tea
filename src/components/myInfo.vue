@@ -103,12 +103,14 @@ export default {
           })
           obj[item.values[0].question_nid] = selArr.join(',')
         }else{
-          obj[item.values[0].question_nid] = item.values[0].value
+          obj[item.values[0].question_nid] = item.value
         }
         
         arr.push(obj)
       })
       console.log(arr)
+      console.log(this.questionList)
+   
       //接下来 调接口 保存
       const options = {
         token :this.token,

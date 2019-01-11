@@ -3,48 +3,47 @@
     <!-- 头部 -->
     <div class="content">
       <ul>
-        <li>
+        <li v-for="item in list" :key="item.friend_id" @click="$router.push({path:'/teaFriend',query:{id:item.user.id}})">
           <div class="top">
             <div class="left">
-              <img src="../assets/img/list1.png" alt="">flora88
+              <img :src="item.user.img_link" alt="">{{item.user.username}}
             </div>
             <div class="right"></div>
           </div>
-          <div class="bottom">
-            <img src="../assets/img/logo.png" alt="">动态
-            <span>刚买过安溪铁观音这款茶</span>
+          <div class="bottom" v-if="item.notifies.length">
+            <img src="../assets/img/logo.png" alt="">{{item.notifies[0].target_type}}
+            <span>{{item.notifies[0].notify_content}}</span>
           </div>
-        </li>
-        <li>
-          <div class="top">
-            <div class="left">
-              <img src="../assets/img/list1.png" alt="">flora88
-            </div>
-            <div class="right"></div>
-          </div>
-          <div class="bottom">
-            <img src="../assets/img/logo.png" alt="">动态
-            <span>刚买过安溪铁观音这款茶</span>
-          </div>
-        </li>            
+        </li>         
       </ul>
     </div>
   </div>
 </template>
 
 <script>
-import {Login} from '../api/api.js'
+import {friendsList} from '../api/api.js'
 export default {
   data () {
     return {
-      msg: ''
+      token:sessionStorage.token || '',
+      list:[]
     }
   },
   created(){
     document.title = '茶友'
+    this.init()
   },
   methods:{
-    
+    init(){
+      friendsList({token:this.token}).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.list = res.data.data
+          console.log(res)
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    }
   }
 }
 </script>

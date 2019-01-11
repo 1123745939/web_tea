@@ -556,8 +556,8 @@ export default {
           padding-bottom l(10)
           img 
             display block
-            width l(18)
-            height l(20)
+            width l(20)
+            height l(16)
             margin-right l(8)
         .his_word
           width 100%
@@ -822,7 +822,7 @@ export default {
       align-items center
       img 
         display block
-        width l(176)
+        width l(150)
         height l(147)
       span 
         font-family: PingFangSC-Regular;

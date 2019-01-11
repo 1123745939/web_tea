@@ -44,7 +44,8 @@
       <img src="../assets/img/c_active.png" alt="" v-else  @click="selectAllAll">
       <span>全选</span>
       <div>
-        总计:<p>￥<span>{{totalP}}</span>.00</p>
+        总计:<p>￥<span>{{totalP}}</span></p>
+        <!-- .00 -->
       </div>
       <p class="goPay" @click="goPay">去结算</p>
     </div>
@@ -115,11 +116,7 @@ export default {
       delShop(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.$vux.toast.text('删除成功')
-          this.carList.forEach((item,index)=>{
-            if(item.id==this.id){
-              this.carList.splice(index,1)
-            }
-          })
+          this.init()
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -138,6 +135,7 @@ export default {
       this.carList.forEach(item=>{
         if(item.active == true){
           this.totalP = Number(this.totalP) + Number(item.tea_count*item.tea_price)
+          this.totalP = this.totalP.toFixed(2)
         }      
       })
       var aa = this.carList.every(item=>{
@@ -159,7 +157,8 @@ export default {
         this.carList.forEach(item=>{
           if(item.tea_left_count!=0){
             item.active = true
-            this.totalP +=item.tea_count*item.tea_price
+            this.totalP +=Number(item.tea_count*item.tea_price)
+            this.totalP = this.totalP.toFixed(2)
           }
           
         })
@@ -173,7 +172,8 @@ export default {
       }
       this.shopCount(id,this.carList[index].tea_count)
       if(!this.carList[index].active){return}
-      this.totalP = this.totalP - this.carList[index].tea_price
+      this.totalP = Number(this.totalP) - Number(this.carList[index].tea_price)
+      this.totalP = this.totalP.toFixed(2)
       this.$forceUpdate()
     },
     //加
@@ -181,7 +181,8 @@ export default {
       this.carList[index].tea_count ++ 
       this.shopCount(id,this.carList[index].tea_count)
       if(!this.carList[index].active){return}
-      this.totalP = this.totalP + this.carList[index].tea_price
+      this.totalP = Number(this.totalP) + Number(this.carList[index].tea_price)
+      this.totalP = this.totalP.toFixed(2)
       this.$forceUpdate()
     },
     //掉接口，保存每次操作之后的购物车数量
@@ -253,19 +254,25 @@ export default {
   padding-top l(10)
   height l(666)
   overflow-y scroll
-  .demo-content.vux-1px-t
-    // padding 0
+  .vux-swipeout.vux-1px-tb
+    div:last-of-child
+      .vux-swipeout-content
+        div.demo-content.vux-1px-t
+          li
+            border-bottom none 
   ul,.demo-content
     padding 0 4.3%
     background #fff
-    li.last
-      border-bottom 0
+  .demo-content
+    padding 0
+    li:last-of-child
+      border-bottom none 
     li.active
       backgroundIcon ('yugou@2x.png')
     li
       height l(126) 
       disFlex()
-      padding 6% 0
+      padding 6% 4.3%
       border-bottom 1px solid #E8E8E8
       .car_s
         display block
@@ -322,6 +329,7 @@ export default {
           font-size: 10px;
           color: #E63443;
           letter-spacing: 0.3px;
+          margin-top l(5)
   .yun
     margin-top l(10)
     height l(64)
@@ -386,17 +394,19 @@ export default {
     height l(44)
     margin-top l(20)
 .noList
-  width l(175)
-  height l(280)
-  position absolute
-  top 0
-  bottom 0
-  left 0
-  right 0
-  margin auto
+  width 100%
+  height 100vh
+  position relative
+  background #f7f7f7
   div
-    width 100%
-    height 100%
+    width l(175)
+    height l(280)
+    position absolute
+    top 0
+    bottom 0
+    left 0
+    right 0
+    margin auto
     display flex
     flex-direction column
     justify-content space-between

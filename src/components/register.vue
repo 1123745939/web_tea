@@ -2,21 +2,21 @@
   <div class="con">
     <div class="table">
       <div class="input">
-        <img src="../assets/img/tel.png" alt="">
+        <img src="../assets/img/tel.png" alt="" class="img1">
         <x-input placeholder="请输入手机号" :show-clear="true"  v-model="tel"></x-input>
       </div>
       <div class="input">
-        <img src="../assets/img/yanzhengma@1x.png" alt="">
+        <img src="../assets/img/yanzhengma@1x.png" alt="" class="img2">
         <input type="text" placeholder="请输入验证码" v-model="code">
         <p @click="getCode">{{cored}}</p>
       </div>
       <div class="input">
         <img src="../assets/img/shezhi@1x.png" alt="">
-        <input type="password" placeholder="请设置6-20位密码" v-model="pass1">
+        <input type="password" placeholder="请设置6-20位密码" v-model="pass1" class="input1">
       </div>
       <div class="input">
-        <img src="../assets/img/mima@1x.png" alt="">
-        <input type="password"  placeholder="确认密码"  v-model="pass2">
+        <img src="../assets/img/genghuanmima@1x.png" alt="">
+        <input type="password"  placeholder="确认密码"  v-model="pass2" class="input1">
       </div>
     </div>
     <div class="agree" @click="ifAgree = !ifAgree">
@@ -172,6 +172,15 @@ export default {
     height l(243)
     background: #FFFFFF;
     box-shadow: 0 0 5px 0 #E8E8E8;
+    img.img1
+      width l(16)
+    img.img2
+      width l(20)
+    img 
+      display block
+      width l(20)
+      height l(20)
+      margin-right l(10)
     input::placeholder
       fz(16)
     .input:last-of-type
@@ -180,14 +189,11 @@ export default {
       width 100%
       height l(60)
       display flex
-      justify-content flex-start
+      justify-content space-between
       align-items center
       border-bottom 1px solid #E8E8E8
-      img 
-        display block
-        width l(16)
-        height l(18)
-        margin-right l(10)
+      .input1
+        width 90%
       input 
         display block
         width 60%
@@ -198,12 +204,13 @@ export default {
         letter-spacing: 0.34px;
         line-height: 20px;
       p 
+        width l(100)
         background: #E8E8E8;
         border-radius: 6px;
         font-size: 12px;
         color: #95514C;
         letter-spacing: 0.2px;
-        padding 0 l(10)
+        padding 0 l(5)
         height l(32)
         line-height l(32)
   .agree

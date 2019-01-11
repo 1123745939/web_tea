@@ -12,11 +12,11 @@
       </div>
       <div class="input">
         <img src="../assets/img/shezhi@1x.png" alt="" class="img3">
-        <input type="password" placeholder="请设置6-20位密码" v-model="pass1">
+        <input type="password" placeholder="请设置6-20位密码" v-model="pass1" class="input1">
       </div>
       <div class="input">
-        <img src="../assets/img/mima@1x.png" alt="" class="img4">
-        <input type="password"  placeholder="确认密码"  v-model="pass2">
+        <img src="../assets/img/genghuanmima@1x.png" alt="" class="img4">
+        <input type="password"  placeholder="确认密码"  v-model="pass2" class="input1">
       </div>
     </div>
     <div class="sub" @click="checkCode">提交</div>
@@ -157,7 +157,7 @@ export default {
 <style lang="stylus" scoped>
 @import '../utils/css/util.styl';
 .con
-  height l(667)
+  height 100vh
   background  #F7F7F7;
   border-top 1px solid #E8E8E8
   padding-top l(10)
@@ -174,7 +174,7 @@ export default {
       width 100%
       height l(60)
       display flex
-      justify-content flex-start
+      justify-content space-between
       align-items center
       border-bottom 1px solid #E8E8E8
       img.img1
@@ -186,9 +186,11 @@ export default {
         width l(20)
         height l(20)
         margin-right l(10)
+      .input1
+        width 90%
       input 
         display block
-        width 59%
+        width 60%
         height 100%
         line-height l(60)
         font-size: 16px;
@@ -196,14 +198,16 @@ export default {
         letter-spacing: 0.34px;
         line-height: 20px;
       p 
+        width l(100)
         background: #E8E8E8;
         border-radius: 6px;
         font-size: 12px;
         color: #95514C;
         letter-spacing: 0.2px;
-        padding 0 l(10)
+        padding 0 l(5)
         height l(32)
         line-height l(32)
+       
   .agree
     width 100%
     display flex
@@ -237,6 +241,6 @@ export default {
     letter-spacing: 1.12px;
     line-height l(44)
     margin-left 5%
-    margin-top l(200)
+    margin-top l(100)
     text-align left 
 </style>

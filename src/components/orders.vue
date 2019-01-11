@@ -452,7 +452,7 @@ export default {
       align-items center
       img 
         display block
-        width l(176)
+        width l(150)
         height l(147)
       span 
         font-family: PingFangSC-Regular;

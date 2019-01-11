@@ -301,6 +301,7 @@ export default {
           width l(47)
           height l(47)
           margin-right l(5)
+          border-radius 50%
       span 
         fz(12)
         color: #999999;

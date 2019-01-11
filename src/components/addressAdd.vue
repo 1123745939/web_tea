@@ -171,8 +171,10 @@ export default {
   background #F7F7F7
   border-top 1px solid  #E8E8E8
   padding-top l(10)
+  height 100vh
+  overflow hidden
   .content
-    height l(650)
+    height 100vh
     background #fff
     padding 0 4.3%
     box-shadow: 0 0 5px 0 #E8E8E8;

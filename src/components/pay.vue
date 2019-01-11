@@ -52,7 +52,7 @@
     <!-- 合计 -->
     <div class="total">
       <span>共{{totalNum}}件商品</span>
-      <div>合计：￥<span>{{totalP}}</span>.00</div>
+      <div>合计：￥<span>{{totalP}}</span></div>
     </div>
     <div class="blank"></div>
     <!-- 底部 -->
@@ -172,10 +172,17 @@ export default {
       orderSettle(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.arr = res.data.data.result
-          this.arr.forEach(item=>{
+          if(this.type=='buy'){
+            this.totalNum =1
+            this.totalP = this.arr[0].tea_price
+          }else{
+            this.arr.forEach(item=>{
             this.totalNum += item.tea_count
             this.totalP += item.tea_count*item.tea_price
           })
+          }
+         
+          
           this.address = res.data.data.address
           if(sessionStorage.is_from_addlist){
             this.txt = sessionStorage.input
@@ -236,7 +243,7 @@ export default {
       }
       orderBuyCheck(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          return
+         
           this.orderOrderBuy()
         }else{
           // this.$vux.toast.text(res.data.error_message||res.data.message)
@@ -328,7 +335,7 @@ export default {
   background #F7F7F7
   border-top 1px solid  #E8E8E8
   padding-top l(10)
-  height l(666)
+  height 100vh
   overflow-y scroll
   .addNo
     display flex

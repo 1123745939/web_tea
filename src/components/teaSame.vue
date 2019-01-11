@@ -133,6 +133,12 @@ export default {
       }
       teaSame(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
+          if(page==1){
+            this.list = res.data.data
+            console.log(this.list)
+            this.page=1
+            return
+          }
           this.list = this.list.concat(res.data.data)
           console.log(this.list)
         }else{

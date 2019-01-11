@@ -15,9 +15,9 @@
               <swipeout-button type="warn" @click.native="handle(item.id,index)">删除</swipeout-button>
             </div>
             <div slot="content" class="demo-content vux-1px-t">
-              <li @click="linker(item.target_type,item.notify_target_id,item.sender_id)">
-                <img src="../assets/img/logo2.png" alt="" class="logo" v-if="item.target_type !='friend'">
-                <img :src="item.user.img_link" alt="" class="logo" v-else>
+              <li @click="linker(item.target_type,item.notify_target_id,item.sender_id)">         
+                <img :src="item.user.img_link" alt="" class="logo" v-if="item.target_type =='friend'">
+                <img src="../assets/img/logo2.png" alt="" class="logo" v-else>
                 <div class="li_r">
                   <div class="li_mm">
                     <p  v-if="item.target_type == 'product '">通知</p>
@@ -54,7 +54,7 @@
   </div>
     <div class="noList" v-else>
       <div class="box">
-        <img src="../assets/img/symbols-order.png" alt="">
+        <img src="../assets/img/symbols-info.png" alt="">
         <span>暂无数据</span>
       </div>
     </div>
@@ -129,13 +129,14 @@ export default {
       }
       infos(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          if(this.is_pull){
-            this.newsList = []
-            this.pullUpLoadMoreTxt = '数据加载中'
+         if(page==1){
+            this.newsList = res.data.data.result
+            this.page=1
+            console.log(this.newsList)
+            return
           }
           this.newsList = this.newsList.concat(res.data.data.result)
           console.log(this.newsList)
-          this.is_pull = false
           this.len = res.data.data.count
           if(this.len == this.newsList.length){
             this.pullUpLoadMoreTxt = '没有更多数据了'
@@ -182,7 +183,6 @@ export default {
     },  
     //下拉刷新
     onPullingDown() {
-      this.is_pull =true
       this.page =1
       this.init(this.page)
     },
@@ -329,7 +329,7 @@ export default {
       align-items center
       img 
         display block
-        width l(176)
+        width l(150)
         height l(147)
       span 
         font-family: PingFangSC-Regular;

@@ -17,7 +17,9 @@
 
     <div class="d">
       <span class="d_t">{{detailObj.tea_date}} {{detailObj.tea_period}}</span>
-      <div class="li_top" @click.stop="$router.push({path:'/videoPlay',query:{id:id}})">
+      <!-- <div class="li_top" @click.stop="$router.push({path:'/videoPlay',query:{id:id}})"> -->   
+      <div class="li_top" @click.stop="playVideo">
+        <video :src="detailObj.tea_vidio_link" id="video" style="width:100%;height:190px;object-fit:fill"  :poster="detailObj.tea_img_link"  controls></video>
         <div class="play"><span></span></div>
         <div class="data">
           <div class="d_l">
@@ -28,7 +30,7 @@
             <li><img src="../assets/img/zan.png" alt="">{{detailObj.tea_thumb_count}}</li>
           </ul>
         </div>
-        <div class="swiper-container">
+        <!-- <div class="swiper-container">
             <div class="swiper-wrapper">
               <div class="swiper-slide">
                 <img src="../assets/img/photo.jpg" alt="">小灰灰11&nbsp;购买了这个茶叶
@@ -40,7 +42,13 @@
                 <img src="../assets/img/hot.png" alt="">超灰灰33&nbsp;购买了这个茶叶
               </div>
             </div>
-          </div>
+          </div> -->
+          <swiper :options="swiperOption" ref="mySwiper">
+            <!-- slides -->
+            <swiper-slide><img src="../assets/img/photo.jpg" alt="">小灰灰11&nbsp;购买了这个茶叶</swiper-slide>
+            <swiper-slide><img src="../assets/img/logo.png" alt="">大灰灰22&nbsp;购买了这个茶叶</swiper-slide>
+            <swiper-slide><img src="../assets/img/hot.png" alt="">超灰灰33&nbsp;购买了这个茶叶</swiper-slide>
+          </swiper>
       </div>
       <div class="li_mid">
         <div class="red"></div>
@@ -64,7 +72,7 @@
         <span class="pr_ms" @click="$router.push({path:'/discussAll',query:{id:id}})">更多&nbsp;&nbsp;<img src="../assets/img/more.png" alt=""></span>
       </div>
       <ul class="pr_list">
-        <li class="pr_li" v-for="i in comment" :key="i.id">
+        <li class="pr_li" v-for="(i,index) in comment" :key="i.id">
           <div class="li_t">
             <img :src="i.user.img_link" alt="">&nbsp;
             {{i.user.username}}
@@ -82,10 +90,39 @@
           </div>
           <div class="li_bt">
             <span>{{i.created_at}}</span>
-            <span><img src="../assets/img/zanb.png" alt="" v-if="i.is_thumb==0">
+            <span @click="zan(i.id,i.is_thumb,index)"><img src="../assets/img/zanb.png" alt="" v-if="i.is_thumb==0">
             <img src="../assets/img/zan1_active.png" alt="" v-else>
             &nbsp;&nbsp;{{i.thumb_count}}</span>
           </div>
+          <!-- 追评 -->
+              <div class="zhui" v-show="i.append">
+                <div class="li_t zhui">用户追评</div>
+                <li class="pr_li" style="padding-top:0" v-for="item in i.append" :key="item.id">             
+                  <div class="li_t">
+                    <img :src="item.user.img_link" alt="">&nbsp;
+                    {{item.user.username}}
+                  </div>
+                  <p>{{item.content}}</p>
+                  <div class="imBox">
+                    <ul class="d_img" v-show="item.image">
+                      <li class="d_li" v-for="(img,index) in item.image" :key="index">
+                        <img :src="item.image_link" alt="">
+                      </li>
+                    </ul>
+                    <div class="vi" v-if="item.vidio!=null">
+                      <video :src="item.vidio.vidio_link"></video>
+                    </div>
+                  </div>
+                  <div class="li_bt">
+                    <span>{{item.created_at}}</span>
+                    <span>
+                      <img src="../assets/img/zanb.png" alt="" v-if="item.is_thumb==1">
+                      <img src="../assets/img/zan1_active.png" alt="" v-else>
+                       &nbsp;&nbsp;{{item.thumb_count}}
+                    </span>
+                  </div>
+                </li>
+              </div>
         </li>
       </ul>
     </div>
@@ -94,7 +131,7 @@
       <div class="ont_tt" @click="goSame">
         同一款茶<img src="../assets/img/more.png" alt="">                                                 
       </div>
-      <ul style="border-bottom:1px solid #ccc">
+      <ul style="border-bottom:1px solid #E8E8E8">
         <li v-for="item in sameList" :key="item.tea_title" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">
           <div :style="{background:'url('+item.tea_img_link+')'}">
             <img src="../assets/img/play.png" alt="">
@@ -150,17 +187,22 @@
 </template>
 
 <script>
+import 'swiper/dist/css/swiper.css'
+ 
+import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import { Confirm,Previewer,TransferDomDirective as TransferDom } from 'vux'
-import Swiper from 'swiper' 
+// import Swiper from 'swiper' 
 import 'swiper/dist/css/swiper.min.css'
-import {getGoodDetail,carList,addShop} from '../api/api.js'
+import { getGoodDetail , carList , addShop , commentThumb } from '../api/api.js'
 export default {
     directives: {
     TransferDom
   },
   components: {
     Confirm,
-    Previewer
+    Previewer,
+    swiper,
+    swiperSlide
   },
   data () {
     return {
@@ -190,6 +232,23 @@ export default {
           // http://javascript.info/tutorial/coordinates
         }
       },
+      //轮播
+      swiperOption:{
+        slidesPerView :'auto',
+        loop :true,
+        autoplay: {
+　　　　delay: 2000,
+      　　disableOnInteraction: false
+      　},
+        direction:'vertical',
+        grabCursor:true,
+        autoplayDisableOnInteraction:false,
+        mousewheelControl:true,
+        autoHeight:true,
+        speed:500,
+        observer:true,//修改swiper自己或子元素时，自动初始化swiper 
+　　    observeParents:true,//修改swiper的父元素时，自动初始化swiper 
+      }
 
     }
   },
@@ -197,23 +256,32 @@ export default {
     document.title = '详情'
   },
   mounted(){
-    var mySwiper = new Swiper('.swiper-container', {
-            slidesPerView :'auto',
-            loop :true,
-            autoplay:true,
-            direction:'vertical',
-            grabCursor:true,
-            autoplayDisableOnInteraction:false,
-            mousewheelControl:true,
-            autoHeight:true,
-            speed:500
-        })
     var id  = this.$route.query.id
     this.id = id
     this.init(id)
     this.$forceUpdate()
     this.getcarNum()
+    // this.$nextTick(()=>{
+    //   var mySwiper = new Swiper('.swiper-container', {
+    //     slidesPerView :'auto',
+    //     loop :true,
+    //     autoplay:true,
+    //     direction:'vertical',
+    //     grabCursor:true,
+    //     autoplayDisableOnInteraction:false,
+    //     mousewheelControl:true,
+    //     autoHeight:true,
+    //     speed:500,
+    //     // spaceBetween:30,
+    //   })
+    // })
+    this.swiper.slideTo(3, 1000, false)
   },
+  computed: {
+      swiper() {
+        return this.$refs.mySwiper.swiper
+      }
+    },
   methods:{
     init(id){
       getGoodDetail({id:id}).then(res=>{
@@ -265,6 +333,27 @@ export default {
         }
       })
     },
+    //点赞评论
+    zan(id,is_thumb,index){
+      if(is_thumb==1){
+        this.$vux.toast.text('已经点赞过了哦')
+        return
+      }else{
+        const options = {
+          token:this.token,
+          id:id,
+          tea_id :this.id
+        }
+        commentThumb(options).then(res=>{
+          if(res.data.code == 200 && !res.data.error_code){
+            this.comment[index].is_thumb=1
+            this.comment[index].thumb_count+=1
+          }else{
+            this.$vux.toast.text(res.data.error_message||res.data.message)
+          }
+        })
+      }
+    },
     show (index) {
       this.$refs.previewer.show(index)
     },
@@ -282,6 +371,15 @@ export default {
     //联系客服
     connectCustom(){
       window.location.href = `http://uat.api.chajisong.com/v1/custom?token=${this.token}`
+    },
+    playVideo(){
+     var  video1 = document.getElementById("video");
+     
+       if(video1.paused) { 
+            video.play()
+          }else{
+            video1.pause()
+          }  
     }
   },
   watch: {
@@ -361,7 +459,7 @@ export default {
     .li_top
       width 100%
       height l(190)
-      backgroundIcon('list1.png')
+      // backgroundIcon('list1.png')
       position relative
       // border-radius 3% 0 3% 0
       .play
@@ -482,6 +580,14 @@ export default {
               margin-right l(5)
               backgroundIcon ('tea.png')
         .t_re
+          display flex
+          justify-content flex-start
+          align-items center
+          img 
+            display block
+            width l(13)
+            height l(15)
+            margin-right l(5)
           span 
             fz(12)
             color: #666666;
@@ -508,12 +614,22 @@ export default {
         display flex
         justify-content space-between
         align-items center
+        img
+          display block
+          width l(18)
+          height l(12)
     ul.pr_list
       li.pr_li:last-of-type
         border-bottom 0
       li.pr_li
-        border-bottom 1px solid #cccccc
+        border-bottom l(1) solid #E8E8E8
         padding l(20) 0 l(10)
+        div.li_t.zhui
+          font-size: 14px;
+          color: #83271F;
+          letter-spacing: 0.3px;
+          padding l(10) 0
+          line-height l(26)
         div.li_t
           display flex
           justify-content flex-start
@@ -574,6 +690,8 @@ export default {
               display block
               width l(15)
               height l(15)
+        div.zhui
+            padding 0 l(30)
   // 同一款茶
   .one_t
     padding l(10) 4.3% 0
@@ -660,7 +778,7 @@ export default {
         top -1%
         right 27%
         background #E63443;
-        line-height l(14)
+        line-height l(15)
         color #ffffff
         fz(10)
       img 

@@ -118,16 +118,16 @@ export default {
       }
       thumbsList(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
+          if(page==1){
+            this.list = res.data.data.result
+            return
+          }
           this.list = this.list.concat(res.data.data.result)
           console.log(this.list)
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
       })
-    },
-    //取消收藏
-    handle(i){
-
     },
     //下拉刷新
     onPullingDown() {
@@ -185,6 +185,7 @@ export default {
   background #F7F7F7
   border-top 1px solid  #E8E8E8
   padding  l(10) 0 0
+  height 100vh
   .content
     height l(656)
     background #F7F7F7

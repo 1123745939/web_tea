@@ -56,7 +56,7 @@
       <!-- 更换密码 -->
       <div class="photo" @click="$router.push('/changePass')">
         <div class="left">
-          <img src="../assets/img/genghuanmima@1x.png" alt="">更换密码
+          <img src="../assets/img/suo1.png" alt="">更换密码
         </div>
         <div class="right">
           <img src="../assets/img/more1.png" alt="">
@@ -356,7 +356,7 @@ export default {
 <style lang="stylus" scoped>
 @import '../utils/css/util.styl';
 .con
-  height l(667)
+  height 100vh
   background  #F7F7F7;
   border-top 1px solid #E8E8E8
   padding-top l(10)
@@ -444,7 +444,7 @@ export default {
     letter-spacing: 1.12px;
     line-height l(44)
     margin-left 28.8%
-    margin-top l(80)
+    margin-top l(60)
     text-align center
 .province>div {
     height: 30px;
