@@ -185,8 +185,8 @@ export default {
           quality: 0.2
         }, function(base64Codes){
           console.log("压缩后：" + base64Codes.length / 1024 + " " + base64Codes);
-          this.img = dataURL
-          var imgs=dataURL.replace(/\+/g,'-');
+          that.img = base64Codes
+          var imgs=base64Codes.replace(/\+/g,'-');
               imgs=imgs.replace(/=/g,'')
               imgs=imgs.replace(/\//g,'_')
 

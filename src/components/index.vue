@@ -42,7 +42,7 @@
 
         <ul class="goodsList" id="lists">     
           <li v-for="(item,index) in list" :key="index" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">
-            <div class="li_top">
+            <div class="li_top" :style="{background:'(url' + item.tea_img_link + ')'}">
               <div class="play"><span></span></div>
               <div class="data">
                 <div class="d_l">
@@ -612,7 +612,7 @@ export default {
         .li_top
           width 100%
           height l(190)
-          backgroundIcon('list1.png')
+          // backgroundIcon('list1.png')
           position relative
           border-radius 3% 0 3% 0
           .play

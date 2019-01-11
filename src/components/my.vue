@@ -5,7 +5,8 @@
       <div class="car" @click="connectCustom"></div>
       <div class="tab">
         <div class="tab_top">
-          <img :src="infoObj.img_link" alt="" @click="$router.push('/personalInfo')">
+          <img :src="infoObj.img_link" alt="" @click="$router.push('/personalInfo')" v-if="infoObj.img_link!=''">
+          <img src="../assets/img/photo-no.png" alt="" @click="$router.push('/personalInfo')" v-else>
           <p>{{infoObj.username}}</p>
         </div>
         <ul class="leb">
@@ -61,7 +62,7 @@
       </ul>
     </div>
     <!-- 爱好 -->
-    <div class="order hobby">
+    <div class="order hobby" v-if="hobbies.length">
       <div class="o_h"  @click="$router.push('/hobby')">
         <div class="oh_l">
           <img src="../assets/img/hobby.png" alt="">爱好

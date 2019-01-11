@@ -90,7 +90,7 @@
           </div>
           <div class="li_bt">
             <span>{{i.created_at}}</span>
-            <span @click="zan(i.id,i.is_thumb,index)"><img src="../assets/img/zanb.png" alt="" v-if="i.is_thumb==0">
+            <span @click="zan(i.id,i.is_thumb,index)"><img src="../assets/img/zanbb.png" alt="" v-if="i.is_thumb==0">
             <img src="../assets/img/zan1_active.png" alt="" v-else>
             &nbsp;&nbsp;{{i.thumb_count}}</span>
           </div>
@@ -116,7 +116,7 @@
                   <div class="li_bt">
                     <span>{{item.created_at}}</span>
                     <span>
-                      <img src="../assets/img/zanb.png" alt="" v-if="item.is_thumb==1">
+                      <img src="../assets/img/zanbb.png" alt="" v-if="item.is_thumb==1">
                       <img src="../assets/img/zan1_active.png" alt="" v-else>
                        &nbsp;&nbsp;{{item.thumb_count}}
                     </span>
@@ -674,7 +674,7 @@ export default {
               width 100%
               height 100%
         .li_bt
-          padding l(10) 10%
+          padding l(10) 0 l(10) 10%
           display flex
           justify-content space-between
           align-items center

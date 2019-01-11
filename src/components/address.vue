@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import {getAddress,defaultAddress,deleteAddress} from '../api/api.js'
+import {getAddress,defaultAddress,deleteAddress, thumbsList} from '../api/api.js'
 export default {
   data () {
     return {
@@ -77,7 +77,6 @@ export default {
         console.log(res)
         if(res.data.code == 200 && !res.data.error_code){
           this.addressList = res.data.data.address
-          console.log(this.addressList)
         }else{
           this.$vux.toast.text(res.data.message, 'middle')
         }
@@ -235,7 +234,7 @@ export default {
       img 
         display block
         width l(170)
-        height l(150)
+        height l(170)
       span 
         font-family: PingFangSC-Regular;
         font-size: 14px;

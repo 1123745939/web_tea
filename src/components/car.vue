@@ -330,6 +330,9 @@ export default {
           color: #E63443;
           letter-spacing: 0.3px;
           margin-top l(5)
+  .vux-swipeout .vux-swipeout-item:last-child .vux-swipeout-content .demo-content li{
+    border none
+  }
   .yun
     margin-top l(10)
     height l(64)

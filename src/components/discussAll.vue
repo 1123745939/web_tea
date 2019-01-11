@@ -39,7 +39,7 @@
               </div>
               <div class="li_bt">
                 <span>{{item.created_at}}</span>
-                <span @click="zan(item.id,index)"><img src="../assets/img/zanb.png" alt="" v-if="item.is_thumb==0">
+                <span @click="zan(item.id,index)"><img src="../assets/img/zanbb.png" alt="" v-if="item.is_thumb==0">
                 <img src="../assets/img/zan1_active.png" alt="" v-else>
                 &nbsp;&nbsp;{{item.thumb_count}}</span>
               </div>
@@ -65,7 +65,7 @@
                   <div class="li_bt">
                     <span>{{i.created_at}}</span>
                     <span @click="zan1(i.id,index,index1)">
-                      <img src="../assets/img/zanb.png" alt="" v-if="i.is_thumb==1">
+                      <img src="../assets/img/zanbb.png" alt="" v-if="i.is_thumb==1">
                      <img src="../assets/img/zan1_active.png" alt="" v-else>
                     &nbsp;&nbsp;{{i.thumb_count}}</span>
                   </div>
