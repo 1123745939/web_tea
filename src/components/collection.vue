@@ -142,8 +142,9 @@ export default {
             this.page=1       
           }else{
             this.list = this.list.concat(res.data.data.result)
-            console.log(this.list)
+            
           }
+          console.log(this.list)
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -169,15 +170,16 @@ export default {
       // 模拟更新数据
       console.log('pulling down and load data')
       this.init(1)
+      this.$refs.scroll.forceUpdate()
      },
      //上拉加载
-    onPullingUp() {
+    async onPullingUp() {
       // 更新数据
       console.log('pulling up and load data')
-      this.page ++
-      // if(this.page*10>this.count){return}
-      this.init(this.page)
-
+      if(this.count>=this.page*10){
+        this.page ++
+        await this.init(this.page)
+      }
       this.$refs.scroll.forceUpdate()
     },
     rebuildScroll() {
@@ -224,10 +226,12 @@ export default {
   position relative
   height 100vh
   .content
-    height l(656)
+    height 100vh - l(10)
     background #F7F7F7
     overflow-y scroll
     box-shadow: 0 0 5px 0 #E8E8E8;
+    position relative
+    
     // position relative
     ul.h_list,.demo-content
       

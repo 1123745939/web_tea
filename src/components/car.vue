@@ -9,14 +9,14 @@
           <li :class="i.is_advance==1?'active':''">
             <img src="../assets/img/c_blank.png" alt="" class="car_s" v-if="i.active == false" @click="select(index,i.tea_left_count)"> 
             <img src="../assets/img/c_active.png" alt="" class="car_s" v-else  @click="select(index,i.tea_left_count)"> 
-            <img src="../assets/img/list1.png" alt="" class="car_img">
+            <img :src="i.tea_img_link" alt="" class="car_img">
             <div class="car_p">
               <div class="t_top">
                 <span>{{i.tea_title}}</span> <span class="ku" v-show="i.tea_left_count==0">库存不足</span>
               </div>
               <p class="t_d">{{i.tea_date}} {{i.tea_period}}</p>
               <div class="t_num">
-                <p>￥<span>{{i.tea_price}}</span>.00</p>
+                <p>￥<span>{{i.tea_price}}</span></p>
                 <div>
                   <p @click="reduce(i.id,index)"></p>{{i.tea_count}} <p  @click="add(i.id,index)"></p>
                 </div>
@@ -157,7 +157,7 @@ export default {
         this.carList.forEach(item=>{
           if(item.tea_left_count!=0){
             item.active = true
-            this.totalP +=Number(item.tea_count*item.tea_price)
+            this.totalP = Number(this.totalP) + Number(item.tea_count*item.tea_price)
             this.totalP = this.totalP.toFixed(2)
           }
           
@@ -300,6 +300,9 @@ export default {
             fz(16)
             color: #333333
             letter-spacing 0.3px
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
         p.t_d
           line-height l(20)
           fz(14)

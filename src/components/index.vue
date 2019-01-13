@@ -42,7 +42,7 @@
 
         <ul class="goodsList" id="lists">     
           <li v-for="(item,index) in list" :key="index" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">
-            <div class="li_top" :style="{background:'(url' + item.tea_img_link + ')'}">
+            <div class="li_top" :style="{background:'url(' + item.tea_img_link + ') no-repeat center',backgroundSize:'100%'}">
               <div class="play"><span></span></div>
               <div class="data">
                 <div class="d_l">
@@ -54,7 +54,7 @@
                   <li><img src="../assets/img/talk.png" alt="">{{Number(item.tea_comment_count) < Number(10000) ? Number(item.tea_comment_count) : (Number(item.tea_comment_count)/10000).toFixed(2)}}</li>
                 </ul>
               </div>
-              <div class="time" v-if="!item.isAdvance">{{item.tea_date}} {{item.tea_period}}</div>
+              <div class="time" v-if="!item.isAdvance">{{item.tea_date}}</div>
               <div class="time" v-else>预售 {{item.tea_period}}</div>
             </div>
             <div class="li_mid">
@@ -438,7 +438,7 @@ export default {
       // 模拟更新数据is_ref
       this.is_ref = true
       if(this.tabIndex==1){
-        return
+        this.goAll()
       }else if(this.tabIndex == 2){
         this.GOrecommand('','',0)
       }else if(this.tabIndex == 3){
@@ -599,6 +599,7 @@ export default {
     position relative
     //height l(350)
     height 100vh
+    padding-bottom l(30)
     ul.goodsList
       width 100%
       background #F7F7F7
@@ -694,16 +695,20 @@ export default {
             -webkit-box-orient: vertical;
             -webkit-line-clamp: 2;
             overflow: hidden;
-            line-height l(16)
+            line-height l(24)
+          input 
+            display block
+            height 0
           img 
             display block
-            width l(22)
+            width l(21)
             height l(22)
             // position absolute
             // right 2.7%
             // bottom 20%
             margin-left 90%
             margin-bottom l(5)
+            margin-top l(5)
         .li_bot
           height l(90)
           display flex

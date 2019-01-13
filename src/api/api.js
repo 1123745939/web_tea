@@ -233,6 +233,11 @@ export const getSearch = function (params) {
 export const getGoodDetail = function (params) {
   return axios.get(`${baseUrl}`+"/index/tea/detail", {params});
 }
+
+   //详情页播放视频 记录次数
+export const vidioPlayCount = function (params) {
+  return axios.post(`${baseUrl}`+"/index/vidio/play", jsonToQuery(params));
+}
      //全部评价
 export const commentAll = function (params) {
   return axios.post(`${baseUrl}`+"/comment", jsonToQuery(params));
@@ -270,13 +275,21 @@ export const orderCheck = function (params) {
 export const orderBuyCheck = function (params) {
   return axios.post(`${baseUrl}`+"/order/buy/check", jsonToQuery(params));
 } 
-      //购物车下单
+      //h5购物车下单
 export const orderPay = function (params) {
   return axios.post(`${baseUrl}`+"/order/order", jsonToQuery(params));
 }
-    //直接下单
+    //h5直接下单
 export const orderBuy = function (params) {
   return axios.post(`${baseUrl}`+"/order/buy", jsonToQuery(params));
+}
+    //公众号购物车下单
+export const jsapiUnion = function (params) {
+  return axios.post(`${baseUrl}`+"/jsapi/union", jsonToQuery(params));
+}
+    //公众号直接购买下单/jsapi/union
+export const jsapiBuy = function (params) {
+  return axios.post(`${baseUrl}`+"/jsapi/buy", jsonToQuery(params));
 }
 
 //订单相关
@@ -300,6 +313,10 @@ export const orderConfirm = function (params) {
 export const orderDel = function (params) {
   return axios.get(`${baseUrl}`+"/order/delete", {params});
 }
+   //取消退款
+export const orderRefundCancel = function (params) {
+  return axios.post(`${baseUrl}`+"/order/refund/cancel", jsonToQuery(params));
+}   
     //不喜欢
 export const orderUnlike = function (params) {
   return axios.post(`${baseUrl}`+"/order/unlike/create", jsonToQuery(params));

@@ -1,7 +1,6 @@
 <template>
   <div class="con">
     <div class="content" v-if="list.length>0">
-      <ul class="h_list">
         <scroll ref="scroll"
             :data="list"
             :pullDownRefresh="pullDownRefreshObj"
@@ -10,12 +9,7 @@
             @pullingDown="onPullingDown"
             @pullingUp="onPullingUp">
             
-            <!-- <swipeout class="vux-1px-tb">
-              <swipeout-item transition-mode="follow" v-for="i in list" :key="i.id">
-                <div slot="right-menu">
-                  <swipeout-button type="warn" @click.native="handle(i)">取消收藏</swipeout-button>
-                </div>
-                <div slot="content" class="demo-content vux-1px-t"> -->
+                <div  class="demo-content vux-1px-t">
                   <li class="h_li"  v-for="i in list" :key="i.id" @click="$router.push({path:'/goodDetail',query:{id:i.id}})">
                     <div class="left">
                       <img src="../assets/img/play.png" alt="">
@@ -45,15 +39,13 @@
                       </div>
                     </div>
                   </li>
-                <!-- </div>
-              </swipeout-item>
-            </swipeout> -->
+                </div>
            
 		    <div class="order-list" v-if="list.length == 0 && !loading">
 		    	<load-more :show-loading="false" tip="暂无数据" background-color="#f0f7f5"></load-more>
 		    </div>
       </scroll>
-    </ul>
+
     </div>
     <div class="noList" v-else>
       <div class="box">
@@ -86,6 +78,7 @@ export default {
       id:'',
       tea_type_id:'',
       is_ref:false,
+      count:'',
 
       
       pullUpLoadThreshold: 0,
@@ -133,6 +126,7 @@ export default {
       }
       teaSame(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
+          this.count = res.data.data.length
           if(page==1){
             this.list = res.data.data
             console.log(this.list)
@@ -156,9 +150,10 @@ export default {
     onPullingUp() {
       // 更新数据
       console.log('pulling up and load data')
-      this.page ++
-      this.init(this.page)
-
+      if(this.count>=this.page*10){
+        this.page ++
+        this.init(this.page)
+      }
       this.$refs.scroll.forceUpdate()
     },
     rebuildScroll() {
@@ -203,11 +198,13 @@ export default {
   border-top 1px solid  #E8E8E8
   padding  l(10) 0 0
   height 100vh
+  position relative
   .content
     height l(656)
     background #F7F7F7
     overflow-y scroll
     box-shadow: 0 0 5px 0 #E8E8E8;
+    position relative
     ul.h_list,.demo-content
       
       .h_li
@@ -252,6 +249,7 @@ export default {
         .right
           height l(110)
           padding-left l(5)
+          width 50%
           p.name
             font-size: 14px;
             color: #333333;
@@ -268,6 +266,8 @@ export default {
             letter-spacing: 0.21px;
             line-height: 23px;
             text-align left 
+            display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;
+            overflow: hidden;
           div.mark
             display flex
             justify-content flex-start

@@ -1,32 +1,34 @@
 <template>
   <div class="con">
+    <div class="blank"></div>
     <div class="o_h">
       <tab :scroll-threshold="6" bar-active-color="#F6AF15" active-color="#83271F" :line-width=4>
         <tab-item :selected="index == selectIndex ? true:false" @on-item-click="onItemClick(item.id,index)" v-for="(item,index) in tabs" :key="item.id">{{item.name}}</tab-item>
       </tab>
     </div>
-    <div class="box" v-if="orderList1.length">
+    
+    <div class="box" v-if="orderList.length">
       <scroll ref="scroll"
-        :data="orderList1"
+        :data="orderList"
         :pullDownRefresh="pullDownRefreshObj"
         :pullUpLoad="pullUpLoadObj"
         :startY="parseInt(startY)"
         @pullingDown="onPullingDown"
         @pullingUp="onPullingUp">
 
-        <ul class="o_l">
-          <li v-for="(item,index) in orderList1" :key="item.id">
+        <div class="o_l">
+          <li v-for="(item,index) in orderList" :key="item.id">
             <div class="li_h">
               <p class="time">{{item.created_at}}</p>
-              <p>{{item.id}}{{item.status_text}}{{item.order_status}}</p>
+              <p>{{item.status_text}}</p>
             </div>
             <div class="li_m"  @click="$router.push({path:'/orderDetail',query:{id:item.id,tea_id:item.tea_id}})">
-              <div class="t_img">
+              <div class="t_img" :style="{background:'url(' + item.tea_img_link + ') no-repeat center',backgroundSize:'100%'}">
                 <img src="../assets/img/play.png" alt="">
               </div>
               <div class="t_info">
                 <p>{{item.tea_title}}</p>
-                <span>{{item.tea_date}} {{item.tea_period}}</span>
+                <span>{{item.tea_date}}</span>
               </div>
               <div class="in_num">
                   <p>￥{{item.order_price}}.00</p>
@@ -35,29 +37,33 @@
             </div>
             <div class="heji">
               <span>共{{item.order_count}}件商品</span>
-              <p>合计：￥<span>{{item.order_total}}</span>.00</p>
+              <p>合计：￥<span>{{item.order_total}}</span></p>
             </div>
             <!-- <div class="b_b" v-if="item.order_status == 0">
               <p @click="cancelShow = true;id=item.id">取消订单</p>
               <p>立即支付</p>
             </div> -->
-            <div class="b_b" v-if="item.order_status == 1">
-              <p @click="$router.push({path:'/applySale',query:{id:item.tea_id}})">申请售后</p>
+            <div class="b_b" v-if="item.order_status == 1 && item.reject_status==0">
+              <p @click="$router.push({path:'/applySale',query:{id:item.id}})">申请售后</p>
+              <!-- <p @click="cancelShow = true;id=item.id">取消订单</p> -->
+            </div>
+             <div class="b_b" v-if="item.order_status == 1 && item.reject_status==2">
+               <p  @click="$router.push({path:'/orderDetail',query:{id:item.id,tea_id:item.tea_id}})">查看详情</p>
+              <p @click="cancelTuiShow = true;id=item.id">取消退款</p>
               <!-- <p @click="cancelShow = true;id=item.id">取消订单</p> -->
             </div>
             <div class="b_b" v-if="item.order_status == 2">
               <p>查看物流</p>
-              <p @click="$router.push({path:'/applySale',query:{id:item.tea_id}})">申请售后</p>
+              <p @click="$router.push({path:'/applySale',query:{id:item.id}})">申请售后</p>
               <p @click="confirmShow = true;id=item.id">确认收货</p>
             </div>
             <div class="b_b" v-if="item.order_status == 3">
-              <p @click="delShow = true;id=item.id">删除订单</p>
+              <p @click="delShow = true;id=item.id;indexindex = index">删除订单</p>
               <p @click="goEvluate(item)">评价</p>
-              <p @click="$router.push({path:'/goodDetail',query:{id:item.tea_id}})">再次购买</p>
+              <p @click="$router.push({path:'/pay',query:{id:item.tea_id,type:'buy'}})">再次购买</p>
             </div>
-            <div class="b_b" v-if="item.order_status == 4">
+            <div class="b_b" v-if="item.order_status == 4 && item.reject_status==0">
               <p  @click="$router.push({path:'/orderDetail',query:{id:item.id,tea_id:item.tea_id}})">查看详情</p>
-              <p>取消退款</p>
             </div>
             <div class="b_b" v-if="item.order_status == 5">
               <p  @click="$router.push({path:'/orderDetail',query:{id:item.id,tea_id:item.tea_id}})">查看详情</p>
@@ -76,8 +82,8 @@
                 </div>
                 <!-- 是否取消退款的弹框 -->
                 <div v-transfer-dom>
-                  <confirm v-model="cancelTuiShow"  @on-confirm="id = item.id">
-                    <p style="text-align:center;">确认要删除吗</p>
+                  <confirm v-model="cancelTuiShow"  @on-confirm="refuseCancel()">
+                    <p style="text-align:center;">确认要取消退款吗</p>
                   </confirm>
                 </div>
                 <!-- 是否确认收货的弹框 -->
@@ -87,10 +93,10 @@
                   </confirm>
                 </div>
           </li>
-       </ul>
-		    <div class="order-list" v-if="orderList1.length == 0 && !loading">
+       </div>
+		    <!-- <div class="order-list" v-if="orderList1.length == 0 && !loading">
 		    	<load-more :show-loading="false" tip="暂无数据" background-color="#f0f7f5"></load-more>
-		    </div>
+		    </div> -->
     </scroll>
 
     </div>
@@ -108,7 +114,7 @@
 <script>
 import { Tab, TabItem , XButton ,Confirm, TransferDomDirective as TransferDom} from 'vux'
 import Scroll from './scroll/scroll'
-import { orderList , orderCancel , orderConfirm ,orderDel} from '../api/api.js'
+import { orderList , orderCancel , orderConfirm ,orderDel , orderRefundCancel } from '../api/api.js'
 export default {
    directives: {
     TransferDom
@@ -135,6 +141,8 @@ export default {
       cancelShow:false,
       cancelTuiShow:false,
       confirmShow:false,
+      indexindex:'',
+      count:'',
 
       pullUpLoadThreshold: 0,
       pullDownRefresh: true,
@@ -151,8 +159,13 @@ export default {
   },
   created(){
     document.title = '我的订单'
-    this.selectIndex = 0
-    this.init(1)
+    if(sessionStorage.selectIndex){
+      this.selectIndex = sessionStorage.selectIndex
+    }else{
+      this.selectIndex = 0
+    }
+    
+    this.init(1,this.selectIndex)
   },
   computed:{
     pullDownRefreshObj: function () {
@@ -169,27 +182,23 @@ export default {
     }
   },
   methods:{
-    init(page){
+    init(page,status){
       const options = {
         token:this.token,
         page:page,
-        rows:10
+        rows:10,
+        status :status
       }
       orderList(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          if(this.ifRefrush){
-            this.orderList = []
-            this.ifRefrush = false
-          }
-          this.orderList = this.orderList.concat(res.data.data.result)
-          if(this.selectIndex==0){
-            this.orderList1 = this.orderList
-            console.log(this.orderList1)
-            }else{
-              this.orderList1 = this.orderList.filter(item=>{
-                return item.order_status == this.selectIndex
-              })
-            }
+          this.count = res.data.data.count
+          if(page==1){
+            this.page = 1
+            this.orderList = res.data.data.result
+          }else{
+            this.orderList = this.orderList.concat(res.data.data.result)  
+            console.log(this.orderList)
+          }         
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -197,17 +206,10 @@ export default {
     },
     //点击tab切换
     onItemClick(id,index){
+      this.orderList = []
+      sessionStorage.selectIndex = index
       this.selectIndex = index
-      //this.orderList1 = []
-      if(this.selectIndex==0){
-        this.orderList1 = this.orderList
-      }else{
-         this.orderList1 = this.orderList.filter(item=>{
-          return item.order_status == index
-        })
-      }
-      console.log(this.orderList1)
-       this.$forceUpdate()
+      this.init(1,index)
     },
     //删除订单
     del(){
@@ -218,9 +220,7 @@ export default {
       orderDel(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.$vux.toast.text('订单已删除')
-          this.selectIndex = 0
-          this.orderList = []
-          this.init(1)
+          this.orderList.splice(this.indexindex,1)
           this.$forceUpdate()
           //this.scroll.scrollTo(0, 0, 500)
         }else{
@@ -252,8 +252,27 @@ export default {
         if(res.data.code == 200 && !res.data.error_code){
           this.$vux.toast.text('已经确认收货')
           this.selectIndex = 3
-          this.orderList = []
-          this.init(1)
+          sessionStorage.selectIndex = 3
+          this.init(1,3)
+          this.$forceUpdate()
+          //this.scroll.scrollTo(0, 0, 500)
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //取消退款
+    refuseCancel(){
+      const options = {
+        token :this.token,
+        id:this.id
+      }
+      orderRefundCancel(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('已经申请取消退款')
+          this.selectIndex = 0
+          sessionStorage.selectIndex = 0
+          this.init(1,0)
           this.$forceUpdate()
           //this.scroll.scrollTo(0, 0, 500)
         }else{
@@ -269,15 +288,18 @@ export default {
     onPullingDown() {
       // 模拟更新数据
       this.ifRefrush = true
-      this.init(1)
+      this.init(1,this.selectIndex)
+      this.$refs.scroll.forceUpdate()
      },
      //上拉加载
     onPullingUp() {
       // 更新数据
       console.log('pulling up and load data')
-      this.page ++ ;
-      this.init(this.page)
-     
+      if(this.count>=this.page*10){
+        this.page ++ ;
+        this.init(this.page,this.selectIndex)
+        this.$refs.scroll.forceUpdate()
+      }
       this.$refs.scroll.forceUpdate()
     },
     rebuildScroll() {
@@ -311,6 +333,9 @@ export default {
     },
     tabIndex(oldV,neWV){
       sessionStorage.tabIndex = oldV
+    },
+    selectIndex(oldV,neWV){
+      this.init(1,oldV)
     }
   }
 }
@@ -322,23 +347,32 @@ export default {
 @import '../utils/css/util.styl';
 .con
   background #F7F7F7
-  height l(666)
-  overflow-y scroll
-  .box
-    height l(626)
-    position relative
-  .o_h
+  position relative
+  height l(667)
+ .o_h
     width 100%
-    //margin-bottom l(10)
     padding 0 4.3%
     background #fff
-  ul
-   
+    position:fixed;
+    z-index:99;
+    height l(40)
+    left 0
+    top 0
+  .blank
+    height l(40)
+  .box
+    height l(637)
+    width: 100%;
+    position relative
+    overflow-y scroll
+    background #F7F7F7 
+  div.o_l
     li
       width 100%
       margin-bottom l(10)
       background #fff
       padding l(20) 4.3% l(10)
+      list-style none
       .li_h
         disFlex ()
         color: #E63443;
@@ -377,6 +411,8 @@ export default {
             letter-spacing: 0.23px;
             line-height: 20px;
             text-align left 
+            display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;
+            overflow: hidden;
           span 
             fz(12)
             color: #999999;

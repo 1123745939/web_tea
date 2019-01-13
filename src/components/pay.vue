@@ -16,7 +16,7 @@
       <li v-for="item in arr" :key="item.id">
         <img :src="item.tea_img_link" alt="" class="car_img">
         <div class="car_p">
-          <span>{{item.tea_title}}</span>
+          <span class="titlt">{{item.tea_title}}</span>
           <p class="t_d">{{item.tea_date}} {{item.tea_period}}</p>
           <div class="t_num">
             <p>￥<span>{{item.tea_price}}</span>.00</p>
@@ -66,7 +66,7 @@
 
 <script>
 import {  Alert, TransferDomDirective as TransferDom } from 'vux'
-import {getAddress,orderSettle,orderCheck,orderPay,orderBuy,orderBuyCheck} from '../api/api.js'
+import {getAddress,orderSettle,orderCheck,orderPay,orderBuy,orderBuyCheck,jsapiUnion,jsapiBuy} from '../api/api.js'
 export default {
   directives: {
     TransferDom
@@ -93,34 +93,18 @@ export default {
     this.getData()
   },
   methods:{
+    //判断浏览器
+    is_weixn(){
+      var ua = navigator.userAgent.toLowerCase();
+      if(ua.match(/MicroMessenger/i)=="micromessenger") {
+          return true;
+      } else {
+          return false;
+      }
+    },
+
     //获取数据
     getData(){
-      // var arr = []
-      // var id = ''
-      // this.type = this.$route.query.type
-      // sessionStorage.type = this.$route.query.type
-      // if(this.$route.query){
-      //   if(this.$route.query.type=='shop'){
-      //     arr = this.$route.query.ids.split(',')
-      //     sessionStorage.payIds = this.$route.query.ids
-      //   }else{
-      //     id=  this.$route.query.id
-      //     sessionStorage.tea_id = this.$route.query.id
-      //   }
-        
-      // }else{
-      //   this.type = sessionStorage.type
-      //   if(sessionStorage.payIds){
-      //     arr = sessionStorage.payIds.split(',')
-      //   }else{
-      //     arr = []
-      //   }
-      //   if(sessionStorage.tea_id ){
-      //     id =  sessionStorage.tea_id 
-      //   }else{
-      //     id=  ''
-      //   }  
-      // }
       var arr = []
       var id = ''
       var type = ''
@@ -148,8 +132,7 @@ export default {
         if(sessionStorage.ids){
           arr = JSON.parse(sessionStorage.ids)
         }
-        id = sessionStorage.id
-       
+        id = sessionStorage.id     
       }
       
       var options = {}
@@ -210,7 +193,7 @@ export default {
       }
       
     },
-    //购物车购买  校验库存
+    //购物车购买  校验库存 然后根据浏览器的类型选择下单方式   ,
     check(arr,ids){
       var arr = []
       this.arr.forEach(item=>{
@@ -223,18 +206,20 @@ export default {
         token :this.token,
         ids :JSON.stringify(arr)
       }
-      // console.log(options)
-      // return
       orderCheck(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          this.orderOrder()
+          if(this.is_weixn()){
+            this.weChatUnion()
+          }else{
+            this.orderOrder()
+          }
         }else{
           //this.$vux.toast.text(res.data.error_message||res.data.message)
           this.show = true
         }
       })
     },
-    //直接购买 校验库存
+    //直接购买 校验库存 然后根据浏览器的类型选择下单方式
     checkBuy(){
       const options = {
         token :this.token,
@@ -243,15 +228,19 @@ export default {
       }
       orderBuyCheck(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-         
-          this.orderOrderBuy()
+          if(this.is_weixn()){
+            this.weChatBuy()
+          }else{
+            this.orderOrderBuy()
+          }
+          
         }else{
           // this.$vux.toast.text(res.data.error_message||res.data.message)
           this.show = true
         }
       })
     },
-    //下单接口
+    //h5 购物车下单接口
     orderOrder(){
       var arr = []
       var totalMoney = 0
@@ -286,9 +275,9 @@ export default {
       })
 
     },
-    //直接购买 下单
+    //h5直接购买 下单
     orderOrderBuy(){
-       const options = {
+      const options = {
         token :this.token,
         id : this.arr[0].id,
         o_price :this.arr[0].tea_price,
@@ -307,6 +296,105 @@ export default {
         }
       })
 
+    },
+    //公众号直接购买  
+    weChatBuy(){
+      const options = {
+        token :this.token,
+        id : this.arr[0].id,
+        o_price :this.arr[0].tea_price,
+        o_count:1,
+        o_total :this.arr[0].tea_price,
+        o_username:this.address.username,
+        o_mobile:this.address.mobile,
+        o_addr_id:this.address.id,
+        o_remark :this.txt
+      }
+      try {
+      jsapiBuy(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          if (typeof WeixinJSBridge == "undefined"){
+            if( document.addEventListener ){
+                document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+            }else if (document.attachEvent){
+                document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+            }
+          }else{
+            this.onBridgeReady(res.data.data);
+          } 
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+      
+      } catch (e) {
+        alert(JSON.stringify(e))
+      }
+    },
+    //公众号购物车下单
+    weChatUnion(){
+      var arr = []
+      var totalMoney = 0
+      this.arr.forEach(item=>{
+        var obj = {}
+        obj.id = item.id
+        obj.price = item.tea_price
+        obj.count = item.tea_count
+        obj.total = item.tea_price*item.tea_count
+        arr.push(obj)
+        totalMoney += obj.total
+      })
+      var targetObj = {}
+      targetObj.total = totalMoney
+      targetObj.products  = arr
+      const options = {
+          token :this.token,
+          data : JSON.stringify(targetObj),
+          o_username:this.address.username,
+          o_mobile:this.address.mobile,
+          o_addr_id:this.address.id,
+          o_remark :this.txt
+      }
+      jsapiUnion(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          if (typeof WeixinJSBridge == "undefined"){
+            if( document.addEventListener ){
+                document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+            }else if (document.attachEvent){
+                document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+            }
+          }else{
+            this.onBridgeReady(res.data.data);
+          } 
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //调起微信支付
+    onBridgeReady(data) {     
+      let params = {
+          'appId' : data.appId,
+          'timeStamp' : data.timeStamp,
+          'nonceStr' : data.nonceStr,
+          'package' : data.package,
+          'signType' : data.signType,
+          'paySign' : data.paySign
+      };
+      let method = 'getBrandWCPayRequest';
+      var that = this
+      WeixinJSBridge.invoke(
+          method, params, function (res) {
+              if (res.err_msg == 'get_brand_wcpay_request:ok') { // 支付成功
+                  that.$vux.toast.text('支付成功')
+                  window.location.href = 'http://uat.chajisong.com/#/orders';
+              } else {
+                that.$vux.toast.text('支付失败')
+              }
+          }
+      )       
     },
     //
     onHide () {
@@ -404,11 +492,16 @@ export default {
         width 64%
         height 100%
         text-align left 
-        span 
+        span.titlt
           line-height l(22)
           fz(16)
           color: #333333
           letter-spacing 0.3px
+          overflow: hidden;
+          text-overflow:ellipsis;
+          white-space: nowrap;
+          display block
+          width 100%
         p.t_d
           line-height l(20)
           fz(14)
@@ -467,6 +560,7 @@ export default {
         letter-spacing: 0.31px;
         border none 
         outline none
+      
       input::placeholder
         color: #999999;
         fz(12)

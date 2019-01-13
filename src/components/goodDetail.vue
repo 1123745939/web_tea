@@ -16,33 +16,28 @@
     <!-- 详情 -->
 
     <div class="d">
-      <span class="d_t">{{detailObj.tea_date}} {{detailObj.tea_period}}</span>
+      <span class="d_t">{{detailObj.tea_date}}</span>
       <!-- <div class="li_top" @click.stop="$router.push({path:'/videoPlay',query:{id:id}})"> -->   
       <div class="li_top" @click.stop="playVideo">
-        <video :src="detailObj.tea_vidio_link" id="video" style="width:100%;height:190px;object-fit:fill"  :poster="detailObj.tea_img_link"  controls></video>
+        <video :src="detailObj.tea_vidio_link" id="video" style="width:100%;height:100%;object-fit:fill"  :poster="detailObj.tea_img_link"  controls></video>
         <div class="play"><span></span></div>
         <div class="data">
           <div class="d_l">
             {{detailObj.tea_play_count}}次播放
           </div>
           <ul class="p_r">
-            <li><img src="../assets/img/star.png" alt="">{{detailObj.tea_collect_count}}</li>
-            <li><img src="../assets/img/zan.png" alt="">{{detailObj.tea_thumb_count}}</li>
+            <li @click="cangV()">
+              <img src="../assets/img/star.png" alt="" v-if="is_collect==0">
+              <img src="../assets/img/star_active.png" alt="" v-else>
+              {{detailObj.tea_collect_count}}
+            </li>
+            <li @click="zanV()">
+              <img src="../assets/img/zan.png" alt="" v-if="is_thumb==0">
+              <img src="../assets/img/zan1_active.png" alt="" v-else>
+              {{detailObj.tea_thumb_count}}
+            </li>
           </ul>
         </div>
-        <!-- <div class="swiper-container">
-            <div class="swiper-wrapper">
-              <div class="swiper-slide">
-                <img src="../assets/img/photo.jpg" alt="">小灰灰11&nbsp;购买了这个茶叶
-              </div>
-              <div class="swiper-slide">
-                <img src="../assets/img/logo.png" alt="">大灰灰22&nbsp;购买了这个茶叶
-              </div>
-              <div class="swiper-slide">
-                <img src="../assets/img/hot.png" alt="">超灰灰33&nbsp;购买了这个茶叶
-              </div>
-            </div>
-          </div> -->
           <swiper :options="swiperOption" ref="mySwiper">
             <!-- slides -->
             <swiper-slide><img src="../assets/img/photo.jpg" alt="">小灰灰11&nbsp;购买了这个茶叶</swiper-slide>
@@ -135,7 +130,7 @@
         <li v-for="item in sameList" :key="item.tea_title" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">
           <div :style="{background:'url('+item.tea_img_link+')'}">
             <img src="../assets/img/play.png" alt="">
-            <span>{{item.tea_date}} {{item.tea_period}}</span>
+            <span>{{item.tea_date}}</span>
           </div>
             <p>{{item.tea_title}}</p>         
         </li>
@@ -150,7 +145,7 @@
         <li v-for="item in likeList" :key="item.tea_title" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">
           <div :style="{background:'url('+item.tea_img_link+')'}">
             <img src="../assets/img/play.png" alt="">
-            <span>{{item.tea_date}} {{item.tea_period}}</span>
+            <span>{{item.tea_date}}</span>
           </div>
             <p>{{item.tea_title}}</p>         
         </li>
@@ -188,12 +183,10 @@
 
 <script>
 import 'swiper/dist/css/swiper.css'
- 
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import { Confirm,Previewer,TransferDomDirective as TransferDom } from 'vux'
-// import Swiper from 'swiper' 
 import 'swiper/dist/css/swiper.min.css'
-import { getGoodDetail , carList , addShop , commentThumb } from '../api/api.js'
+import { getGoodDetail , carList , addShop , commentThumb ,vidioCollect ,vidioThumb ,vidioPlayCount } from '../api/api.js'
 export default {
     directives: {
     TransferDom
@@ -216,6 +209,8 @@ export default {
       topArr:[],
       list:[],
       idd:'',
+      is_thumb:0,
+      is_collect:0,
 
       options: {
         getThumbBoundsFn (index) {
@@ -284,9 +279,11 @@ export default {
     },
   methods:{
     init(id){
-      getGoodDetail({id:id}).then(res=>{
+      getGoodDetail({id:id,token:this.token}).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           console.log(res.data.data)
+          this.is_thumb = res.data.data.isthumb
+          this.is_collect= res.data.data.isCollect
           this.detailObj = res.data.data.detail
           this.sameList = res.data.data.same
           this.likeList = res.data.data.like 
@@ -354,6 +351,44 @@ export default {
         })
       }
     },
+    //收藏视频
+    cangV(){
+       if(!this.token){
+        this.$vux.toast.text('请登录后再操作')
+        return
+      }
+      const options = {
+        token :this.token,
+        id:this.id
+      }
+      vidioCollect(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.is_collect =1
+          this.detailObj.tea_collect_count+=1
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //点赞视频
+    zanV(){
+      if(!this.token){
+        this.$vux.toast.text('请登录后再操作')
+        return
+      }
+      const options = {
+        token :this.token,
+        id:this.id
+      }
+      vidioThumb(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.is_thumb =1
+          this.detailObj.tea_thumb_count+=1
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
     show (index) {
       this.$refs.previewer.show(index)
     },
@@ -372,14 +407,25 @@ export default {
     connectCustom(){
       window.location.href = `http://uat.api.chajisong.com/v1/custom?token=${this.token}`
     },
+    //视频播放增加次数
     playVideo(){
-     var  video1 = document.getElementById("video");
-     
+     var  video1 = document.getElementById("video");  
        if(video1.paused) { 
             video.play()
           }else{
             video1.pause()
-          }  
+          } 
+      const options = {
+        id : this.id,
+        vidio_id:1
+      } 
+      vidioPlayCount(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          
+          }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
     }
   },
   watch: {
@@ -488,6 +534,7 @@ export default {
         color: #FFFFFF;
         letter-spacing: 0.28px;
         padding 0 4.3%
+        z-index 99
         .d_l
           line-height l(25)
         ul 
@@ -555,7 +602,7 @@ export default {
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
-          line-height l(16)
+          line-height l(24)
         div.t_star
           width 100%
           display flex
@@ -652,6 +699,9 @@ export default {
         div.a_b
           overflow hidden
           ul.d_img
+            margin-top l(5)
+            padding 0 10%
+            width 100%
             display flex
             justify-content flex-start
             flex-wrap wrap
@@ -710,6 +760,7 @@ export default {
       disFlex ()
       padding l(5) 0
       li
+        width l(162)
         div
           width l(162)
           height l(110)
@@ -739,6 +790,11 @@ export default {
           letter-spacing: l(0.28)
           line-height l(26)
           text-align left 
+          width 100%
+          height l(18)
+          text-overflow:ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
   // 底部
   .foot
     width 100%

@@ -43,11 +43,11 @@ export default {
         return
       }
       var options = {}
-      if(sessionStorage.iod){
+      if(sessionStorage.oid){
           options = {
           mobile : this.tel,
           password : md5(this.pass),
-          openid:sessionStorage.iod
+          openid:sessionStorage.oid
         }
       }else{
         options = {

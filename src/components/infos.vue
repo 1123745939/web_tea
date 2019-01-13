@@ -87,6 +87,7 @@ export default {
       page:1,
       is_pull :false,
       loginMaskShow:false,
+      count:'',
       
       pullUpLoadThreshold: 0,
       pullDownRefresh: true,
@@ -129,6 +130,7 @@ export default {
       }
       infos(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
+          this.count = res.data.data.count
          if(page==1){
             this.newsList = res.data.data.result
             this.page=1
@@ -185,11 +187,15 @@ export default {
     onPullingDown() {
       this.page =1
       this.init(this.page)
+      this.$refs.scroll.forceUpdate()
     },
      //上拉加载
-    onPullingUp() {
-      this.page ++ 
-      this.init(this.page)
+    async onPullingUp() {
+       if(this.count>=this.page*10){
+        this.page ++
+        await this.init(this.page)
+      }
+      this.$refs.scroll.forceUpdate()
     },
     rebuildScroll() {
       Vue.nextTick(() => {

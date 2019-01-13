@@ -7,7 +7,7 @@
       <!-- 地址 -->
       <div class="add">
          <!-- 退款信息 -->
-        <div class="tui" v-if="order.order_status==4">
+        <div class="tui" v-if="order.reject_status!=0">
           <div>
             <span>退款金额</span><span class="money">￥{{order.order_total}}</span>
           </div>
@@ -19,7 +19,7 @@
           </div>
         </div>
         <!-- 地址 -->
-        <div class="a_bor" v-if="order.order_status!=4">
+        <div class="a_bor" v-if="order.reject_status==0">
           <div class="a_t">
           <div class="red"></div>
           <span>收货人信息</span>
@@ -30,7 +30,7 @@
         </div>
       </div>
       <!-- 留言 -->
-      <div class="word"  v-if="order.reject_status!=4">
+      <div class="word"  v-if="order.reject_status==0">
         <div class="red"></div>
         <span>买家留言</span>
         <p>{{order.order_remark}}</p>
@@ -80,16 +80,16 @@
      </div>
     </div>
     <div class="foot">
-      <img src="../assets/img/kefu1.png" alt="" v-if="order.order_status==0">
-      <div  v-if="order.order_status==0">
-        <p @click="cancel">取消订单</p>
-        <p>立即支付</p>
+      <img src="../assets/img/kefu1.png" alt=""  @click="connectCustom">
+      <div  v-if="order.order_status==1 && order.reject_status==0">
+        <p @click.stop="applyShouhou">申请售后</p>
       </div>
-      <div  v-if="order.order_status==1">
-        <p @click="cancel">取消订单</p>
+      <div  v-if="order.order_status==1 && order.reject_status==2">
+        <p @click="connectCustom">联系客服</p>
+        <p @click.stop="cancelTuiShow=true" >取消退款</p>
       </div>
       <div  v-if="order.order_status==2">
-        <p>申请售后</p>
+        <p @click.stop="applyShouhou">申请售后</p>
         <p>查看物流</p>
         <p @click="confirm">确认收货</p>
       </div>
@@ -98,9 +98,9 @@
         <p  @click="showHideOnBlur=true">不喜欢</p>
         <p @click="buy">继续喝</p>
       </div>
-      <div  v-if="order.reject_status==3 || order.reject_status==4 ">
+      <!-- <div  v-if="order.reject_status!=0">
         <p @click="connectCustom">联系客服</p>
-      </div>
+      </div> -->
     </div>
 
     <!-- 不喜欢的弹窗 -->
@@ -122,18 +122,25 @@
         </div>
       </x-dialog>
     </div>
+     <!-- 是否取消退款的弹框 -->
+      <div v-transfer-dom>
+        <confirm v-model="cancelTuiShow"  @on-confirm="refuseCancel()">
+          <p style="text-align:center;">确认要取消退款吗</p>
+        </confirm>
+      </div>
   </div>
 </template>
 
 <script>
-import { XDialog,TransferDomDirective as TransferDom } from 'vux'
-import {orderUnlike , orderDetail ,orderCancel} from '../api/api.js'
+import { XDialog,TransferDomDirective as TransferDom ,Confirm} from 'vux'
+import {orderUnlike , orderDetail ,orderCancel ,orderConfirm , orderRefundCancel} from '../api/api.js'
 export default {
   directives: {
     TransferDom
   },
   components: {
     XDialog, 
+    Confirm
   },
   data () {
     return {
@@ -145,6 +152,7 @@ export default {
       tea:{},
       order:{},
       address:{},
+      cancelTuiShow:false,
       showHideOnBlur:false,
       dislikeYL:[{id:1,txt:'太苦了',active:false},{id:2,txt:'口味不好',active:false},{id:3,txt:'冲泡次数太少',active:false},{id:4,txt:'其他',active:false}]
     }
@@ -213,15 +221,19 @@ export default {
     },
     //去评价
     evluate(){
-      this.$router.push('/evaluate');
+      this.tea.tea_id = this.tea_id
       sessionStorage.orderComment = JSON.stringify(this.tea)
+      this.$router.push('/evaluate');
+
+     
     },
     //继续喝 跳转至下单页面
     buy(){
-      var arr = []
-      arr.push(this.tea)
-      sessionStorage.payInfo = JSON.stringify(arr)
-      this.$router.push('/pay')   
+      this.$router.push({path:'/pay',query:{id:this.tea_id,type:'buy'}})   
+    },
+    //申请售后
+    applyShouhou(){
+      this.$router.push({path:'/applySale',query:{id:this.order.id}})
     },
     //取消订单
     cancel(){
@@ -246,9 +258,28 @@ export default {
       orderConfirm(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.$vux.toast.text('已经确认收货')
-          this.selectIndex = 4
-          this.orderList = []
-          this.init(1)
+          this.selectIndex = 3
+          sessionStorage.selectIndex = 3
+          setTimeout(()=>{
+            this.$router.push('/orders')
+          },1000)
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+    //取消退款
+    refuseCancel(){
+      const options = {
+        token :this.token,
+        id:this.id
+      }
+      orderRefundCancel(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.$vux.toast.text('已经申请取消退款')
+          this.selectIndex = 0
+          sessionStorage.selectIndex = 0
+          this.init(1,0)
           this.$forceUpdate()
           //this.scroll.scrollTo(0, 0, 500)
         }else{
@@ -343,7 +374,7 @@ export default {
     div
       width 100%
       height l(60)
-      border-bottom 1px solid #ccc
+      border-bottom 1px solid #e8e8e8
       display flex
       justify-content flex-start
       align-items center
@@ -351,6 +382,8 @@ export default {
         width 20%
       span:last-of-type
         width 60%
+        margin-left l(10)
+        color #7b7a7a
       span.money
         text-align right 
         color #E63443 
@@ -362,6 +395,7 @@ export default {
       
   ul
     padding 0 4.3%
+    margin-top l(10)
     li
       width 100%
       background #fff
@@ -404,6 +438,8 @@ export default {
             letter-spacing: 0.23px;
             line-height: 20px;
             text-align left 
+            display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;
+            overflow: hidden;
           span 
             fz(12)
             color: #999999;

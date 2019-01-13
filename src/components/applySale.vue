@@ -1,15 +1,15 @@
 <template>
   <div class="con">
     <div class="o_h">
-      <div class="o_state">{{order.status_text}}</div>
+      <!-- <div class="o_state">{{order.status_text}}</div> -->
       <div class="add">
          <!-- 退款信息 -->
-        <div class="tui" v-if="order.order_status==4">
+        <div class="tui" v-if="order.order_status==1 || order.order_status==2">
           <div>
             <span>退款金额</span><span class="money">￥{{order.order_total}}</span>
           </div>
           <div>
-            <span>退款原因</span><input type="text" placeholder="请输入退款原因" v-model="reason">
+            <span class="res">退款原因</span><input type="text" placeholder="请输入退款原因" v-model="reason">
           </div>
           <!-- <div v-if="order.reject_status==3">
             <span>失败原因</span><span>已经开封</span>
@@ -60,13 +60,20 @@
      </div>
     </div>
     <div class="foot">
-      <img src="../assets/img/kefu1.png" alt="" v-if="order.order_status==0">
+      <img src="../assets/img/kefu1.png" alt=""  @click="connectCustom">
       <div>
         <p @click="connectCustom">联系客服</p>
         <p @click="submit">确认提交</p>
       </div>
     </div>
 
+    </div>
+
+    <!-- 申请完售后后去联系客服的弹框 -->
+     <div v-transfer-dom>
+      <confirm v-model="show6" :show-cancel-button="false" title="申请售后已成功，请联系客服说明退款单号等" @on-confirm="connectCustom">
+        <p style="text-align:center;"></p>
+      </confirm>
     </div>
   </div>
 </template>
@@ -87,7 +94,8 @@ export default {
       id:'',
       reason:'',
       order:{},
-      tea:{}
+      tea:{},
+      show6:false,
     }
   },
   created(){
@@ -122,12 +130,18 @@ export default {
         return
       }
       const options = {
+        token:this.token,
         id:this.id,
         reason:this.reason
       }
       orderApply(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          this.$router.push("/orders")
+          this.show6 = true
+          // this.$vux.toast.text('申请售后成功')
+          // sessionStorage.selectIndex = 0
+          // setTimeout(() => {
+          //    this.$router.push("/orders")
+          // }, 1000);       
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -219,7 +233,7 @@ export default {
       border-bottom 1px solid #ccc
       display flex
       justify-content flex-start
-      align-items center
+      align-items center     
       span:first-of-type
         width 20%
       span:last-of-type
@@ -227,14 +241,22 @@ export default {
       span.money
         text-align right 
         color #E63443 
+      span.res
+        width 30%
+        display block
       span 
         display block
         text-align left 
         font-size: l(14)
         color: #333333;
+      input 
+        height 100%
+        line-height l(20)
+        width 100%
       
   ul
     padding 0 4.3%
+    margin-top l(10)
     li
       width 100%
       background #fff

@@ -1,7 +1,6 @@
 <template>
   <div class="con">
     <div class="content" v-if="list.length">
-      <ul class="h_list">
         <scroll ref="scroll"
             :data="list"
             :pullDownRefresh="pullDownRefreshObj"
@@ -9,7 +8,7 @@
             :startY="parseInt(startY)"
             @pullingDown="onPullingDown"
             @pullingUp="onPullingUp">
-                     
+             <div class="h_list">     
               <li class="h_li" @click.stop="$router.push({path:'/goodDetail',query:{id:i.id}})">
                 <div class="left" :style="{background:'url('+i.tea_img_link+')'}">
                   <img src="../assets/img/play.png" alt="">
@@ -39,12 +38,9 @@
                     <div class="pri_r" @click.stop="$router.push({path:'/teaLike',query:{id:i.id}})" v-else>查看相似</div>
                   </div>
                 </div>
-              </li>          
-          <div class="order-list" v-if="list.length == 0 && !loading">
-            <load-more :show-loading="false" tip="暂无数据" background-color="#f0f7f5"></load-more>
-          </div>
+              </li> 
+            </div>          
         </scroll>
-      </ul>
     </div>
      <div class="noList" v-else>
       <div class="box">
@@ -74,6 +70,7 @@ export default {
       list:[],
       page:1,
       loading :true,
+      count:'',
 
       
       pullUpLoadThreshold: 0,
@@ -116,6 +113,7 @@ export default {
         rows:10,
       }
       slotsList(options).then(res=>{
+        this.count = res.data.data.count
         if(res.data.code == 200 && !res.data.error_code){
           if(page==1){
             this.list = res.data.data.result
@@ -139,8 +137,10 @@ export default {
     onPullingUp() {
       // 更新数据
       console.log('pulling up and load data')
-      this.page ++
-      this.init(this.page)
+      if(this.count>=this.page*10){
+        this.page ++
+        this.init(this.page)
+      }
       this.$refs.scroll.forceUpdate()
     },
     rebuildScroll() {
@@ -191,7 +191,7 @@ export default {
     overflow-y scroll
     box-shadow: 0 0 5px 0 #E8E8E8;
     position relative
-    ul.h_list,.demo-content
+    div.h_list,.demo-content
       
       .h_li
         padding l(25) 4.3% l(15)
@@ -235,6 +235,7 @@ export default {
         .right
           height l(110)
           padding-left l(5)
+          width 50%
           p.name
             font-size: 14px;
             color: #333333;
@@ -251,6 +252,9 @@ export default {
             letter-spacing: 0.21px;
             line-height: 23px;
             text-align left 
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           div.mark
             display flex
             justify-content flex-start

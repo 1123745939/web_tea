@@ -1,0 +1,198 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>微信jsapi支付测试</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js" type="text/javascript"></script>
+</head>
+<?php
+//    $status = 1;
+    $status = 0;
+
+    if ($status == 1){
+?>
+
+<body>
+<table>
+    <tr>
+        <td><input type="hidden" name="token" id="token" value="msOgsGqlPStTtZCZMZhlmARf02QaIdtL"></td>
+    </tr>
+    <tr>
+        <td>产品id</td>
+        <td><input type="text" name="id" id ="id" value="1"></td>
+    </tr>
+    <tr>
+        <td>产品价格</td>
+        <td><input type="text" name="o_price" id="o_price" value="0.01">分</td>
+    </tr>
+    <tr>
+        <td>购买数量</td>
+        <td><input type="text" name="o_count" id="o_count" value="1">件</td>
+    </tr>
+    <tr>
+        <td>总计金额</td>
+        <td><input type="text" name="o_total" id="o_total" value="0.01">分</td>
+    </tr>
+    <tr>
+        <td>收件人</td>
+        <td><input type="text" name="o_username" id="o_username" value="收件人"></td>
+    </tr>
+    <tr>
+        <td>收件人手机号</td>
+        <td><input type="text" name="o_mobile" id="o_mobile" value="13717607457"></td>
+    </tr>
+    <tr>
+        <td>收件人地址id</td>
+        <td><input type="text" name="o_addr_id" id="o_addr_id" value="1"></td>
+    </tr>
+    <tr>
+        <td>备注</td>
+        <td><input type="text" name="o_remark" id="o_remark" value="备注"></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <button id="submit-btn" style="color:red">提交</button>
+        </td>
+    </tr>
+</table>
+
+<script type="text/javascript">
+    // 下单
+    $(function () {
+        // 调起微信支付
+        function onBridgeReady(data) {
+            try {
+                let params = {
+                    'appId' : data.appId,
+                    'timeStamp' : data.timeStamp,
+                    'nonceStr' : data.nonceStr,
+                    'package' : data.package,
+                    'signType' : data.signType,
+                    'paySign' : data.paySign
+                };
+                var method = 'getBrandWCPayRequest';
+                WeixinJSBridge.invoke(
+                    method, params, function (res) {
+                        if (res.err_msg == 'get_brand_wcpay_request:ok') { // 支付成功
+                            alert('支付成功');
+                            // window.location.replace('要跳转的链接');
+                        } else {
+                            alert('支付失败');
+                            alert(JSON.stringify(res));
+                        }
+                    }
+                )
+            } catch(e) {
+                alert(e)
+            }
+        }
+
+        $('#submit-btn').click(function () {
+            var params = {
+                'token' : $('#token').val(),
+                'id' : $('#id').val(),
+                'o_price' : $('#o_price').val(),
+                'o_count' : $('#o_count').val(),
+                'o_total' : $('#o_total').val(),
+                'o_username' : $('#o_username').val(),
+                'o_mobile' : $('#o_mobile').val(),
+                'o_addr_id' : $('#o_addr_id').val(),
+                'o_remark' : $('#o_remark').val(),
+            };
+            var url = "{{route('jsapi.buy.post')}}";
+            $.post(url, params, function (res) {
+                if (res.error_code == 0) {
+                    if (typeof WeixinJSBridge == "undefined"){
+                        if( document.addEventListener ){
+                            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                        }else if (document.attachEvent){
+                            document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                        }
+                    }else{
+                        onBridgeReady(res.data);
+                    }
+                } else {
+                    alert('失败')
+                    alert(JSON.stringify(res));
+                }
+            });
+        });
+    });
+</script>
+</body>
+<?php } else {?>
+
+    {{--多品下单--}}
+<button id="submit-btn" style="color:red">提交</button>
+<script type="text/javascript">
+    // 下单
+    $(function () {
+        // 调起微信支付
+        function onBridgeReady(data) {
+            try {
+                let params = {
+                    'appId' : data.appId,
+                    'timeStamp' : data.timeStamp,
+                    'nonceStr' : data.nonceStr,
+                    'package' : data.package,
+                    'signType' : data.signType,
+                    'paySign' : data.paySign
+                };
+                var method = 'getBrandWCPayRequest';
+                WeixinJSBridge.invoke(
+                    method, params, function (res) {
+                        if (res.err_msg == 'get_brand_wcpay_request:ok') { // 支付成功
+                            alert('支付成功');
+                            // window.location.replace('要跳转的链接');
+                        } else {
+                            alert('支付失败');
+                            alert(JSON.stringify(res));
+                        }
+                    }
+                )
+            } catch(e) {
+                alert(e)
+            }
+        }
+
+        $('#submit-btn').click(function () {
+            let data = {
+                'total' : 0.04,
+                'products' : [
+                    {'id' : 63, 'price' : 0.01, 'count' : 2, 'total' : 0.02},
+                    {'id' : 64, 'price' : 0.01, 'count' : 2, 'total' : 0.02},
+                ],
+            };
+            let params = {
+                'token' : 'msOgsGqlPStTtZCZMZhlmARf02QaIdtL',
+                'data' : JSON.stringify(data),
+                'o_username' : '赵岩',
+                'o_mobile' : '13717607457',
+                'o_addr_id' : '1',
+                'o_remark' : 'jsapi支付 联合下单',
+            };
+            var url = "{{route('jsapi.union.post')}}";
+            $.post(url, params, function (res) {
+                if (res.error_code == 0) {
+                    if (typeof WeixinJSBridge == "undefined"){
+                        if( document.addEventListener ){
+                            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                        }else if (document.attachEvent){
+                            document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                        }
+                    }else{
+                        onBridgeReady(res.data);
+                    }
+                } else {
+                    alert('失败')
+                    alert(JSON.stringify(res));
+                }
+            });
+        });
+    });
+</script>
+<?php }?>
+
+</html>

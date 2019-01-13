@@ -1,7 +1,7 @@
 <template>
   <div class="con">
     <div class="content" v-if="list.length">
-      <ul class="h_list">
+  
         <scroll ref="scroll"
               :data="list"
               :pullDownRefresh="pullDownRefreshObj"
@@ -9,7 +9,7 @@
               :startY="parseInt(startY)"
               @pullingDown="onPullingDown"
               @pullingUp="onPullingUp">
-          
+              <ul class="h_list">
                 <li class="h_li">
                   <div class="left">
                     <img src="../assets/img/play.png" alt="">
@@ -39,13 +39,13 @@
                     </div>
                   </div>
                 </li>
-           
+            </ul>
           <div class="order-list" v-if="list.length == 0 && !loading">
             <load-more :show-loading="false" tip="暂无数据" background-color="#f0f7f5"></load-more>
           </div>
 
         </scroll>
-      </ul>
+     
     </div>
     <div class="noList" v-else>
       <div class="box">
@@ -75,6 +75,7 @@ export default {
       list:[],
       page:1,
       loading :true,
+      count:'',
 
       
       pullUpLoadThreshold: 0,
@@ -118,8 +119,10 @@ export default {
       }
       thumbsList(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
+          this.count = res.data.data.count
           if(page==1){
             this.list = res.data.data.result
+            this.page =1
             return
           }
           this.list = this.list.concat(res.data.data.result)
@@ -139,8 +142,10 @@ export default {
     onPullingUp() {
       // 更新数据
       console.log('pulling up and load data')
-      this.page ++
-      this.init(this.page)
+      if(this.count>=this.page*10){
+        this.page ++
+        this.init(this.page)
+      }
 
       this.$refs.scroll.forceUpdate()
     },
@@ -191,6 +196,7 @@ export default {
     background #F7F7F7
     overflow-y scroll
     box-shadow: 0 0 5px 0 #E8E8E8;
+    position relative
     ul.h_list,.demo-content
       
       .h_li
@@ -251,6 +257,9 @@ export default {
             letter-spacing: 0.21px;
             line-height: 23px;
             text-align left 
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           div.mark
             display flex
             justify-content flex-start

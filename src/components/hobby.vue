@@ -46,7 +46,7 @@ export default {
   data () {
     return {
       token:sessionStorage.token ||"",
-      list:[]
+      list:[],
     }
   },
   created(){

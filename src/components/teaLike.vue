@@ -1,7 +1,7 @@
 <template>
   <div class="con">
     <div class="content" v-if="list.length">
-      <ul class="h_list">
+
         <scroll ref="scroll"
             :data="list"
             :pullDownRefresh="pullDownRefreshObj"
@@ -9,13 +9,8 @@
             :startY="parseInt(startY)"
             @pullingDown="onPullingDown"
             @pullingUp="onPullingUp">
-            
-            <!-- <swipeout class="vux-1px-tb">
-              <swipeout-item transition-mode="follow" v-for="i in list" :key="i.id">
-                <div slot="right-menu">
-                  <swipeout-button type="warn" @click.native="handle(i)">取消收藏</swipeout-button>
-                </div>
-                <div slot="content" class="demo-content vux-1px-t"> -->
+
+                <div class="demo-content vux-1px-t"> 
                   <li class="h_li" v-for="i in list" :key="i.id" @click="$router.push({path:'/goodDetail',query:{id:i.id}})">
                     <div class="left" :style="{background:'url('+i.tea_img_link+')'}">
                       <img src="../assets/img/play.png" alt="">
@@ -45,11 +40,9 @@
                       </div>
                     </div>
                   </li>
-                <!-- </div>
-              </swipeout-item>
-            </swipeout> -->
+                </div>
+             
       </scroll>
-    </ul>
       
     </div>
     <div class="noList" v-else>
@@ -63,16 +56,11 @@
 
 <script>
 import {teaLike, thumbsList} from '../api/api.js'
-import {  Swipeout, SwipeoutItem, SwipeoutButton, XButton ,LoadMore } from 'vux'
 import Scroll from './scroll/scroll'
 export default {
   components: {
     Scroll,
-    Swipeout,
-    SwipeoutItem,
-    SwipeoutButton,
-    XButton ,
-    LoadMore,
+   
   },
   data () {
     return {
@@ -82,6 +70,7 @@ export default {
       loading :true,
       id:'',
       tea_type_id:'',
+      count:'',
 
       
       pullUpLoadThreshold: 0,
@@ -129,6 +118,7 @@ export default {
       }
       teaLike(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
+          this.count = res.data.data.length
           if(page==1){
             this.list = res.data.data
             console.log(this.list)
@@ -155,9 +145,10 @@ export default {
     onPullingUp() {
       // 更新数据
       console.log('pulling up and load data')
-      this.page ++
-      this.init(this.page)
-
+      if(this.count>=this.page*10){
+        this.page ++
+        this.init(this.page)
+      }
       this.$refs.scroll.forceUpdate()
     },
     rebuildScroll() {
@@ -252,6 +243,7 @@ export default {
         .right
           height l(110)
           padding-left l(5)
+          width 50%
           p.name
             font-size: 14px;
             color: #333333;
@@ -268,6 +260,9 @@ export default {
             letter-spacing: 0.21px;
             line-height: 23px;
             text-align left 
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           div.mark
             display flex
             justify-content flex-start

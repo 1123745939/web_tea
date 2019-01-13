@@ -17,29 +17,29 @@
       </div>
     </div>
     <!-- 通知 -->
-    <div class="order" v-if="notifies.length">
+    <div class="order">
       <div class="o_h"  @click="$router.push('/infos')">
         <div class="oh_l">
           <img src="../assets/img/logo.png" alt="">通知
         </div>
         <img src="../assets/img/more2.png" alt="">
       </div>
-      <ul class="tips">
+      <ul class="tips"  v-if="notifies.length">
         <li v-for="item in notifies" :key="item.notify_target_id">
           <span></span>{{item.notify_content}}
         </li>
       </ul>
     </div>
     <!-- 订单 -->
-    <div class="order" v-if="orders.length">
+    <div class="order">
       <div class="o_h"  @click="$router.push('/orders')">
         <div class="oh_l">
           <img src="../assets/img/order.png" alt="">订单
         </div>
         <img src="../assets/img/more2.png" alt="">
       </div>
-      <ul class="o_l">
-        <li v-for="item in orders" :key="item.id"  @click="$router.push({path:'/orderDetail',query:{id:item.id}})">
+      <ul class="o_l"  v-if="orders.length">
+        <li v-for="item in orders" :key="item.id"  @click="$router.push({path:'/orderDetail',query:{id:item.id,tea_id:item.tea_id}})">
           <div class="li_h">
             <p class="time">{{item.created_at}}</p>
             <p>{{item.status_text}}</p>
@@ -50,26 +50,34 @@
             </div>
             <div class="t_info">
               <p>{{item.tea_title}}</p>
-              <span>{{item.tea_date}} {{item.tea_period}}</span>
+              <span>{{item.tea_date}}</span>
               <div class="in_num">
                 <p>￥<span>{{item.tea_price}}</span>.00</p>
                 <span>X{{item.order_count}}</span>
               </div>
             </div>
-            <div class="red" @click.stop="evluate(item)">去评价</div>
+            <!-- <div class="red" @click.stop="evluate(item)" v-if="item.order_status==1 && item.reject_status==0">申请退款</div>
+            <div class="red" @click.stop="evluate(item)" v-if="item.order_status==1 && item.reject_status==1">查看详情</div>
+            <div class="red" @click.stop="evluate(item)" v-if="item.order_status==1 && item.reject_status==2">取消退款</div>
+            <div class="red" @click.stop="evluate(item)" v-if="item.order_status==1 && item.reject_status==3">查看详情</div>
+            <div class="red" @click.stop="evluate(item)" v-if="item.order_status==1 && item.reject_status==4">确认收货</div>
+            <div class="red" @click.stop="evluate(item)" v-if="item.order_status==2">查看详情</div>
+            <div class="red" @click.stop="evluate(item)" v-if="item.order_status==3">去评价</div>
+            <div class="red" @click.stop="evluate(item)" v-if="item.order_status==4">查看详情</div> -->
+            <div class="red" @click.stop="$router.push({path:'/orderDetail',query:{id:item.id,tea_id:item.tea_id}})">查看详情</div>
           </div>          
         </li>
       </ul>
     </div>
     <!-- 爱好 -->
-    <div class="order hobby" v-if="hobbies.length">
+    <div class="order hobby">
       <div class="o_h"  @click="$router.push('/hobby')">
         <div class="oh_l">
           <img src="../assets/img/hobby.png" alt="">爱好
         </div>
         <img src="../assets/img/more2.png" alt="" >
       </div>
-       <ul class="o_l">
+       <ul class="o_l"  v-if="hobbies.length">
         <li class="li_f" v-for="item in hobbies" :key="item.id">
           <div class="li_m">
             <div class="t_img" :style="{background:'url('+item.tea_img_link+')'}">
@@ -86,14 +94,14 @@
       <!-- <img src="../assets/img/hobbym.png" alt="" class="hobbym"> -->
     </div>
     <!-- 热评 -->
-    <div class="order hot" v-if="comments.length">
+    <div class="order hot">
       <div class="o_h"  @click="$router.push('/evaluate')">
         <div class="oh_l">
           <img src="../assets/img/hot.png" alt="">热评
         </div>
         <img src="../assets/img/edit.png" alt="">
       </div>
-      <ul class="h_d">
+      <ul class="h_d"  v-if="comments.length">
         <li @click="$router.push({path:'/hotDiscuss',query:{id:item.id}})" v-for="item in comments" :key="item.id">
           <div class="li_top">
             <div></div>
