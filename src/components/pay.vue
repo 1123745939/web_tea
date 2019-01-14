@@ -61,11 +61,17 @@
      <div v-transfer-dom>
       <alert v-model="show" title="您购买的产品库存不足"  @on-hide="onHide">{{alertTxt}}</alert>
     </div>
+    <!-- 用h5支付完之后 显示的弹框 假如支付成功就去订单页，假如失败就去支付前的上一个页面 -->
+    <div v-transfer-dom>
+      <confirm v-model="showIfSuccess" title="是否已经支付成功" @on-cancel="onCancel1"  @on-confirm="onConfirm1">
+        <p style="text-align:center;"></p>
+      </confirm>
+    </div>
   </div>
 </template>
 
 <script>
-import {  Alert, TransferDomDirective as TransferDom } from 'vux'
+import {  Alert, TransferDomDirective as TransferDom ,Confirm, } from 'vux'
 import {getAddress,orderSettle,orderCheck,orderPay,orderBuy,orderBuyCheck,jsapiUnion,jsapiBuy} from '../api/api.js'
 export default {
   directives: {
@@ -73,6 +79,7 @@ export default {
   },
   components: {
     Alert,
+    Confirm
   },
   data () {
     return {
@@ -85,7 +92,8 @@ export default {
       show:false,
       alertTxt:'',
       totalNum:0,
-      totalP:0
+      totalP:0,
+      showIfSuccess:false
     }
   },
   created(){
@@ -211,6 +219,7 @@ export default {
           if(this.is_weixn()){
             this.weChatUnion()
           }else{
+            this.showIfSuccess = true
             this.orderOrder()
           }
         }else{
@@ -231,6 +240,7 @@ export default {
           if(this.is_weixn()){
             this.weChatBuy()
           }else{
+            this.showIfSuccess = true
             this.orderOrderBuy()
           }
           
@@ -396,7 +406,7 @@ export default {
           }
       )       
     },
-    //
+    //没库存时候
     onHide () {
       console.log(this.type)
       if(this.type=='shop'){
@@ -405,6 +415,14 @@ export default {
         this.$router.push({path:'/goodDetail',query:{id:this.arr[0].id}})
       }
     },
+    //h5支付完之后 的弹框 失败的话 就去主页 成功就去订单页
+    onCancel1 () {//去主页
+      this.$router.push('/')
+    },
+    onConfirm1 () {//去订单页
+      sessionStorage.selectIndex = 0
+      this.$router.push('/orders ')
+    }
   },
   
   beforeRouteLeave(to, from, next){

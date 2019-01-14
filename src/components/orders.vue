@@ -1,13 +1,13 @@
 <template>
-  <div class="con">
-    <div class="blank"></div>
-    <div class="o_h">
+  <div class="con"  ref="cons">
+    <!-- <div class="blank"></div> -->
+    <div class="o_h"  ref="navs">
       <tab :scroll-threshold="6" bar-active-color="#F6AF15" active-color="#83271F" :line-width=4>
         <tab-item :selected="index == selectIndex ? true:false" @on-item-click="onItemClick(item.id,index)" v-for="(item,index) in tabs" :key="item.id">{{item.name}}</tab-item>
       </tab>
     </div>
     
-    <div class="box" v-if="orderList.length">
+    <div class="box" v-show="orderList.length" id="boxs">
       <scroll ref="scroll"
         :data="orderList"
         :pullDownRefresh="pullDownRefreshObj"
@@ -94,15 +94,12 @@
                 </div>
           </li>
        </div>
-		    <!-- <div class="order-list" v-if="orderList1.length == 0 && !loading">
-		    	<load-more :show-loading="false" tip="暂无数据" background-color="#f0f7f5"></load-more>
-		    </div> -->
     </scroll>
 
     </div>
 
     
-    <div class="noList" v-else>
+    <div class="noList" v-show="orderList.length==0">
     <div class="box">
       <img src="../assets/img/symbols-order.png" alt="">
       <span>暂无订单</span>
@@ -158,6 +155,7 @@ export default {
     }
   },
   created(){
+
     document.title = '我的订单'
     if(sessionStorage.selectIndex){
       this.selectIndex = sessionStorage.selectIndex
@@ -166,7 +164,9 @@ export default {
     }
     
     this.init(1,this.selectIndex)
+
   },
+  
   computed:{
     pullDownRefreshObj: function () {
       return this.pullDownRefresh ? {
@@ -181,6 +181,10 @@ export default {
       } : false
     }
   },
+  mounted(){
+    this.$el.querySelector('#boxs').style.height=this.$refs.cons.offsetHeight-this.$refs.navs.offsetHeight+'px'
+  },
+ 
   methods:{
     init(page,status){
       const options = {
@@ -198,7 +202,8 @@ export default {
           }else{
             this.orderList = this.orderList.concat(res.data.data.result)  
             console.log(this.orderList)
-          }         
+          } 
+              
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -348,7 +353,7 @@ export default {
 .con
   background #F7F7F7
   position relative
-  height l(667)
+  height 100vh
  .o_h
     width 100%
     padding 0 4.3%
@@ -358,12 +363,11 @@ export default {
     height l(40)
     left 0
     top 0
-  .blank
-    height l(40)
   .box
-    height l(637)
+    height l(627)
     width: 100%;
-    position relative
+    position fixed;
+    top l(40)
     overflow-y scroll
     background #F7F7F7 
   div.o_l
@@ -480,8 +484,11 @@ export default {
     right 0
     margin auto
     div
-      width 100%
-      height 100%
+      width l(175)
+      height l(200)
+      position absolute
+      top 0
+      left 0
       display flex
       flex-direction column
       justify-content space-between

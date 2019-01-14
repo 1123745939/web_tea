@@ -1,8 +1,7 @@
 <template>
-  <div class="con">
-
+  <div class="con"  ref="cons">
     <!-- 评价 -->
-    <div class="pre">
+    <div class="pre"  ref="navs">
       <ul class="pr_m">
         <li :class="tabIndex ==1 ?'active':'' "  @click="hot('',1)">全部<br>{{total.total_count}}</li>
         <li :class="tabIndex ==2 ?'active':'' " @click="hot('is_hot',0)">热评<br>{{total.hot_count}}</li>
@@ -11,7 +10,7 @@
         <li :class="tabIndex ==5 ?'active':'' " @click="hot('is_append',0)">追加<br>{{total.append_count}}</li>
       </ul>
       <div class="blank"></div>
-      <div class="booo" v-if="result.length">
+      <div class="booo" v-show="result.length" >
         <scroll ref="scroll"
           :data="result"
           :pullDownRefresh="pullDownRefreshObj"
@@ -46,14 +45,14 @@
               <!-- 追评 -->
               <div class="zhui" v-show="item.append">
                 <div class="li_t zhui">用户追评</div>
-                <li class="pr_li" style="padding-top:0" v-for="(i,index1) in item.append" :key="i.id">             
+                <li class="pr_li" v-for="(i,index1) in item.append" :key="i.id">             
                   <div class="li_t">
                     <img :src="i.user.img_link" alt="">&nbsp;
                     {{i.user.username}}
                   </div>
                   <p>{{i.content}}</p>
                   <div class="imBox">
-                    <ul class="d_img" v-show="i.image">
+                    <ul class="d_img zhui" v-show="i.image">
                       <li class="d_li" v-for="(img,index) in i.image" :key="index">
                         <img :src="i.image_link" alt="">
                       </li>
@@ -78,7 +77,7 @@
           </div>
         </scroll>
       </div>
-    <div class="noList" v-else>
+    <div class="noList" v-show="result.length==0">
       <div class="box">
         <img src="../assets/img/symbols-order.png" alt="">
         <span>暂无数据</span>
@@ -300,7 +299,9 @@ export default {
       height l(80)
     .booo
       height l(587)
-      position relative
+      position fixed
+      top l(80)
+      width 100%
       ul.pr_list
         background #fff
         padding 0 4.3% 
@@ -309,7 +310,7 @@ export default {
           border-bottom 0
         li.pr_li
           border-bottom 1px solid #E8E8E8
-          padding l(20) 0 l(10)
+          padding l(20)  l(10)
           div.li_t.zhui
             font-size: 14px;
             color: #83271F;
@@ -327,6 +328,7 @@ export default {
               display block
               width l(31)
               height l(31)
+              border-radius 50%
           p
             fz(14)
             color: #333333;
@@ -336,12 +338,20 @@ export default {
             padding 0 10%
           div.imBox
             overflow hidden
+            ul.d_img.zhui
+              padding l(10) 0
+              li.d_li:nth-of-type(3n)
+                margin-right 0
+              li.d_li 
+                width l(65)
+                height l(45)
+                margin-right l(5)
             ul.d_img
               // width 100%
               display flex
               justify-content flex-start
               flex-wrap wrap
-              // padding l(10) 10%
+              padding l(10) 10%
               float left
               li.d_li:nth-of-type(3n)
                 margin-right 0
@@ -361,6 +371,7 @@ export default {
                 width l(85)
                 height l(65)
                 margin-top l(5)
+                margin-left l(20)
           .li_bt
             padding l(10) 10%
             display flex
@@ -390,8 +401,11 @@ export default {
     right 0
     margin auto
     div
-      width 100%
-      height 100%
+      width l(175)
+      height l(200)
+      position absolute
+      top 0
+      left 0
       display flex
       flex-direction column
       justify-content space-between

@@ -18,7 +18,8 @@
     <div class="d">
       <span class="d_t">{{detailObj.tea_date}}</span>
       <!-- <div class="li_top" @click.stop="$router.push({path:'/videoPlay',query:{id:id}})"> -->   
-      <div class="li_top" @click.stop="playVideo">
+      <div class="li_top" @click.stop="playVideo" height=200 width=200 units="pixels" >
+        <!-- <embed :src="detailObj.tea_vidio_link" type="" id="video"> -->
         <video :src="detailObj.tea_vidio_link" id="video" style="width:100%;height:100%;object-fit:fill"  :poster="detailObj.tea_img_link"  controls></video>
         <div class="play"><span></span></div>
         <div class="data">
@@ -423,7 +424,7 @@ export default {
         if(res.data.code == 200 && !res.data.error_code){
           
           }else{
-          this.$vux.toast.text(res.data.error_message||res.data.message)
+          // this.$vux.toast.text(res.data.error_message||res.data.message)
         }
       })
     }
@@ -508,6 +509,9 @@ export default {
       // backgroundIcon('list1.png')
       position relative
       // border-radius 3% 0 3% 0
+      #video
+        width 100%
+        height 100%
       .play
         opacity: 0.3;
         backgroundIcon('play.png')
@@ -556,7 +560,7 @@ export default {
         width: l(180)
         height: l(30)
         border-radius: 4px;
-        background rgba(0,0,0,0.1)
+        background rgba(0,0,0,0.4)
         position absolute
         top l(20)
         left l(20)
@@ -566,7 +570,7 @@ export default {
           .swiper-slide
             width 100% 
             height l(30)!important          
-            color #333
+            color #fff
             display flex
             justify-content flex-start
             align-items center

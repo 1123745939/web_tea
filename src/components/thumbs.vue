@@ -1,6 +1,6 @@
 <template>
-  <div class="con">
-    <div class="content" v-if="list.length">
+  <div class="con" ref="cons">
+    <div class="content" v-show="list.length>0" id="boxs">
   
         <scroll ref="scroll"
               :data="list"
@@ -47,7 +47,7 @@
         </scroll>
      
     </div>
-    <div class="noList" v-else>
+    <div class="noList" v-show="list.length==0">
       <div class="box">
         <img src="../assets/img/symbols-order.png" alt="">
         <span>暂无数据</span>
@@ -109,6 +109,9 @@ export default {
         txt: {more: this.pullUpLoadMoreTxt, noMore: this.pullUpLoadNoMoreTxt}
       } : false
     }
+  },
+  mounted(){
+    this.$el.querySelector('#boxs').style.height=this.$refs.cons.offsetHeight +'px'
   },
   methods:{
     init(page){
@@ -191,12 +194,15 @@ export default {
   border-top 1px solid  #E8E8E8
   padding  l(10) 0 0
   height 100vh
+  position relative
   .content
+    width 100%
     height l(656)
     background #F7F7F7
     overflow-y scroll
     box-shadow: 0 0 5px 0 #E8E8E8;
-    position relative
+    position fixed
+    top 0
     ul.h_list,.demo-content
       
       .h_li
@@ -343,8 +349,11 @@ export default {
     right 0
     margin auto
     div
-      width 100%
-      height 100%
+      width l(175)
+      height l(200)
+      position absolute
+      top 0
+      left 0
       display flex
       flex-direction column
       justify-content space-between
