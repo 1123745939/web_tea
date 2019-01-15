@@ -132,7 +132,7 @@
       </div>
       <ul style="border-bottom:1px solid #E8E8E8">
         <li v-for="item in sameList" :key="item.tea_title" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">
-          <div :style="{background:'url('+item.tea_img_link+')'}">
+          <div :style="{background:'url(' + item.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
             <img src="../assets/img/play.png" alt="">
             <span>{{item.tea_date}}</span>
           </div>
@@ -147,7 +147,7 @@
       </div>
       <ul>
         <li v-for="item in likeList" :key="item.tea_title" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">
-          <div :style="{background:'url('+item.tea_img_link+')'}">
+          <div :style="{background:'url(' + item.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
             <img src="../assets/img/play.png" alt="">
             <span>{{item.tea_date}}</span>
           </div>
