@@ -23,7 +23,7 @@
               <p>{{item.status_text}}</p>
             </div>
             <div class="li_m"  @click="$router.push({path:'/orderDetail',query:{id:item.id,tea_id:item.tea_id}})">
-              <div class="t_img" :style="{background:'url(' + item.tea_img_link + ') no-repeat center',backgroundSize:'100%'}">
+              <div class="t_img" :style="{background:'url(' + item.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
                 <img src="../assets/img/play.png" alt="">
               </div>
               <div class="t_info">
@@ -31,7 +31,7 @@
                 <span>{{item.tea_date}}</span>
               </div>
               <div class="in_num">
-                  <p>￥{{item.order_price}}.00</p>
+                  <p>￥{{item.order_price}}</p>
                   <span>X{{item.order_count}}</span>
                 </div>
             </div>
@@ -45,14 +45,16 @@
             </div> -->
             <div class="b_b" v-if="item.order_status == 1 && item.reject_status==0">
               <p @click="$router.push({path:'/applySale',query:{id:item.id}})">申请售后</p>
-              <!-- <p @click="cancelShow = true;id=item.id">取消订单</p> -->
             </div>
              <div class="b_b" v-if="item.order_status == 1 && item.reject_status==2">
                <p  @click="$router.push({path:'/orderDetail',query:{id:item.id,tea_id:item.tea_id}})">查看详情</p>
               <p @click="cancelTuiShow = true;id=item.id">取消退款</p>
-              <!-- <p @click="cancelShow = true;id=item.id">取消订单</p> -->
             </div>
-            <div class="b_b" v-if="item.order_status == 2">
+             <div class="b_b" v-if="item.order_status == 2 && item.reject_status==2">
+               <p  @click="$router.push({path:'/orderDetail',query:{id:item.id,tea_id:item.tea_id}})">查看详情</p>
+              <p @click="cancelTuiShow = true;id=item.id">取消退款</p>
+            </div>
+            <div class="b_b" v-if="item.order_status == 2 && item.reject_status==0">
               <p>查看物流</p>
               <p @click="$router.push({path:'/applySale',query:{id:item.id}})">申请售后</p>
               <p @click="confirmShow = true;id=item.id">确认收货</p>

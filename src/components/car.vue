@@ -166,7 +166,9 @@ export default {
     },
     //减
     reduce(id,index){
-
+      if(this.carList[index].tea_count ==1){
+        return
+      }
       if(this.carList[index].tea_count > 1){
         this.carList[index].tea_count -- 
       }

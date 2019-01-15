@@ -1,6 +1,6 @@
 <template>
-  <div class="con">
-     <div class="content" v-if="newsList.length>0">
+  <div class="con"  ref="cons">
+     <div class="content" v-show="newsList.length>0" id="boxs">
       <scroll ref="scroll"
         :data="newsList"
         :pullDownRefresh="pullDownRefreshObj"
@@ -52,7 +52,7 @@
       </confirm>
     </div>
   </div>
-    <div class="noList" v-else>
+    <div class="noList" v-show="newsList.length==0">
       <div class="box">
         <img src="../assets/img/symbols-info.png" alt="">
         <span>暂无数据</span>
@@ -107,6 +107,9 @@ export default {
     document.title = '通知'
     this.init(1)
   },
+  mounted(){
+    this.$el.querySelector('#boxs').style.height=this.$refs.cons.offsetHeight+'px'
+  },
   computed:{
     pullDownRefreshObj: function () {
       return this.pullDownRefresh ? {
@@ -134,14 +137,8 @@ export default {
          if(page==1){
             this.newsList = res.data.data.result
             this.page=1
-            console.log(this.newsList)
-            return
-          }
-          this.newsList = this.newsList.concat(res.data.data.result)
-          console.log(this.newsList)
-          this.len = res.data.data.count
-          if(this.len == this.newsList.length){
-            this.pullUpLoadMoreTxt = '没有更多数据了'
+          }else{
+            this.newsList = this.newsList.concat(res.data.data.result)
           }
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
@@ -191,7 +188,7 @@ export default {
     },
      //上拉加载
     async onPullingUp() {
-       if(this.count>=this.page*10){
+       if(this.count>this.page*10){
         this.page ++
         await this.init(this.page)
       }
@@ -236,87 +233,95 @@ export default {
 @import '../utils/css/util.styl';
 .con
   background #F7F7F7
-  height l(667)
-  overflow-y scroll
   border-top 1px solid  #E8E8E8
-  padding-top l(10)
-  .del
-    width l(44)
-    height l(44)
-    position fixed
-    right l(16)
-    bottom l(40)
-    img 
-      display block
-      width 100%
-      height 100%
-  ul,.demo-content
-    padding 0 4.3%
-    background #fff
+  padding  l(10) 0 0
+  height 100vh
+  position relative
+  .content
+    width 100%
+    height l(656)
+    background #F7F7F7
+    overflow-y scroll
     box-shadow: 0 0 5px 0 #E8E8E8;
-    li:last-of-type
-      div.li_r
-        border-bottom 0
-    li
-      padding l(10) 0
-      display flex
-      justify-content flex-start
-      align-items center
-      img.logo
+    position fixed
+    top 0
+    .del
+      width l(44)
+      height l(44)
+      position fixed
+      right l(16)
+      bottom l(40)
+      img 
         display block
-        width l(47)
-        height l(47)
-        border-radius 50%
-      div.li_r
-        width 84%
-        border-bottom 1px solid  #E8E8E8
-        disFlex ()
-        margin-left l(10)
-        .li_mm
-          width 70%
-          display flex
-          flex-direction column
-          justify-content space-between
-          text-align left 
-          p 
-            line-height l(28)
-            fz(16)
-            color: #333333;
-            letter-spacing: 0.32px; 
-            text-align left  
-          span.t 
-            fz(14)
-            color: #666666;
-            letter-spacing: 0.22px;
-            line-height l(28)
+        width 100%
+        height 100%
+    ul,.demo-content
+      padding 0 4.3%
+      background #fff
+      // box-shadow: 0 0 5px 0 #E8E8E8;
+      // li:last-of-type
+      //   div.li_r
+      //     border-bottom 0
+      li
+        padding l(10) 0
+        display flex
+        justify-content flex-start
+        align-items center
+        img.logo
+          display block
+          width l(47)
+          height l(47)
+          border-radius 50%
+        div.li_r
+          width 84%
+          //border-bottom 1px solid  #E8E8E8
+          disFlex ()
+          margin-left l(10)
+          .li_mm
+            width 70%
+            display flex
+            flex-direction column
+            justify-content space-between
             text-align left 
-          span.ti
-            fz(12)
-            color: #999999;
-            letter-spacing: 0.24px;
-            line-height l(28)
-            text-align left 
-        .li_img
-          width l(80)
-          height l(60)
-          position relative
-          .img1
-            position absolute
-            display block
+            p 
+              line-height l(28)
+              fz(16)
+              color: #333333;
+              letter-spacing: 0.32px; 
+              text-align left  
+            span.t 
+              fz(14)
+              color: #666666;
+              letter-spacing: 0.22px;
+              line-height l(28)
+              text-align left 
+            span.ti
+              fz(12)
+              color: #999999;
+              letter-spacing: 0.24px;
+              line-height l(28)
+              text-align left 
+          .li_img
             width l(80)
             height l(60)
-            top 0
-            left 0
-          .img2
-            position absolute
-            display block
-            width l(22)
-            height l(22)
-            top 0
-            left 0
-            bottom 0
-            right 0
-            margin auto
+            position relative
+            .img1
+              position absolute
+              display block
+              width l(80)
+              height l(60)
+              top 0
+              left 0
+            .img2
+              position absolute
+              display block
+              width l(22)
+              height l(22)
+              top 0
+              left 0
+              bottom 0
+              right 0
+              margin auto
   .noList
     width l(175)
     height l(200)
@@ -327,8 +332,11 @@ export default {
     right 0
     margin auto
     div
-      width 100%
-      height 100%
+      width l(175)
+      height l(200)
+      position absolute
+      top 0
+      left 0
       display flex
       flex-direction column
       justify-content space-between

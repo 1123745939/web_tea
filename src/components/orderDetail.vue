@@ -39,7 +39,7 @@
     <ul class="o_l">
       <li>
         <div class="li_m">
-          <div class="t_img" :style="{background:'url('+ tea.tea_img_link + ')'}">
+          <div class="t_img" :style="{background:'url(' + tea.tea_img_link + ') no-repeat center/cover',backgroundSize:'100%'}">
             <img src="../assets/img/play.png" alt="">
           </div>
           <div class="t_info">
@@ -88,7 +88,11 @@
         <p @click="connectCustom">联系客服</p>
         <p @click.stop="cancelTuiShow=true" >取消退款</p>
       </div>
-      <div  v-if="order.order_status==2">
+      <div  v-if="order.order_status==2 && order.reject_status==2">
+        <p @click="connectCustom">联系客服</p>
+        <p @click.stop="cancelTuiShow=true" >取消退款</p>
+      </div>
+      <div  v-if="order.order_status==2 && order.reject_status==0">
         <p @click.stop="applyShouhou">申请售后</p>
         <p>查看物流</p>
         <p @click="confirm">确认收货</p>
@@ -222,6 +226,7 @@ export default {
     //去评价
     evluate(){
       this.tea.tea_id = this.tea_id
+      this.tea.id = this.id
       sessionStorage.orderComment = JSON.stringify(this.tea)
       this.$router.push('/evaluate');
 

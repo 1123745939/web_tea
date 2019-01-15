@@ -5,10 +5,12 @@
       <div class="bt">同一批茶</div>
       <div class="t_b">
         <ul>
-          <li v-for="(i,index) in topArr" :key="index">
+          <!-- <li v-for="(i,index) in topArr" :key="index">
             <img :src="i.image_url" alt="" class="goodimg previewer-demo-img"  v-if="!i.tea_play_count" @click="show(index)">
             <video :src="i.vidio_url" v-else></video>
-            <!-- <img src="../assets/img/play.png" alt="" class="play" v-show="i.tea_play_count"> -->
+          </li> -->
+          <li v-for="(i,index) in batch" :key="index">
+            <video :src="i.tea_vidio_link" ></video>
           </li>
         </ul>
       </div>
@@ -21,7 +23,7 @@
       <div class="li_top" @click.stop="playVideo" height=200 width=200 units="pixels" >
         <!-- <embed :src="detailObj.tea_vidio_link" type="" id="video"> -->
         <video :src="detailObj.tea_vidio_link" id="video" style="width:100%;height:100%;object-fit:fill"  :poster="detailObj.tea_img_link"  controls></video>
-        <div class="play"><span></span></div>
+        <!-- <div class="play"><span></span></div> -->
         <div class="data">
           <div class="d_l">
             {{detailObj.tea_play_count}}次播放
@@ -44,6 +46,7 @@
             <swiper-slide><img src="../assets/img/photo.jpg" alt="">小灰灰11&nbsp;购买了这个茶叶</swiper-slide>
             <swiper-slide><img src="../assets/img/logo.png" alt="">大灰灰22&nbsp;购买了这个茶叶</swiper-slide>
             <swiper-slide><img src="../assets/img/hot.png" alt="">超灰灰33&nbsp;购买了这个茶叶</swiper-slide>
+            <swiper-slide><img src="../assets/img/2.jpg" alt="">喜洋洋&nbsp;购买了这个茶叶</swiper-slide>
           </swiper>
       </div>
       <div class="li_mid">
@@ -205,6 +208,7 @@ export default {
       sameList:[],
       likeList:[],
       comment:[],
+      batch:[],
       loginMaskShow:false,
       carNum:'',
       topArr:[],
@@ -233,8 +237,8 @@ export default {
         slidesPerView :'auto',
         loop :true,
         autoplay: {
-　　　　delay: 2000,
-      　　disableOnInteraction: false
+　　　　 delay: 2000,
+      　　disableOnInteraction: true
       　},
         direction:'vertical',
         grabCursor:true,
@@ -257,21 +261,7 @@ export default {
     this.init(id)
     this.$forceUpdate()
     this.getcarNum()
-    // this.$nextTick(()=>{
-    //   var mySwiper = new Swiper('.swiper-container', {
-    //     slidesPerView :'auto',
-    //     loop :true,
-    //     autoplay:true,
-    //     direction:'vertical',
-    //     grabCursor:true,
-    //     autoplayDisableOnInteraction:false,
-    //     mousewheelControl:true,
-    //     autoHeight:true,
-    //     speed:500,
-    //     // spaceBetween:30,
-    //   })
-    // })
-    this.swiper.slideTo(3, 1000, false)
+    this.swiper.slideTo(4, 1000, false)
   },
   computed: {
       swiper() {
@@ -289,6 +279,7 @@ export default {
           this.sameList = res.data.data.same
           this.likeList = res.data.data.like 
           this.comment = res.data.data.comments
+          this.batch = res.data.data.batch
           this.topArr = res.data.data.detail.images.concat(res.data.data.detail.vidio)
           if(res.data.data.detail.images.length){
             res.data.data.detail.images.forEach(item=>{
@@ -398,7 +389,7 @@ export default {
     },
     //去同款茶列表
     goSame(){
-      this.$router.push({path:'/teaSame',query:{id:this.detailObj.id,tea_id:this.detailObj.tea_type_id}})
+      this.$router.push({path:'/teaSame',query:{id:this.detailObj.id,tea_no_same:this.detailObj.tea_no_same}})
     },
     //去相似茶列表
     goLike(){
@@ -418,7 +409,8 @@ export default {
           } 
       const options = {
         id : this.id,
-        vidio_id:1
+        vidio_id:'',
+        type:1,
       } 
       vidioPlayCount(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
@@ -477,6 +469,7 @@ export default {
           video     
             width 100%
             height 100%
+            object-fit: fill;
           img.goodimg
             display block
             width 100%
@@ -702,10 +695,11 @@ export default {
           padding 0 10%
         div.a_b
           overflow hidden
+          padding 0 10%
           ul.d_img
             margin-top l(5)
-            padding 0 10%
-            width 100%
+            //padding 0 10%
+            //width 100%
             display flex
             justify-content flex-start
             flex-wrap wrap

@@ -3,7 +3,7 @@
     <div class="content">
       <ul class="h_list">
         <li class="h_li" v-for="(i) in list" :key="i.id" @click.stop="$router.push({path:'/goodDetail',query:{id:i.id}})">
-          <div class="left" :style="{background:'url('+i.tea_img_link+')'}">
+          <div class="left" :style="{background:'url(' + i.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
             <img src="../assets/img/play.png" alt="">
             <span class="time">{{i.tea_date}} {{i.tea_period}}</span>
             <span class="p_n">{{i.tea_play_count}}次播放</span>
@@ -136,6 +136,7 @@ export default {
         .right
           height l(110)
           padding-left l(5)
+          width 50%
           p.name
             font-size: 14px;
             color: #333333;
@@ -152,6 +153,9 @@ export default {
             letter-spacing: 0.21px;
             line-height: 23px;
             text-align left 
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
           div.mark
             display flex
             justify-content flex-start

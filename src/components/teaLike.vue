@@ -12,16 +12,16 @@
 
                 <div class="demo-content vux-1px-t"> 
                   <li class="h_li" v-for="i in list" :key="i.id" @click="$router.push({path:'/goodDetail',query:{id:i.id}})">
-                    <div class="left" :style="{background:'url('+i.tea_img_link+')'}">
+                    <div class="left" :style="{background:'url(' + i.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
                       <img src="../assets/img/play.png" alt="">
-                      <span class="time">{{i.tea_date}} {{i.tea_period}}</span>
+                      <span class="time">{{i.tea_date}}</span>
                       <span class="p_n">{{i.tea_play_count}}次播放</span>
                     </div>
                     <div class="right">
                       <p class="name">{{i.tea_title}}</p>
                       <p class="intro">介绍：{{i.tea_desc}}</p>
                       <div class="mark">
-                        评分
+                        评分:
                         <ul class="tea">
                           <li class="img" v-for="x in i.tea_score" :key="x">
                             <img src="../assets/img/tea.png" alt="">
@@ -148,7 +148,7 @@ export default {
     onPullingUp() {
       // 更新数据
       console.log('pulling up and load data')
-      if(this.count>=this.page*10){
+      if(this.count>this.page*10){
         this.page ++
         this.init(this.page)
       }

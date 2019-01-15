@@ -10,17 +10,17 @@
               @pullingDown="onPullingDown"
               @pullingUp="onPullingUp">
               <ul class="h_list">
-                <li class="h_li">
-                  <div class="left">
+                <li class="h_li" v-for="i in list" :key="i.id"  @click.stop="$router.push({path:'/goodDetail',query:{id:i.id}})">
+                  <div class="left" :style="{background:'url(' + i.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
                     <img src="../assets/img/play.png" alt="">
-                    <span class="time">{{i.tea_date}} {{i.tea_period}}</span>
+                    <span class="time">{{i.tea_date}}</span>
                     <span class="p_n">{{i.tea_play_count}}次播放</span>
                   </div>
                   <div class="right">
                     <p class="name">{{i.tea_title}}</p>
                     <p class="intro">介绍：{{i.tea_desc}}</p>
                     <div class="mark">
-                      评分
+                      评分:
                       <ul class="tea">
                         <li class="img" v-for="x in i.tea_score" :key="x">
                           <img src="../assets/img/tea.png" alt="">
@@ -40,10 +40,6 @@
                   </div>
                 </li>
             </ul>
-          <div class="order-list" v-if="list.length == 0 && !loading">
-            <load-more :show-loading="false" tip="暂无数据" background-color="#f0f7f5"></load-more>
-          </div>
-
         </scroll>
      
     </div>
@@ -145,7 +141,7 @@ export default {
     onPullingUp() {
       // 更新数据
       console.log('pulling up and load data')
-      if(this.count>=this.page*10){
+      if(this.count>this.page*10){
         this.page ++
         this.init(this.page)
       }
@@ -247,6 +243,7 @@ export default {
         .right
           height l(110)
           padding-left l(5)
+          width 50%
           p.name
             font-size: 14px;
             color: #333333;
@@ -258,14 +255,15 @@ export default {
             width l(170)
             text-align left 
           p.intro
+            width 100%
             font-size: 12px;
             color: #666666;
             letter-spacing: 0.21px;
             line-height: 23px;
             text-align left 
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
           div.mark
             display flex
             justify-content flex-start

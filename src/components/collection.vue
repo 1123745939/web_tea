@@ -16,7 +16,7 @@
             </div>
             <div slot="content" class="demo-content vux-1px-t">
               <li class="h_li" @click.stop="$router.push({path:'/goodDetail',query:{id:i.id}})">
-                <div class="left" :style="{background:'url('+i.tea_img_link+')'}">
+                <div class="left" :style="{background:'url(' + i.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
                   <img src="../assets/img/play.png" alt="">
                   <span class="time">{{i.tea_date}} {{i.tea_period}}</span>
                   <span class="p_n">{{i.tea_play_count}}次播放</span>
@@ -176,7 +176,7 @@ export default {
     async onPullingUp() {
       // 更新数据
       console.log('pulling up and load data')
-      if(this.count>=this.page*10){
+      if(this.count>this.page*10){
         this.page ++
         await this.init(this.page)
       }

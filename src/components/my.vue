@@ -45,7 +45,7 @@
             <p>{{item.status_text}}</p>
           </div>
           <div class="li_m" >
-            <div class="t_img"  :style="{background:'url('+item.tea_img_link+')'}">
+            <div class="t_img"  :style="{background:'url(' + item.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
               <img src="../assets/img/play.png" alt="">
             </div>
             <div class="t_info">
@@ -80,7 +80,7 @@
        <ul class="o_l"  v-if="hobbies.length">
         <li class="li_f" v-for="item in hobbies" :key="item.id">
           <div class="li_m">
-            <div class="t_img" :style="{background:'url('+item.tea_img_link+')'}">
+            <div class="t_img" :style="{background:'url(' + item.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
               <img src="../assets/img/play.png" alt="">
             </div>
             <div class="t_info">
@@ -174,6 +174,7 @@ export default {
   flex-direction column
   justify-content flex-start
   align-items center
+  padding-bottom l(20)
   .content
     width l(375)
     height l(230)
@@ -378,6 +379,8 @@ export default {
     .o_h
       
     .h_d  
+      li:last-of-type
+        border-bottom 0
       li
         padding l(10) 0
         border-bottom  1px solid #E8E8E8

@@ -7,7 +7,18 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  created(){
+    this.init()
+  },
+  methods:{
+    //屏蔽掉微信分享的按钮
+    init(){
+      document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+          WeixinJSBridge.call('hideOptionMenu');
+      })
+    }
+  }
 }
 </script>
 

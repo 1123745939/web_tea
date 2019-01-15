@@ -1,8 +1,8 @@
 <template>
-  <div class="con">
+  <div class="con" ref="cons">
     
     <!-- 列表 -->
-  <div class="box">
+<div class="box" id="boxs">
     <scroll ref="scroll"
         :data="list"
         :pullDownRefresh="pullDownRefreshObj"
@@ -16,15 +16,15 @@
           <div class="search" @click="$router.push('/search')"></div>
           <div class="car" @click="token == ''? loginMaskShow=true : $router.push('/car')"><span class="carNum" v-show="carNum">{{carNum}}</span></div>
           <ul class="tab">
-            <li  class="tabli" @click="goAll()">
+            <li  class="tabli" @click="goAll();filterId=0">
               <img src="../assets/img/tab1_active.png" alt="" v-if="tabIndex==1">
               <img src="../assets/img/tab1.png" alt="" v-else>全部
             </li>
-            <li  class="tabli" @click="token == ''? loginMaskShow=true :GOrecommand('','',0)">
+            <li  class="tabli" @click="token == ''? loginMaskShow=true :GOrecommand('','',0);filterId=0">
               <img src="../assets/img/tab2_active.png" alt="" v-if="tabIndex==2">
               <img src="../assets/img/tab2.png" alt="" v-else>推荐
             </li>
-            <li  class="tabli" @click="GOadvance('','',0)" >
+            <li  class="tabli" @click="GOadvance('','',0);filterId=0" >
               <img src="../assets/img/tab3_active.png" alt="" v-if="tabIndex==3">
               <img src="../assets/img/tab3.png" alt="" v-else>预告
             </li>
@@ -41,7 +41,7 @@
         </div>
 
         <ul class="goodsList" id="lists">     
-          <li v-for="(item,index) in list" :key="index" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">
+          <li v-for="(item,index) in list" :key="index" @click="$router.push({path:'/goodDetail',query:{id:item.id}})" class="listli">
             <div class="li_top" :style="{background:'url(' + item.tea_img_link + ') no-repeat center',backgroundSize:'100%'}">
               <div class="play"><span></span></div>
               <div class="data">
@@ -59,9 +59,15 @@
             </div>
             <div class="li_mid">
               <div class="red"></div>
-              <span class="t_t">{{item.tea_title}}</span>
-              <input type="text" style="opacity:0;" v-model='urls+item.id' id="foo">
-              <img src="../assets/img/share.png" alt="" @click.stop="share(item.id,index)" ref='copy' data-clipboard-action="copy" data-clipboard-target="#foo" class="aaa">
+              <span class="t_t">{{item.tea_title}}</span>  
+              <div class="flower">
+                <ul class="fl">
+                  <li v-for="i in item.tea_score"></li>
+                </ul>
+                <input type="text" style="opacity:0;" v-model='urls+item.id' id="foo">
+                <img src="../assets/img/share.png" alt="" v-on:click.stop="share(item.id,index)" ref='copy' data-clipboard-action="copy" data-clipboard-target="#foo" class="aaa">
+              </div>
+              
             </div>
             <div class="li_bot">
               <div class="lt_l">
@@ -276,6 +282,7 @@ export default {
       })
     },
     goAll(){
+      // this.filterId =0
       this.tabIndex = 1
       this.indexActive = this.tabIndex
       this.list = []
@@ -306,6 +313,7 @@ export default {
       setTimeout(()=>{
         getAll(options).then(res=>{      
           if(res.data.code == 200 && !res.data.error_code){
+            this.allCount = res.data.data.count
             if(this.page==1){
               // this.list = this.list.concat(res.data.data.tea)
               // this.list = this.topArr.concat(this.list)
@@ -326,6 +334,7 @@ export default {
       
     },
     GOrecommand(key,order,is_order){
+      //this.filterId =0
       this.tabIndex = 2
       this.indexActive = this.tabIndex
       this.list = []
@@ -337,7 +346,7 @@ export default {
       if(key==1){
         key = 'tea_play_count '
       }else if(key==2){
-        key=='tea_collect_count'
+        key='tea_collect_count'
       }else if(key==3){
         key = 'tea_thumb_count'
       }else{
@@ -353,13 +362,13 @@ export default {
       }
       getRecommand(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          if(this.is_ref){
-            this.list = []
-          }
           this.recommendCount = res.data.data.count
+          if(page==1){
+            this.list = res.data.data.result
+            return
+          } 
           if(res.data.data.result.length){
             this.list = this.list.concat(res.data.data.result)
-            this.is_ref = false
              console.log(this.list,111111)
           }          
         }else{
@@ -368,6 +377,7 @@ export default {
       })
     },
     GOadvance(key,order,is_order){
+      //this.filterId =0
       this.tabIndex = 3
       this.indexActive = this.tabIndex
       this.list = []
@@ -394,9 +404,10 @@ export default {
       }
       getAdvance(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
+            this.advanceCount = res.data.data.count
            if(page==1){
             this.list = res.data.data.result
-            this.page=1       
+            this.page=1    
           }else{
             this.list = this.list.concat(res.data.data.result)
             console.log(this.list)
@@ -404,34 +415,29 @@ export default {
           this.list.forEach(item=>{
               item.isAdvance = true
             })
-          this.advanceCount = res.data.data.count
-          // if(res.data.data.result.length){
-          //   this.list = this.list.concat(res.data.data.result)
-          //   this.list.forEach(item=>{
-          //     item.isAdvance = true
-          //   })
-            
-          // }        
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
       })
     },
     //排序
-    shilter(id){
-      this.list = []
-      this.filterId = id
-      this.order = 'desc'
-      this.is_order = 1
-      this.moreShow = false
-      console.log(this.moreShow)
+    shilter(id){  
       if(this.tabIndex==1){
-
+        
       }else if(this.tabIndex==2){
+        this.list = []
+        this.filterId = id
+        this.order = 'desc'
+        this.is_order = 1
         this.GOrecommand(id,this.order,this.is_order)
       }else if(this.tabIndex==3){
+        this.list = []
+        this.filterId = id
+        this.order = 'desc'
+        this.is_order = 1
         this.GOadvance(id,this.order,this.is_order)
       }
+      this.moreShow = false
     },
        //下拉刷新
     onPullingDown() {
@@ -449,8 +455,6 @@ export default {
     onPullingUp() {
       // 更新数据
       console.log('pulling up and load data')
-
-      this.page ++
       //  filterId:'',
       // order:'',
       // is_order : 0,
@@ -460,11 +464,20 @@ export default {
         this.is_order =0
       }
       if(this.tabIndex==1){
-       this.allData(this.page,this.filterId,this.order,this.is_order)
+        if(this.allCount>this.page*10){
+          this.page++
+          this.allData(this.page,this.filterId,this.order,this.is_order)
+        }       
       }else if(this.tabIndex == 2){
-        this.recommand(this.page,this.filterId,this.order,this.is_order)
+        if(this.recommendCount>this.page*10){
+          this.page++
+          this.recommand(this.page,this.filterId,this.order,this.is_order)
+        }   
       }else if(this.tabIndex == 3){
-        this.advance(this.page,this.filterId,this.order,this.is_order)
+        if(this.advanceCount>this.page*10){
+          this.page++
+          this.advance(this.page,this.filterId,this.order,this.is_order)
+        }   
       }
       this.$refs.scroll.forceUpdate()
     },
@@ -510,8 +523,8 @@ export default {
 @import '../utils/css/util.styl';
 .con
   background #F7F7F7
-  // height 100vh
-  // position relative
+  height 100vh
+  position relative
   .content
     width 100%
     height l(230)
@@ -546,7 +559,7 @@ export default {
         color #fff
         fz(12)
     ul.tab
-      width l(343)
+      width 91.5%
       height l(74)
       disFlex()
       position absolute
@@ -596,17 +609,18 @@ export default {
           width l(24)
           height l(24)
   .box
-    position relative
-    //height l(350)
-    height 100vh
-    padding-bottom l(30)
+    width 100%
+    height 100%
+    position fixed
+    top 0
+    left 0
     ul.goodsList
       width 100%
       background #F7F7F7
       margin-top l(20)
-      li
+      li.listli
         width 100%
-        height l(387)
+        min-height l(367)
         background #ffffff
         padding 1.7% 4.3%
         margin-bottom l(10)
@@ -615,7 +629,7 @@ export default {
           height l(190)
           // backgroundIcon('list1.png')
           position relative
-          border-radius 3% 0 3% 0
+          border-radius 2% 2% 0 0
           .play
             opacity: 0.3;
             backgroundIcon('play.png')
@@ -696,21 +710,35 @@ export default {
             -webkit-line-clamp: 2;
             overflow: hidden;
             line-height l(24)
-          input 
-            display block
-            height 0
-          img 
-            display block
-            width l(21)
-            height l(22)
+          .flower
+            width 100%
+            disFlex()
+            height l(24)
+            margin-top l(5)
+            ul
+              overflow hidden
+              li
+                width l(20)
+                height l(16)
+                float left
+                margin-right l(5)
+                backgroundIcon ('tea.png')
+            input 
+              display block
+              width 0
+              height 0
+            img 
+              display block
+              width l(21)
+              height l(22)
             // position absolute
             // right 2.7%
             // bottom 20%
-            margin-left 90%
-            margin-bottom l(5)
-            margin-top l(5)
+            // margin-left 90%
+            // margin-bottom l(5)
+            // margin-top l(5)
         .li_bot
-          height l(90)
+          min-height l(90)
           display flex
           justify-content space-between
           align-items center

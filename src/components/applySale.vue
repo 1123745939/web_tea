@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { XDialog,TransferDomDirective as TransferDom } from 'vux'
+import { XDialog,TransferDomDirective as TransferDom ,Confirm } from 'vux'
 import { orderDetail , orderApply } from '../api/api.js'
 export default {
   directives: {
@@ -87,6 +87,7 @@ export default {
   },
   components: {
     XDialog, 
+    Confirm
   },
   data () {
     return {

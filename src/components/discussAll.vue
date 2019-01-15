@@ -10,7 +10,7 @@
         <li :class="tabIndex ==5 ?'active':'' " @click="hot('is_append',0)">追加<br>{{total.append_count}}</li>
       </ul>
       <div class="blank"></div>
-      <div class="booo" v-show="result.length" >
+      <div class="booo" v-show="result.length" id="boxs">
         <scroll ref="scroll"
           :data="result"
           :pullDownRefresh="pullDownRefreshObj"
@@ -32,8 +32,8 @@
                     <img :src="img.image_link" alt="">
                   </li>
                 </ul>
-                <div class="vi">
-                  <video src=""></video>
+                <div class="vi" v-if="item.vidio!=null">
+                  <video :src="item.vidio.vidio_link" v-if="item.vidio!=null"></video>
                 </div>
               </div>
               <div class="li_bt">
@@ -54,11 +54,11 @@
                   <div class="imBox">
                     <ul class="d_img zhui" v-show="i.image">
                       <li class="d_li" v-for="(img,index) in i.image" :key="index">
-                        <img :src="i.image_link" alt="">
+                        <img :src="img.image_link" alt="">
                       </li>
                     </ul>
-                    <div class="vi" v-if="i.vidio!=null">
-                      <video :src="i.vidio.vidio_link"></video>
+                    <div class="vi" v-show="i.vidio!=null">
+                      <video :src="i.vidio.vidio_link" v-if="i.vidio!=null"></video>
                     </div>
                   </div>
                   <div class="li_bt">
@@ -107,6 +107,7 @@ export default {
       page:1,
       len:'',
       tabIndex:1,
+      count:'',
 
       pullUpLoadThreshold: 0,
       pullDownRefresh: true,
@@ -125,6 +126,9 @@ export default {
     document.title = '全部评论'
     this.id = this.$route.query.id
     this.init('',1,1)
+  },
+  mounted(){
+    this.$el.querySelector('#boxs').style.height=this.$refs.cons.offsetHeight-this.$refs.navs.offsetHeight+'px'
   },
   computed:{
     pullDownRefreshObj: function () {
@@ -152,6 +156,7 @@ export default {
       }
       commentAll(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
+          this.count = res.data.data.comments.count
           console.log(res,'res')
           if(res.data.data.total!=null){
             this.total = res.data.data.total
@@ -225,9 +230,10 @@ export default {
     onPullingUp() {
       // 更新数据
       console.log('pulling up and load data')
-      this.page ++ ;
-      this.init(this.ket,0,this.page)
-     
+      if(this.count>=this.page*10){
+        this.page ++ ;
+         this.init(this.ket,0,this.page)
+      }   
       this.$refs.scroll.forceUpdate()
     },
     rebuildScroll() {
@@ -310,7 +316,7 @@ export default {
           border-bottom 0
         li.pr_li
           border-bottom 1px solid #E8E8E8
-          padding l(20)  l(10)
+          padding l(20)  l(10) 0
           div.li_t.zhui
             font-size: 14px;
             color: #83271F;
@@ -335,15 +341,16 @@ export default {
             letter-spacing: 0.3px;
             line-height l(20)
             text-align left 
-            padding 0 10%
+            padding 0 10% l(5)
           div.imBox
             overflow hidden
+            padding  0 l(30)
             ul.d_img.zhui
               padding l(10) 0
               li.d_li:nth-of-type(3n)
                 margin-right 0
               li.d_li 
-                width l(65)
+                width l(55)
                 height l(45)
                 margin-right l(5)
             ul.d_img
@@ -351,12 +358,12 @@ export default {
               display flex
               justify-content flex-start
               flex-wrap wrap
-              padding l(10) 10%
+              //padding l(10) 10%
               float left
               li.d_li:nth-of-type(3n)
                 margin-right 0
               li.d_li 
-                width l(85)
+                width l(80)
                 height l(65)
                 margin-right l(9)
                 img 
@@ -364,7 +371,7 @@ export default {
                   width 100%
                   height 100%
             div.vi  
-              width l(85)
+              width l(80)
               height l(65)
               float left
               video 
@@ -413,7 +420,7 @@ export default {
       img 
         display block
         width l(176)
-        height l(147)
+        height l(167)
       span 
         font-family: PingFangSC-Regular;
         font-size: 14px;

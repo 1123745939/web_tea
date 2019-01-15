@@ -1,13 +1,13 @@
 <template>
-  <div class="con">
+  <div class="con" @click.stop="moreShow = moreShow ? !moreShow : moreShow">
     <!-- 頭部 -->
     <div class="s_h">
       <input type="text" placeholder="关键词搜索" v-model="searchTxt" @focus="getHistoryDate();conShow = false">
-      <img src="../assets/img/search.png" alt="" @click="search()">
+      <img src="../assets/img/search.png" alt="" @click.stop="search()">
     </div>
     <div class="content" v-if="!conShow">
       <div class="his" v-if="historyArr.length > 0 && token">
-        <div class="his_t">历史搜索<img src="../assets/img/del.png" alt="" @click="show = true"></div>
+        <div class="his_t">历史搜索<img src="../assets/img/del.png" alt="" @click.stop="show = true"></div>
         <ul class="his_word">
           <li v-for="(item,index) in historyArr8" :key="index" @click.stop="searchTxt=item.word;search()">{{item.word}}</li>
         </ul>
@@ -18,15 +18,15 @@
         <li class="k_t" v-for="(item,index) in kindList" :key="item.group_id">
           <div class="his_t"><img src="../assets/img/t_r.png" alt="">{{item.group_name}}</div>
           <ul class="his_word">
-            <li v-for="tea in item.type8" :key="tea.id" @click="searchIdCon(tea.id)">{{tea.name}}</li>
+            <li v-for="tea in item.type8" :key="tea.id" @click.stop="searchIdCon(tea.id)">{{tea.name}}</li>
           </ul>
-          <img src="../assets/img/hobbym.png" alt="" class="more" v-show="item.moreKindShow" @click="handle(index)">
+          <img src="../assets/img/hobbym.png" alt="" class="more" v-show="item.moreKindShow" @click.stop="handle(index)">
         </li>
       </ul>
     </div>
 
     <!-- 搜索到的列表 -->
-    <div class="big_box" v-if="conShow " style="position:relative" @click="makeShow = false;placeShow=false;yearShow=false">
+    <div class="big_box" v-if="conShow " style="position:relative" @click.stop="makeShow = false;placeShow=false;yearShow=false">
         <!-- tab选项 -->
       <ul class="tab">
         <li class="tab_li" :class="selectLi == 1 ?'active':''" @click.stop="selectLi=1;searchResultList = [];sort(1,'tea_period');yearShow=false;makeShow=false;placeShow=false">期数
@@ -378,7 +378,7 @@ export default {
         page:page,
         rows:10,
         search_type:search_type,//检索时 类型和关键词是否参与检索 取值 0 1 2    0 都有 1 仅关键词 2 仅类型
-        tea_desc:tea_desc,//检索关键词 若search_type 为0 1时必传
+        tea_title:tea_desc,//检索关键词 若search_type 为0 1时必传
         tea_type_id:tea_type_id,//检索类型id 若search_type 为0 2 时必传
         type:type,//筛选类型  0 无需筛选 1 排序 2 筛选
         key:key,//筛选的key 当type=1,2时必传  tea_period(期数)/tea_price(价格)/tea_place_id(产地id)/tea_make(制茶方法)/tea_year(年份)

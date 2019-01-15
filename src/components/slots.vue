@@ -1,6 +1,6 @@
 <template>
-  <div class="con">
-    <div class="content" v-if="list.length">
+  <div class="con" ref="cons">
+    <div class="content" v-show="list.length" id='boxs'>
         <scroll ref="scroll"
             :data="list"
             :pullDownRefresh="pullDownRefreshObj"
@@ -9,10 +9,10 @@
             @pullingDown="onPullingDown"
             @pullingUp="onPullingUp">
              <div class="h_list">     
-              <li class="h_li" @click.stop="$router.push({path:'/goodDetail',query:{id:i.id}})">
-                <div class="left" :style="{background:'url('+i.tea_img_link+')'}">
+              <li class="h_li" v-for="(i) in list" :key="i.id"  @click.stop="$router.push({path:'/goodDetail',query:{id:i.id}})">
+                <div class="left" :style="{background:'url(' + i.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
                   <img src="../assets/img/play.png" alt="">
-                  <span class="time">{{i.tea_date}} {{i.tea_period}}</span>
+                  <span class="time">{{i.tea_date}}</span>
                   <span class="p_n">{{i.tea_play_count}}次播放</span>
                 </div>
                 <div class="right">
@@ -21,7 +21,7 @@
                   <div class="mark">
                     评分:
                     <ul class="tea">
-                      <li class="img" v-for="x in i.tea_score" :key="x">
+                      <li class="img" v-for="(x,indexx) in i.tea_score" :key="indexx">
                         <img src="../assets/img/tea.png" alt="">
                       </li>
                     </ul>
@@ -42,7 +42,7 @@
             </div>          
         </scroll>
     </div>
-     <div class="noList" v-else>
+     <div class="noList" v-show="list.length==0">
       <div class="box">
         <img src="../assets/img/symbols-order.png" alt="">
         <span>暂无数据</span>
@@ -91,6 +91,9 @@ export default {
     document.title = '我的足迹'
     this.init(this.page)
   },
+  mounted(){
+    this.$el.querySelector('#boxs').style.height=this.$refs.cons.offsetHeight +'px'
+  },
   computed:{
     pullDownRefreshObj: function () {
       return this.pullDownRefresh ? {
@@ -137,7 +140,7 @@ export default {
     onPullingUp() {
       // 更新数据
       console.log('pulling up and load data')
-      if(this.count>=this.page*10){
+      if(this.count>this.page*10){
         this.page ++
         this.init(this.page)
       }

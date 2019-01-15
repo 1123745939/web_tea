@@ -12,14 +12,14 @@
     <div class="addNo" @click="$router.push('/address')" v-else>
       无收货地址，去添加<img src="../assets/img/more1.png" alt="">
     </div>
-    <ul>
+    <ul class="list">
       <li v-for="item in arr" :key="item.id">
         <img :src="item.tea_img_link" alt="" class="car_img">
         <div class="car_p">
           <span class="titlt">{{item.tea_title}}</span>
           <p class="t_d">{{item.tea_date}} {{item.tea_period}}</p>
           <div class="t_num">
-            <p>￥<span>{{item.tea_price}}</span>.00</p>
+            <p>￥<span>{{item.tea_price}}</span></p>
             <div>
               <p></p>X{{item.tea_count ? item.tea_count : 1}}<p></p>
             </div>
@@ -62,10 +62,14 @@
       <alert v-model="show" title="您购买的产品库存不足"  @on-hide="onHide">{{alertTxt}}</alert>
     </div>
     <!-- 用h5支付完之后 显示的弹框 假如支付成功就去订单页，假如失败就去支付前的上一个页面 -->
-    <div v-transfer-dom>
-      <confirm v-model="showIfSuccess" title="是否已经支付成功" @on-cancel="onCancel1"  @on-confirm="onConfirm1">
-        <p style="text-align:center;"></p>
-      </confirm>
+    <div class="mask" v-show="showIfSuccess">
+      <div class="mask_b">
+        <p>已经支付成功了吗</p>
+        <ul class="mask_ul">
+          <li @click="onConfirm1">是的,查看订单</li>
+          <li @click="onCancel1">没有,继续逛逛</li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -99,6 +103,9 @@ export default {
   created(){
     document.title = '结算'  
     this.getData()
+    if(sessionStorage.showIfSuccess){
+      this.showIfSuccess = true
+    }
   },
   methods:{
     //判断浏览器
@@ -219,7 +226,8 @@ export default {
           if(this.is_weixn()){
             this.weChatUnion()
           }else{
-            this.showIfSuccess = true
+            sessionStorage.sessionStorage=true
+            // this.showIfSuccess = true
             this.orderOrder()
           }
         }else{
@@ -240,10 +248,10 @@ export default {
           if(this.is_weixn()){
             this.weChatBuy()
           }else{
-            this.showIfSuccess = true
+            // this.showIfSuccess = true
+            sessionStorage.sessionStorage=true
             this.orderOrderBuy()
-          }
-          
+          }    
         }else{
           // this.$vux.toast.text(res.data.error_message||res.data.message)
           this.show = true
@@ -488,7 +496,7 @@ export default {
       display block
       width l(8)
       height l(13)
-  ul
+  ul.list
     padding 0 4.3%
     background #fff
     li:last-of-type
@@ -645,4 +653,50 @@ export default {
   .blank
     height l(44)
     margin-top l(10)
+  //提示去看订单的弹框
+  .mask
+    width 100%
+    height 100vh
+    background rgba(0,0,0,0.3)
+    z-index 999
+    position fixed
+    top 0
+    left 0
+    .mask_b
+      width l(300)
+      height l(135)
+      position absolute
+      top 0px
+      bottom 0
+      left 0
+      right 0
+      margin auto
+      background #fff
+      border-radius l(5)
+      p
+        height l(85)
+        line-height l(85)
+        text-align center
+        font-family: PingFangSC-Regular;
+        fz(16)
+        color: #666666;
+        letter-spacing: 0.3px;
+      ul.mask_ul
+        width 100%
+        height l(50)
+        overflow hidden
+        border-top l(1) solid #e8e8e8
+        li:last-of-type 
+          color: red;
+          border-left l(1) solid #e8e8e8
+        li
+          width 50%
+          height 100%
+          float left
+          text-align center
+          line-height l(50)
+          fz(16)
+          color: #353535;
+          letter-spacing: 0.3px;
+
 </style>

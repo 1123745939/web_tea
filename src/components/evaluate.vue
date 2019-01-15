@@ -38,7 +38,7 @@
         <input type="file" accept="video/*"  id="photoInput" @change="tirggerVideo($event)">
       </div>    
       <div class="vi" v-else>
-        <video :src="videoSrc"></video>
+        <video :src="videoSrc" poster="../assets/img/play.png"></video>
         <div @click="delVideo"></div>
       </div>  
       <video :src="videoSrc1" style="display:none" id="videoPlayer"></video>   
