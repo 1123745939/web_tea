@@ -135,7 +135,7 @@ import { Confirm } from 'vux'
 import Vue from 'vue'
 import Scroll from './scroll/scroll'
 import {getHistory,delHistory,getSearchDate,getFilter,getSearch} from '../api/api.js'
-import util from '../utils/js/style.js'
+import utils from '../utils/js/style.js'
 export default {
   components: {
     Confirm,

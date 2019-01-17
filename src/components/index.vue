@@ -115,7 +115,7 @@
 
     <!-- 提示去登录的弹框 -->
     <div v-transfer-dom>
-      <confirm v-model="loginMaskShow" title="您还没有登录" @on-confirm="$router.push({path:'/login'})">
+      <confirm v-model="loginMaskShow" title="您还没有登录" @on-confirm="$router.replace({path:'/login'})">
         <p style="text-align:center;">现在去登录?</p>
       </confirm>
     </div>
@@ -629,9 +629,9 @@ export default {
       margin-top l(20)
       li.listli
         width 100%
-        min-height l(367)
+        min-height l(320)
         background #ffffff
-        padding 1.7% 4.3%
+        padding 1.7% 4.3% 0
         margin-bottom l(10)
         .li_top
           width 100%
@@ -695,7 +695,7 @@ export default {
             text-align right
         .li_mid
           background: #F7F7F7;
-          min-height l(70)
+          min-height l(60)
           position relative
           font-family: PingFangSC-Medium;
           fz(16)
@@ -705,7 +705,7 @@ export default {
           padding 0.9% 0 0 2.4%
           text-align left 
           padding-top l(10)
-          padding-bottom l(5)
+          //padding-bottom l(5)
           .red
             width l(4)
             height l(16)
@@ -748,22 +748,22 @@ export default {
             // margin-bottom l(5)
             // margin-top l(5)
         .li_bot
-          min-height l(90)
+          min-height l(60)
           display flex
           justify-content space-between
           align-items center
-          padding-bottom 1.9%
+          //padding-bottom 1.9%
           margin 0 l(10)
           .lt_l
             height 100%
-            padding-top l(15)
+            // padding-top l(15)
             .all
               width l(104)
               height l(17)
               background: rgba(230,52,67,0.30);
               border-radius: 4px;
               position relative
-              margin-bottom l(10)
+              margin-bottom l(5)
               span 
                 display block
                 height 100%
@@ -784,7 +784,7 @@ export default {
               color: #E63443;
               fz(14)
               letter-spacing: 0.31px;
-              line-height l(30)
+              //line-height l(24)
               text-align left
               .p1
                 fz(18)

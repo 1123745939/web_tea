@@ -58,18 +58,7 @@ export default {
       Login(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           utils.setCookie('token',res.data.data.access_token,90)
-          // utils.setCookie('img_link',res.data.data.img_link,90)
-          // utils.setCookie('username',res.data.data.username,90)
-
-          // sessionStorage.token = res.data.data.access_token
-          // sessionStorage.img_link = res.data.data.img_link
-          // sessionStorage.username = res.data.data.username
-          let redirect = this.$route.query.type
-          if(redirect !='goodDetail'){
-            this.$router.push('/')
-          }else {
-            this.$router.push('/goodDetail')
-          }
+          this.$router.replace('/')
         }else{
           this.$vux.toast.text(res.data.message, 'middle')
         }

@@ -199,10 +199,7 @@ export default {
       if(!this.address.id){
         this.$vux.toast.text('地址不能为空')
         return
-      }else if(!this.txt){
-        this.$vux.toast.text('留言不能为空')
-        return
-      } 
+      }
       if(this.type=='shop'){
         this.check()
       }else if(this.type=='buy'){
