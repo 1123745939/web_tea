@@ -20,7 +20,7 @@
     <div class="d">
       <span class="d_t">{{detailObj.tea_date}}</span>
       <!-- <div class="li_top" @click.stop="$router.push({path:'/videoPlay',query:{id:id}})"> -->   
-      <div class="li_top" @click.stop="playVideo" height=200 width=200 units="pixels" >
+      <div class="li_top" @click.stop="playVideo">
         <!-- <embed :src="detailObj.tea_vidio_link" type="" id="video"> -->
         <video :src="detailObj.tea_vidio_link" id="video" style="width:100%;height:100%;object-fit:fill"  :poster="detailObj.tea_img_link"  controls></video>
         <!-- <div class="play"><span></span></div> -->
@@ -182,11 +182,18 @@
     <div v-transfer-dom>
       <previewer :list="list" ref="previewer" :options="options" @on-index-change="logIndexChange"></previewer>
     </div>
+     <!-- the tip to login -->
+     <div v-transfer-dom>
+      <confirm v-model="loginMaskShow" title="您还没有登录" @on-confirm="$router.push({path:'/login'})">
+        <p style="text-align:center;">现在去登录?</p>
+      </confirm>
+    </div>
   </div>
 </template>
 
 <script>
 import 'swiper/dist/css/swiper.css'
+import utils from '../utils/js/style.js'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import { Confirm,Previewer,TransferDomDirective as TransferDom } from 'vux'
 import 'swiper/dist/css/swiper.min.css'
@@ -203,7 +210,7 @@ export default {
   },
   data () {
     return {
-      token : sessionStorage.token || '',
+      token:utils.getCookie('token') || '',
       detailObj:{},
       sameList:[],
       likeList:[],
@@ -324,6 +331,10 @@ export default {
     },
     //点赞评论
     zan(id,is_thumb,index){
+      if(!this.token){
+        this.loginMaskShow = true
+        return
+      }
       if(is_thumb==1){
         this.$vux.toast.text('已经点赞过了哦')
         return
@@ -346,7 +357,7 @@ export default {
     //收藏视频
     cangV(){
        if(!this.token){
-        this.$vux.toast.text('请登录后再操作')
+        this.loginMaskShow = true
         return
       }
       const options = {
@@ -364,8 +375,8 @@ export default {
     },
     //点赞视频
     zanV(){
-      if(!this.token){
-        this.$vux.toast.text('请登录后再操作')
+     if(!this.token){
+        this.loginMaskShow = true
         return
       }
       const options = {

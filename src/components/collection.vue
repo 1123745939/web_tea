@@ -23,9 +23,9 @@
                 </div>
                 <div class="right">
                   <p class="name">{{i.tea_title}}</p>
-                  <p class="intro">介绍：{{i.tea_desc}}</p>
+                  <p class="intro">介绍:{{i.tea_desc}}</p>
                   <div class="mark">
-                    评分：
+                    评分:
                     <ul class="tea">
                       <li class="img" v-for="x in i.tea_score" :key="x">
                         <img src="../assets/img/tea.png" alt="">
@@ -38,7 +38,7 @@
                   </div>
                   <div class="pri">
                     <div class="pri_l">
-                      ￥<span class="preice">{{i.tea_price}}.</span>00 <span>/{{i.tea_format}}g</span>
+                      ￥<span class="preice">{{i.tea_price}}</span> <span>/{{i.tea_format}}g</span>
                     </div>
                     <div class="pri_r" @click.stop="$router.push({path:'/pay',query:{id:i.id,type:'buy'}})" v-if="i.tea_count!=0">马上抢</div>
                     <div class="pri_r" @click.stop="$router.push({path:'/teaLike',query:{id:i.id}})" v-else>查看相似</div>
@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import utils from '../utils/js/style.js'
 import {collectList ,collectCancel} from '../api/api.js'
 import {  Swipeout, SwipeoutItem, SwipeoutButton, XButton ,LoadMore ,Confirm,TransferDomDirective as TransferDom} from 'vux'
 import Scroll from './scroll/scroll'
@@ -85,7 +86,7 @@ export default {
   },
   data () {
     return {
-      token :sessionStorage.token,
+      token : utils.getCookie('token') || '',
       list:[],
       page:1,
       loading :true,

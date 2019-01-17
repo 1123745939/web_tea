@@ -16,13 +16,14 @@
         </li>
       </ul>
       <!-- 评论的视频 -->
-      <div class="vi" v-if="commentObj.vidio" v-for="item in commentObj.vidio">
-        <video :src="item.vidio_link" controls ></video>
+      <div class="vi" v-if="commentObj.vidio">
+        <video :src="item.vidio_link" controls  v-for="(item,index) in commentObj.vidio" :key="index"></video>
       </div>
       <!-- 商品 -->
      <div class="d">
-      <div class="li_top" :style="{background:'url(' + tea.tea_img_link +')'}">
-        <div class="play"><span></span></div>
+      <div class="li_top" :style="{background:'url(' + tea.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}" @click.stop="playVideo">
+        <!-- <div class="play"><span></span></div> -->
+        <video :src="tea.tea_vidio_link" id="video" style="width:100%;height:100%;object-fit:fill"  :poster="tea.tea_img_link"  controls></video>
         <div class="data">
           <div class="d_l">
            {{tea.tea_play_count}}次播放
@@ -44,7 +45,7 @@
           <img src="../assets/img/zan1_active.png" alt="">有用
         </li>
         <li @click="comThumb" v-else>
-          <img src="../assets/img/zan1_active.png" alt="">有用
+          <img src="../assets/img/zan1.png" alt="">有用
         </li>
         <li @click="addCar()">
           <img src="../assets/img/car.png" alt="">我也要买
@@ -73,12 +74,12 @@
           <div class="top" @click="show5 = true;replyId = item.id">
             <img :src="item.user.img_link" alt="">{{item.user.username}}
           </div>
-          <p  @click="show5 = true;replyId = item.id">{{item.content}}=={{item.id}}</p>
+          <p  @click="show5 = true;replyId = item.id">{{item.content}}</p>
           <div class="bot">
             <span>{{item.created_at}}</span>
             <div>
-              <img src="../assets/img/zan1.png" alt="" @click="zan(item.id)" v-if="item.is_thumb==0">
-              <img src="../assets/img/zan1_active.png" alt="" @click="zan(item.id)" v-else>
+              <img src="../assets/img/zan1_active.png" alt="" @click="zan(item.id)" v-if="item.is_thumb==1">
+              <img src="../assets/img/zan1.png" alt="" @click="zan(item.id)" v-else>
               {{item.thumb_count}}             
               <img src="../assets/img/talk1.png" alt="" @click="getZhuiList(item.id,index)">
               {{item.reply_count}}
@@ -105,8 +106,9 @@
 </template>
 
 <script>
+import utils from '../utils/js/style.js'
 import { Confirm, TransferDomDirective as TransferDom } from 'vux'
-import {commentDetail ,commentThumb ,commentReply ,commentReplyThumb,commentReplyReply ,commentReplyList ,addShop} from '../api/api.js'
+import {commentDetail ,commentThumb ,commentReply ,commentReplyThumb,commentReplyReply ,commentReplyList ,addShop ,vidioPlayCount} from '../api/api.js'
 export default {
    directives: {
     TransferDom
@@ -116,7 +118,7 @@ export default {
   },
   data () {
     return {
-      token:sessionStorage.token || '',
+      token : utils.getCookie('token') || '',
       commentObj:'',
       comment :{},
       tea:{},
@@ -177,8 +179,7 @@ export default {
         this.reply()
       }else{
         this.comReply()
-      }
-     
+      }    
     },
     //热评回复
     comReply(){
@@ -233,6 +234,7 @@ export default {
           this.$vux.toast.text('留言回复成功')
           this.init()
           this.replyId = ''
+          this.$forceUpdate()
         }else{  
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -265,6 +267,27 @@ export default {
           this.$vux.toast.text('加入购物车成功')
         }else{  
           this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+    },
+        //视频播放增加次数
+    playVideo(){
+     var  video1 = document.getElementById("video");  
+       if(video1.paused) { 
+            video.play()
+          }else{
+            video1.pause()
+          } 
+      const options = {
+        id : this.tea.id,
+        vidio_id:'',
+        type:1,
+      } 
+      vidioPlayCount(options).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          
+          }else{
+          // this.$vux.toast.text(res.data.error_message||res.data.message)
         }
       })
     }
@@ -351,7 +374,7 @@ export default {
         height l(190)
         backgroundIcon('list1.png')
         position relative
-        border-radius 3% 0 3% 0
+        border-radius 2% 2% 0 0
         .play
           opacity: 0.3;
           backgroundIcon('play.png')
@@ -383,6 +406,7 @@ export default {
           ul 
             display flex
             justify-content space-between
+            z-index 99
             li
               height 100%
               display flex
@@ -509,6 +533,7 @@ export default {
             width l(31)
             height l(31)
             margin-right l(5)
+            border-radius 50%
         p
           fz(14)
           color: #333333;
@@ -560,6 +585,7 @@ export default {
                 width l(31)
                 height l(31)
                 margin-left l(5)
+                border-radius 50%
             p
               font-size: 14px;
               color: #666666;

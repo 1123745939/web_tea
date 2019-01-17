@@ -21,11 +21,12 @@
 </template>
 
 <script>
+import utils from '../utils/js/style.js'
 import {friendsList} from '../api/api.js'
 export default {
   data () {
     return {
-      token:sessionStorage.token || '',
+      token : utils.getCookie('token') || '',
       list:[]
     }
   },

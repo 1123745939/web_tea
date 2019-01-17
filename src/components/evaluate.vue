@@ -4,12 +4,12 @@
      <div class="e_h">
         <div class="box">
           <div class="li_m">
-            <div class="t_img">
+            <div class="t_img" :style="{background:'url(' + goodObj.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
               <img src="../assets/img/play.png" alt="">
             </div>
             <div class="t_info">
               <p>{{goodObj.tea_title}}</p>
-              <span>{{goodObj.tea_date}} {{goodObj.tea_period}}</span>
+              <span>{{goodObj.tea_date}}</span>
               <div class="in_num">
                 <p>￥<span>{{goodObj.tea_price|| goodObj.order_price}}</span>.00</p>
               </div>
@@ -48,12 +48,13 @@
 </template>
 
 <script>
+import utils from '../utils/js/style.js'
 import Exif from 'exif-js'
 import { orderUploadImg , orderUploadVidio ,orderDelComment ,orderAddComment ,orderCanComment} from '../api/api.js'
 export default {
   data () {
     return {
-      token: sessionStorage.token || '',
+      token : utils.getCookie('token') || '',
       txt:'',
       imgList:[],
       imgUrlList:[],
@@ -75,7 +76,7 @@ export default {
     init(){
       if(!sessionStorage.orderComment){
         this.ifFromMy = true
-        this.orderComment(this.index)
+        this.orderComment()
       }else{
         this.ifFromMy = false
         this.goodObj = JSON.parse(sessionStorage.orderComment)
@@ -86,6 +87,10 @@ export default {
       orderCanComment({token:this.token}).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.commentList = res.data.data
+          this.commentList.forEach(item=>{
+            item.tea_id = item.id
+            item.id = item.order_id
+          })
           this.goodObj = this.commentList[0]
           console.log(res,'res')
         }else{

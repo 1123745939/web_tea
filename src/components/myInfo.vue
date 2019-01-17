@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import utils from '../utils/js/style.js'
 import { Group, CellBox, Checklist ,XTextarea} from 'vux'
 import { HobbyList ,saveQuestion } from '../api/api.js'
 export default {
@@ -26,7 +27,7 @@ export default {
   },
   data () {
     return {
-      token :sessionStorage.token || '',
+      token : utils.getCookie('token') || '',
       questionList:[],
       value:''
     }

@@ -44,7 +44,8 @@
           </div>
           <div class="t_info">
             <p>{{tea.tea_title}}</p>
-            <span>{{tea.tea_date}} {{tea.tea_period}}</span>
+            <span>{{tea.tea_date}}</span>
+            <span v-show="tea.is_advance==1" style="color:#e63443;">预售时间：{{tea.advance_date}}</span>
           </div>
           <div class="in_num">
               <p>￥{{order.order_price}}</p>
@@ -136,6 +137,7 @@
 </template>
 
 <script>
+import utils from '../utils/js/style.js'
 import { XDialog,TransferDomDirective as TransferDom ,Confirm} from 'vux'
 import {orderUnlike , orderDetail ,orderCancel ,orderConfirm , orderRefundCancel} from '../api/api.js'
 export default {
@@ -148,7 +150,7 @@ export default {
   },
   data () {
     return {
-      token:sessionStorage.token || '',
+      token : utils.getCookie('token') || '',
       id:'',
       tea_id:'',
       txt:'',

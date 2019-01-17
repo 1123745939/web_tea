@@ -62,8 +62,7 @@ export default {
         return
       }
       const options = {
-        token :sessionStorage.token,
-        old_password : md5(this.passOld),
+        token : utils.getCookie('token') || '',
         password : md5(this.passNew1),
         password_confirmation :md5(this.passNew2)
       }

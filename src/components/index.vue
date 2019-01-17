@@ -42,7 +42,7 @@
 
         <ul class="goodsList" id="lists">     
           <li v-for="(item,index) in list" :key="index" @click="$router.push({path:'/goodDetail',query:{id:item.id}})" class="listli">
-            <div class="li_top" :style="{background:'url(' + item.tea_img_link + ') no-repeat center',backgroundSize:'100%'}">
+            <div class="li_top" :style="{background:'url(' + item.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
               <div class="play"><span></span></div>
               <div class="data">
                 <div class="d_l">
@@ -55,7 +55,7 @@
                 </ul>
               </div>
               <div class="time" v-if="!item.isAdvance">{{item.tea_date}}</div>
-              <div class="time" v-else>预售 {{item.tea_period}}</div>
+              <div class="time" v-else>预售 {{item.tea_date}}</div>
             </div>
             <div class="li_mid">
               <div class="red"></div>
@@ -75,12 +75,12 @@
                   <span :style="{width:item.tea_count/item.tea_total*100+'%'}"></span>
                   <div>仅剩{{item.tea_count}}份</div>
                 </div>
-                <div>￥<span class="p1">{{item.tea_price}}</span>.00 <span class="p2">/{{item.tea_format}}g</span></div>
+                <div>￥<span class="p1">{{item.tea_price}}</span><span class="p2">/{{item.tea_format}}g</span></div>
               </div>
               
               <img src="../assets/img/l1.png" alt="" v-if="item.tea_count/item.tea_total!=0 && item.isAdvance!=1">
-              <img src="../assets/img/l2.png" alt="" v-if="item.tea_count/item.tea_total==0">
-              <img src="../assets/img/l3.png" alt="" v-if="item.isAdvance==1">
+              <img src="../assets/img/l2.png" alt="" v-if="item.tea_count/item.tea_total==0" @click.stop="$router.push({path:'/teaLike',query:{id:item.id,tea_id:item.tea_type_id}})">
+              <img src="../assets/img/l3.png" alt="" v-if="item.isAdvance==1 && item.tea_count/item.tea_total!=0">
             </div>
           </li>
         </ul>
@@ -123,11 +123,12 @@
 </template>
 
 <script>
+import utils from '../utils/js/style.js'
 import { Confirm,TransferDomDirective as TransferDom ,Swipeout, SwipeoutItem, SwipeoutButton, XButton ,LoadMore } from 'vux'
 import Scroll from './scroll/scroll'
-import {getAlltop,getAll,getRecommand,getAdvance,vidioThumb,vidioCollect,carList} from '../api/api.js'
+import {getAlltop, getAll, getRecommand, getAdvance, vidioThumb, vidioCollect, carList, myData} from '../api/api.js'
 export default {
-   directives: {
+  directives: {
     TransferDom
   },
   components: {
@@ -141,9 +142,8 @@ export default {
   },
   data () {
     return {
-      token : sessionStorage.token || '',
-      username:sessionStorage.username || '请设置昵称',
-      img_link:sessionStorage.img_link || '',
+      token : utils.getCookie('token') || '',
+      img_link : '',
       loginMaskShow:false,
       moreShow : false,//更多那个按钮是否显示
       list:[],
@@ -177,8 +177,10 @@ export default {
     
   },
   created(){
+    console.log(this.token)
     if(this.$route.query.oid){
-      sessionStorage.oid = this.$route.query.oid
+      utils.setCookie('oid',this.$route.query.oid,90)
+      // sessionStorage.oid = this.$route.query.oid
     }
     document.title = '茶急送'
     this.init()
@@ -224,6 +226,13 @@ export default {
       carList({token:this.token}).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.carNum = res.data.data.count
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      })
+      myData({token:this.token}).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.img_link = res.data.data.info.img_link
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -678,7 +687,7 @@ export default {
             color: #95514C;
             letter-spacing: 0.23px;  
             line-height l(17)
-            width l(123)
+            // width l(123)
             height l(17)
             position absolute
             top l(5)   
@@ -729,8 +738,9 @@ export default {
               height 0
             img 
               display block
-              width l(21)
-              height l(22)
+              width l(16)
+              height l(16)
+              margin 0 l(10)
             // position absolute
             // right 2.7%
             // bottom 20%
@@ -743,6 +753,7 @@ export default {
           justify-content space-between
           align-items center
           padding-bottom 1.9%
+          margin 0 l(10)
           .lt_l
             height 100%
             padding-top l(15)
@@ -774,6 +785,7 @@ export default {
               fz(14)
               letter-spacing: 0.31px;
               line-height l(30)
+              text-align left
               .p1
                 fz(18)
               .p2

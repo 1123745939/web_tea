@@ -19,7 +19,7 @@
         <div class="oh_l">
           <img src="../assets/img/logo.png" alt="">动态
         </div>
-        <img src="" alt="">
+        <!-- <img src="" alt=""> -->
       </div>
       <ul class="tips">
         <li v-for="item in notifies" :key="item.notify_target_id">
@@ -33,7 +33,7 @@
         <div class="oh_l">
           <img src="../assets/img/hobby.png" alt="">爱好
         </div>
-        <img src="" alt="">
+        <!-- <img src="" alt=""> -->
       </div>
        <ul class="o_l">
         <li class="li_f" v-for="item in hobbies" :key="item.id">
@@ -57,7 +57,7 @@
         <div class="oh_l">
           <img src="../assets/img/hot.png" alt="">热评
         </div>
-        <img src="" alt="">
+        <!-- <img src="" alt=""> -->
       </div>
       <ul class="h_d">
         <li v-for="item in comments" :key="item.id">
@@ -74,11 +74,12 @@
 </template>
 
 <script>
+import utils from '../utils/js/style.js'
 import {friend} from '../api/api.js'
 export default {
   data () {
     return {
-      token : sessionStorage.token || '',
+      token : utils.getCookie('token') || '',
       id:'',
       info:{},
       notifies:[],
@@ -123,6 +124,7 @@ export default {
   flex-direction column
   justify-content flex-start
   align-items center
+  padding-bottom l(10)
   // padding-bottom l(20)
   .content
     width l(375)

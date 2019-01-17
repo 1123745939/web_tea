@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import utils from '../utils/js/style.js'
 import {  Alert, TransferDomDirective as TransferDom ,Confirm, } from 'vux'
 import {getAddress,orderSettle,orderCheck,orderPay,orderBuy,orderBuyCheck,jsapiUnion,jsapiBuy} from '../api/api.js'
 export default {
@@ -88,7 +89,7 @@ export default {
   data () {
     return {
       hasAddress:false,
-      token:sessionStorage.token || '',
+      token : utils.getCookie('token') || '',
       arr:[],
       address:{},
       txt:'',
@@ -106,6 +107,7 @@ export default {
     if(sessionStorage.showIfSuccess){
       this.showIfSuccess = true
     }
+    sessionStorage.removeItem('showIfSuccess')
   },
   methods:{
     //判断浏览器
@@ -226,7 +228,7 @@ export default {
           if(this.is_weixn()){
             this.weChatUnion()
           }else{
-            sessionStorage.sessionStorage=true
+            sessionStorage.showIfSuccess='true'
             // this.showIfSuccess = true
             this.orderOrder()
           }
@@ -249,7 +251,7 @@ export default {
             this.weChatBuy()
           }else{
             // this.showIfSuccess = true
-            sessionStorage.sessionStorage=true
+            sessionStorage.showIfSuccess='true'
             this.orderOrderBuy()
           }    
         }else{
@@ -407,6 +409,7 @@ export default {
           method, params, function (res) {
               if (res.err_msg == 'get_brand_wcpay_request:ok') { // 支付成功
                   that.$vux.toast.text('支付成功')
+                  sessionStorage.selectIndex = 0
                   window.location.href = 'http://uat.chajisong.com/#/orders';
               } else {
                 that.$vux.toast.text('支付失败')
@@ -429,7 +432,7 @@ export default {
     },
     onConfirm1 () {//去订单页
       sessionStorage.selectIndex = 0
-      this.$router.push('/orders ')
+      this.$router.push('/orders')
     }
   },
   
@@ -474,13 +477,15 @@ export default {
     background #fff
     margin-bottom l(10)
     .add_l
-      fz(16)
+      display block
+      fz(14)
       color: #333333;
       letter-spacing: 0.27px;
       line-height l(22)
-      width l(66)
+      width l(75)
+      text-align left
     .add_r
-      width l(238)
+      width l(228)
       text-align left 
       span 
         font-size: 14px;
@@ -553,7 +558,7 @@ export default {
   .yun
     margin-top l(10)
     height l(64)
-    fz(16)
+    fz(14)
     color #333
     line-height l(64)
     disFlex()
@@ -576,7 +581,7 @@ export default {
       justify-content flex-start
       align-items center
       span 
-        fz(16)
+        fz(14)
         color: #333333;
         letter-spacing: l(0.36)
         margin-right l(10)
@@ -609,7 +614,7 @@ export default {
         letter-spacing: 0.31px;
         fz(14)
         span 
-          fz(16)
+          fz(14)
           color: #333333;
           letter-spacing: l(0.36)
         img 

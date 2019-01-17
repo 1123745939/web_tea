@@ -41,7 +41,7 @@ export default {
   },
   data () {
     return {
-      token:sessionStorage.token,
+      token:utils.getCookie('token') || '',
       uname:'',
       uphone:'',
       uaddress:'',

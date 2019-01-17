@@ -79,6 +79,7 @@
 </template>
 
 <script>
+import utils from '../utils/js/style.js'
 import { XDialog,TransferDomDirective as TransferDom ,Confirm } from 'vux'
 import { orderDetail , orderApply } from '../api/api.js'
 export default {
@@ -91,7 +92,7 @@ export default {
   },
   data () {
     return {
-      token:sessionStorage.token || '',
+      token:utils.getCookie('token') || '',
       id:'',
       reason:'',
       order:{},

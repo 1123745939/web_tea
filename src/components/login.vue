@@ -47,7 +47,7 @@ export default {
           options = {
           mobile : this.tel,
           password : md5(this.pass),
-          openid:sessionStorage.oid
+          openid:utils.getCookie('oid')
         }
       }else{
         options = {
@@ -57,9 +57,13 @@ export default {
       }   
       Login(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          sessionStorage.token = res.data.data.access_token
-          sessionStorage.img_link = res.data.data.img_link
-          sessionStorage.username = res.data.data.username
+          utils.setCookie('token',res.data.data.access_token,90)
+          // utils.setCookie('img_link',res.data.data.img_link,90)
+          // utils.setCookie('username',res.data.data.username,90)
+
+          // sessionStorage.token = res.data.data.access_token
+          // sessionStorage.img_link = res.data.data.img_link
+          // sessionStorage.username = res.data.data.username
           let redirect = this.$route.query.type
           if(redirect !='goodDetail'){
             this.$router.push('/')

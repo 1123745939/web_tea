@@ -110,7 +110,7 @@ export default {
   },
   data () {
     return {
-      token:sessionStorage.getItem('token')||'',
+      token : utils.getCookie('token') || '',
       havePhoto :false,
       photoSrc :'',
       show5:false,
@@ -367,7 +367,7 @@ export default {
       updataName(options).then(res=>{
          if(res.data.code == 200 && !res.data.error_code){
           this.nickname = value
-          sessionStorage.username = value
+          //sessionStorage.username = value
           this.$vux.toast.text('昵称修改成功', 'middle')
         }else{
           this.$vux.toast.text(res.data.message, 'middle')
@@ -416,7 +416,8 @@ export default {
       loginOut({token:this.token}).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.$router.push('/login')
-          sessionStorage.removeItem('token')
+          utils.delCookie('token')
+          //sessionStorage.removeItem('token')
         }else{
           this.$vux.toast.text(res.data.message, 'middle')
         }

@@ -41,11 +41,12 @@
 </template>
 
 <script>
-import {hobbiesList} from '../api/api.js'
+import utils from '../utils/js/style.js'
+import { hobbiesList } from '../api/api.js'
 export default {
   data () {
     return {
-      token:sessionStorage.token ||"",
+      token:utils.getCookie('token') || '',
       list:[],
     }
   },

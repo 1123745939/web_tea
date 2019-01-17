@@ -18,7 +18,7 @@
                   </div>
                   <div class="right">
                     <p class="name">{{i.tea_title}}</p>
-                    <p class="intro">介绍：{{i.tea_desc}}</p>
+                    <p class="intro">介绍:{{i.tea_desc}}</p>
                     <div class="mark">
                       评分:
                       <ul class="tea">
@@ -33,7 +33,7 @@
                     </div>
                     <div class="pri">
                       <div class="pri_l">
-                        ￥<p>{{i.tea_price}}.</p>00 <span>/{{i.tea_format}}g</span>
+                        ￥<p>{{i.tea_price}}</p><span>/{{i.tea_format}}g</span>
                       </div>
                       <div class="pri_r">马上抢</div>
                     </div>
@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import utils from '../utils/js/style.js'
 import {thumbsList} from '../api/api.js'
 import {  Swipeout, SwipeoutItem, SwipeoutButton, XButton ,LoadMore } from 'vux'
 import Scroll from './scroll/scroll'
@@ -67,7 +68,7 @@ export default {
   },
   data () {
     return {
-      token :sessionStorage.token,
+      token : utils.getCookie('token') || '',
       list:[],
       page:1,
       loading :true,

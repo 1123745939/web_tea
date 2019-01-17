@@ -29,6 +29,7 @@
               <div class="t_info">
                 <p>{{item.tea_title}}</p>
                 <span>{{item.tea_date}}</span>
+                <span v-show="item.is_advance==1" style="color:#e63443;">预售时间：{{item.advance_date}}</span>
               </div>
               <div class="in_num">
                   <p>￥{{item.order_price}}</p>
@@ -111,6 +112,7 @@
 </template>
 
 <script>
+import utils from '../utils/js/style.js'
 import { Tab, TabItem , XButton ,Confirm, TransferDomDirective as TransferDom} from 'vux'
 import Scroll from './scroll/scroll'
 import { orderList , orderCancel , orderConfirm ,orderDel , orderRefundCancel } from '../api/api.js'
@@ -127,7 +129,7 @@ export default {
   },
   data () {
     return {
-      token:sessionStorage.token,
+      token : utils.getCookie('token') || '',
       status:1,
       selectIndex:0,
       tabs:[{id:1,name:'全部'},{id:3,name:'待发货'},{id:4,name:'待收货'},{id:5,name:'已完成'},{id:6,name:'售后'}],//{id:2,name:'待付款'}
@@ -236,19 +238,19 @@ export default {
       })
     },
     //取消订单
-    cancel(index){
-      const options = {
-        token :this.token,
-        id:this.id
-      }
-      orderCancel(options).then(res=>{
-        if(res.data.code == 200 && !res.data.error_code){
-          this.$vux.toast.text('订单已取消成功')
-        }else{
-          this.$vux.toast.text(res.data.error_message||res.data.message)
-        }
-      })
-    },
+    // cancel(index){
+    //   const options = {
+    //     token :this.token,
+    //     id:this.id
+    //   }
+    //   orderCancel(options).then(res=>{
+    //     if(res.data.code == 200 && !res.data.error_code){
+    //       this.$vux.toast.text('订单已取消成功')
+    //     }else{
+    //       this.$vux.toast.text(res.data.error_message||res.data.message)
+    //     }
+    //   })
+    // },
     //确认收货
     confirm(){
        const options = {
@@ -302,7 +304,7 @@ export default {
     onPullingUp() {
       // 更新数据
       console.log('pulling up and load data')
-      if(this.count>=this.page*10){
+      if(this.count>this.page*10){
         this.page ++ ;
         this.init(this.page,this.selectIndex)
         this.$refs.scroll.forceUpdate()

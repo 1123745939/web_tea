@@ -249,13 +249,26 @@ function setCookie(cname, cvalue, exdays) {
 function getCookie(cname) {
     var name = cname + "=";
     var ca = document.cookie.split(';');
-    for(var i = 0; i < ca.length; i++) {
-        var c = ca[i].trim();
-
-        if(c.indexOf(name) == 0)
-            return decodeURIComponent(c.substring(name.length, c.length));
-    }
-    return "";
+    var val = ''
+    ca.forEach(item=>{
+        item = item.replace(/%/g, '%25');
+        if(item.trim().indexOf(name)==0){
+            val = decodeURIComponent(item.trim().substring(name.length,item.trim().length));
+            // return decodeURIComponent(item.trim().substring(name.length,item.trim().length));
+        }
+    })
+    // for(var i = 0; i < ca.length; i++) {
+    //     var c = ca[i].trim();
+    //     console.log(c,'c')
+    //     if(c.indexOf(name) == 0){
+    //         return decodeURIComponent(c.substring(name.length, c.length));
+    //     }else{
+    //         return "";
+    //     }
+       
+    // }
+    return val
+   
 }
 
 function delCookie(name) {
@@ -348,7 +361,8 @@ export default {
 	objectToString,
 	sendCode,
 	setCookie,
-	getCookie,
+    getCookie,
+    delCookie,
 	formatTime,
 	setHistory,
 	getHistory,

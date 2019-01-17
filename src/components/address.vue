@@ -44,11 +44,12 @@
 </template>
 
 <script>
+import utils from '../utils/js/style.js'
 import {getAddress,defaultAddress,deleteAddress, thumbsList} from '../api/api.js'
 export default {
   data () {
     return {
-      token : sessionStorage.token,
+      token : utils.getCookie('token') || '',
       addressList:[],
     }
   },

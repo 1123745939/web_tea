@@ -64,7 +64,7 @@
                   <div class="li_bt">
                     <span>{{i.created_at}}</span>
                     <span @click="zan1(i.id,index,index1)">
-                      <img src="../assets/img/zanbb.png" alt="" v-if="i.is_thumb==1">
+                      <img src="../assets/img/zanbb.png" alt="" v-if="i.is_thumb==0">
                      <img src="../assets/img/zan1_active.png" alt="" v-else>
                     &nbsp;&nbsp;{{i.thumb_count}}</span>
                   </div>
@@ -85,19 +85,31 @@
     </div>
 
     </div>
+    <!-- the tip to login -->
+    <div v-transfer-dom>
+      <confirm v-model="loginMaskShow" title="您还没有登录" @on-confirm="$router.push({path:'/login'})">
+        <p style="text-align:center;">现在去登录?</p>
+      </confirm>
+    </div>
   </div>
 </template>
 
 <script>
+import utils from '../utils/js/style.js'
+import { Confirm,TransferDomDirective as TransferDom } from 'vux'
 import Scroll from './scroll/scroll'
 import {commentAll , commentThumb ,commentReplyThumb } from '../api/api.js'
 export default {
+   directives: {
+    TransferDom
+  },
   components: {
-    Scroll
+    Scroll,
+    Confirm,
   },
   data () {
     return {
-      token :sessionStorage.token || '',
+      token : utils.getCookie('token') || '',
       id:'',
       total:{},
       comments:{},
@@ -108,6 +120,7 @@ export default {
       len:'',
       tabIndex:1,
       count:'',
+      loginMaskShow:false,
 
       pullUpLoadThreshold: 0,
       pullDownRefresh: true,
@@ -191,31 +204,40 @@ export default {
     },
     //点赞某一条评论
     zan(id,index){
+       if(!this.token){
+        this.loginMaskShow = true
+        return
+      }
       const options = {
         token :this.token,
         id:id,
-        tea_id:this.is,
+        tea_id:this.id,
       }
       commentThumb(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          //  this.result[index].thumb_count+=1
-          // this.result[index].is_thumb=1
+          this.result[index].thumb_count+=1
+          this.result[index].is_thumb=1
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
       })
     },
-    //点赞回复
+    //点赞追评
     zan1(id,index,index1){
+      console.log(id)
+      if(!this.token){
+        this.loginMaskShow = true
+        return
+      }
       const options = {
         id:id,
         tea_id:this.id,
         token :this.token
       }
-      commentReplyThumb(options).then(res=>{
+      commentThumb(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          //  this.result[index].append[index1].is_thumb=1
-          //  this.result[index].append[index1].thumb_count+=1
+           this.result[index].append[index1].is_thumb=1
+           this.result[index].append[index1].thumb_count+=1
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -230,7 +252,7 @@ export default {
     onPullingUp() {
       // 更新数据
       console.log('pulling up and load data')
-      if(this.count>=this.page*10){
+      if(this.count>this.page*10){
         this.page ++ ;
          this.init(this.ket,0,this.page)
       }   

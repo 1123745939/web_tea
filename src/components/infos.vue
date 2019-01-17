@@ -42,7 +42,7 @@
 
     </scroll>
 
-    <div class="del" @click="loginMaskShow = true" v-show="len">
+    <div class="del" @click="loginMaskShow = true" v-show="count">
       <img src="../assets/img/quanbushanchu@2x.png" alt="">
     </div>
      <!-- 提示是否全部删除的弹框 -->
@@ -62,6 +62,7 @@
 </template>
 
 <script>
+import utils from '../utils/js/style.js'
 import {  Swipeout, SwipeoutItem, SwipeoutButton, XButton ,LoadMore ,Confirm,TransferDomDirective as TransferDom ,} from 'vux'
 import Scroll from './scroll/scroll'
 import {infos,infosDelOne,infosDelAll} from '../api/api.js'
@@ -80,7 +81,7 @@ export default {
   },
   data () {
     return {
-      token:sessionStorage.token || '',
+      token : utils.getCookie('token') || '',
       newsList:[],
       len:'',
       loading :false,

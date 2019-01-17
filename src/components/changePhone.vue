@@ -35,7 +35,7 @@ export default {
   },
   data () {
     return {
-      token: sessionStorage.token,
+      token : utils.getCookie('token') || '',
       tel: '',
       code:'',
       cored:'获取验证码',

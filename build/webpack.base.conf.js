@@ -19,7 +19,7 @@ const webpackConfig= {
 		commonstyle:[
 			'./src/utils/js/flexible',
 			'./src/utils/css/reset.css',
-			'./src/utils/css/util.styl'
+			'./src/utils/css/util.styl',
 		]
   },
   output: {
