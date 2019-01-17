@@ -118,7 +118,7 @@ export default {
   },
   data () {
     return {
-      token : utils.getCookie('token') || '',
+      token : localStorage.token || '',
       commentObj:'',
       comment :{},
       tea:{},

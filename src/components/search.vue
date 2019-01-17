@@ -143,7 +143,7 @@ export default {
   },
   data () {
     return {
-      token : utils.getCookie('token') || '',
+      token : localStorage.token || '',
       show:false,//弹框是否显示
       moreShow :false,
       conShow :false,//列表和历史记录的切换

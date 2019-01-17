@@ -81,7 +81,7 @@ export default {
   },
   data () {
     return {
-      token : utils.getCookie('token') || '',
+      token : localStorage.token || '',
       newsList:[],
       len:'',
       loading :false,

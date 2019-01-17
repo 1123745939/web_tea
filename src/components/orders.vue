@@ -129,7 +129,7 @@ export default {
   },
   data () {
     return {
-      token : utils.getCookie('token') || '',
+      token : localStorage.token || '',
       status:1,
       selectIndex:0,
       tabs:[{id:1,name:'全部'},{id:3,name:'待发货'},{id:4,name:'待收货'},{id:5,name:'已完成'},{id:6,name:'售后'}],//{id:2,name:'待付款'}

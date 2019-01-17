@@ -79,7 +79,7 @@ export default {
   },
   data () {
     return {
-      token : utils.getCookie('token') || '',
+      token : localStorage.token || '',
       selectAll :false,
       carList:[],
       show:false,

@@ -110,7 +110,7 @@ export default {
   },
   data () {
     return {
-      token : utils.getCookie('token') || '',
+      token : localStorage.token || '',
       havePhoto :false,
       photoSrc :'',
       show5:false,
@@ -416,8 +416,9 @@ export default {
       loginOut({token:this.token}).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.$router.push('/login')
-          utils.delCookie('token')
-          //sessionStorage.removeItem('token')
+          //utils.delCookie('token')
+          localStorage.removeItem('token')
+          localStorage.removeItem('firstTime')
         }else{
           this.$vux.toast.text(res.data.message, 'middle')
         }

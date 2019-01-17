@@ -89,7 +89,7 @@ export default {
   data () {
     return {
       hasAddress:false,
-      token : utils.getCookie('token') || '',
+      token : localStorage.token || '',
       arr:[],
       address:{},
       txt:'',

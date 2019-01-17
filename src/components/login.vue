@@ -43,11 +43,13 @@ export default {
         return
       }
       var options = {}
-      if(sessionStorage.oid){
+      if(localStorage.oid){
           options = {
           mobile : this.tel,
           password : md5(this.pass),
-          openid:utils.getCookie('oid')
+          //openid:utils.getCookie('oid')
+          openid:localStorage.oid
+
         }
       }else{
         options = {
@@ -57,7 +59,11 @@ export default {
       }   
       Login(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          utils.setCookie('token',res.data.data.access_token,90)
+          localStorage.token = res.data.data.access_token
+          let firstTime = new Date().getTime()
+          console.log(firstTime)
+          localStorage.firstTime = firstTime
+          //utils.setCookie('token',res.data.data.access_token,90)
           this.$router.replace('/')
         }else{
           this.$vux.toast.text(res.data.message, 'middle')

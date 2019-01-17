@@ -65,7 +65,7 @@ export default {
   },
   data () {
     return {
-      token : utils.getCookie('token') || '',
+      token : localStorage.token || '',
       list:[],
       page:1,
       loading :true,

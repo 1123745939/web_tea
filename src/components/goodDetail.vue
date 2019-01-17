@@ -210,7 +210,7 @@ export default {
   },
   data () {
     return {
-      token:utils.getCookie('token') || '',
+      token:localStorage.token || '',
       detailObj:{},
       sameList:[],
       likeList:[],

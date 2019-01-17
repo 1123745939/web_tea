@@ -54,7 +54,7 @@ import { orderUploadImg , orderUploadVidio ,orderDelComment ,orderAddComment ,or
 export default {
   data () {
     return {
-      token : utils.getCookie('token') || '',
+      token : localStorage.token || '',
       txt:'',
       imgList:[],
       imgUrlList:[],

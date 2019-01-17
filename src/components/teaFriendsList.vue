@@ -26,7 +26,7 @@ import {friendsList} from '../api/api.js'
 export default {
   data () {
     return {
-      token : utils.getCookie('token') || '',
+      token : localStorage.token || '',
       list:[]
     }
   },

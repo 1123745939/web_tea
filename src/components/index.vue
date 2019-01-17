@@ -56,6 +56,9 @@
               </div>
               <div class="time" v-if="!item.isAdvance">{{item.tea_date}}</div>
               <div class="time" v-else>预售 {{item.tea_date}}</div>
+                <div class="new-tea" v-if="item.isAdvance==1">
+              <img src="../assets/img/tea_new.png" alt="">
+            </div>
             </div>
             <div class="li_mid">
               <div class="red"></div>
@@ -82,6 +85,7 @@
               <img src="../assets/img/l2.png" alt="" v-if="item.tea_count/item.tea_total==0" @click.stop="$router.push({path:'/teaLike',query:{id:item.id,tea_id:item.tea_type_id}})">
               <img src="../assets/img/l3.png" alt="" v-if="item.isAdvance==1 && item.tea_count/item.tea_total!=0">
             </div>
+           
           </li>
         </ul>
 		    <div class="order-list" v-if="list.length == 0 && !loading">
@@ -142,7 +146,7 @@ export default {
   },
   data () {
     return {
-      token : utils.getCookie('token') || '',
+      token : '',
       img_link : '',
       loginMaskShow:false,
       moreShow : false,//更多那个按钮是否显示
@@ -177,10 +181,24 @@ export default {
     
   },
   created(){
-    console.log(this.token)
+    if(localStorage.firstTime){
+      let firstTime = localStorage.firstTime
+      let nowTime = new Date().getTime()
+      //算时间差
+      let cha = Number(nowTime) - Number(firstTime)
+      if(cha/1000/60/60/24 < Number(90)){
+        this.token = localStorage.token
+      }else{
+        sessionStorage.removeItem('token')
+        sessionStorage.removeItem('firstTime')
+        this.token = ''
+      }
+    }else{
+      this.token = ''
+    }
     if(this.$route.query.oid){
-      utils.setCookie('oid',this.$route.query.oid,90)
-      // sessionStorage.oid = this.$route.query.oid
+      //utils.setCookie('oid',this.$route.query.oid,90)
+      localStorage.oid = this.$route.query.oid
     }
     document.title = '茶急送'
     this.init()
@@ -629,10 +647,11 @@ export default {
       margin-top l(20)
       li.listli
         width 100%
-        min-height l(320)
+        min-height l(300)
         background #ffffff
         padding 1.7% 4.3% 0
         margin-bottom l(10)
+        //position relative
         .li_top
           width 100%
           height l(190)
@@ -693,9 +712,19 @@ export default {
             top l(5)   
             right l(8)  
             text-align right
+          .new-tea
+            width l(50)
+            height l(50)
+            position absolute
+            top 0
+            left 0
+            img
+              display block
+              width 100%
+              height 100%
         .li_mid
           background: #F7F7F7;
-          min-height l(60)
+          min-height l(50)
           position relative
           font-family: PingFangSC-Medium;
           fz(16)
@@ -704,7 +733,7 @@ export default {
           line-height l(22)
           padding 0.9% 0 0 2.4%
           text-align left 
-          padding-top l(10)
+          padding-top l(5)
           //padding-bottom l(5)
           .red
             width l(4)
@@ -722,8 +751,8 @@ export default {
           .flower
             width 100%
             disFlex()
-            height l(24)
-            margin-top l(5)
+            height l(20)
+            //margin-top l(5)
             ul
               overflow hidden
               li
@@ -748,7 +777,7 @@ export default {
             // margin-bottom l(5)
             // margin-top l(5)
         .li_bot
-          min-height l(60)
+          min-height l(50)
           display flex
           justify-content space-between
           align-items center
@@ -794,8 +823,9 @@ export default {
 
           img 
             display block
-            width l(95)
-            height l(40)
+            width l(92)
+            height l(34)
+        
   .no_use
     height l(50)
   .footer
