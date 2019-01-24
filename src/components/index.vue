@@ -827,12 +827,12 @@ export default {
             height l(34)
         
   .no_use
-    height l(50)
+    height l(70)
   .footer
     position fixed
     bottom 0
     left 0
-    height l(55)
+    height l(75)
     display flex
     justify-content space-between
     width 100%
@@ -857,6 +857,7 @@ export default {
       justify-content space-between
       width 73.7%
       background #fff
+      padding l(10) 0
       li  
         width 33%
         display flex

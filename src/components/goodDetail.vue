@@ -19,10 +19,10 @@
 
     <div class="d">
       <span class="d_t">{{detailObj.tea_date}}</span>
-      <!-- <div class="li_top" @click.stop="$router.push({path:'/videoPlay',query:{id:id}})"> -->   
-      <div class="li_top" @click.stop="playVideo">
-        <!-- <embed :src="detailObj.tea_vidio_link" type="" id="video"> -->
-        <video :src="detailObj.tea_vidio_link" id="video" style="width:100%;height:100%;object-fit:fill"  :poster="detailObj.tea_img_link"  controls></video>
+      <!--  @click.stop="playVideo" -->
+      <div class="li_top">
+        <!-- <div  class="prism-player" id="J_prismPlayer" style="height:200px" ></div> -->
+        <video :src="detailObj.tea_vidio_link" id="video" style="width:100%;height:200px;"  :poster="detailObj.tea_img_link"  controls ></video>
         <!-- <div class="play"><span></span></div> -->
         <div class="data">
           <div class="d_l">
@@ -194,6 +194,8 @@
 <script>
 import 'swiper/dist/css/swiper.css'
 import utils from '../utils/js/style.js'
+// import '../utils/js/aliplay.js'
+// import '../utils/css/aliplay.css'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import { Confirm,Previewer,TransferDomDirective as TransferDom } from 'vux'
 import 'swiper/dist/css/swiper.min.css'
@@ -261,6 +263,8 @@ export default {
   },
   created(){
     document.title = '详情'
+
+        
   },
   mounted(){
     var id  = this.$route.query.id
@@ -269,6 +273,8 @@ export default {
     this.$forceUpdate()
     this.getcarNum()
     this.swiper.slideTo(4, 1000, false)
+    
+    
   },
   computed: {
       swiper() {
@@ -298,6 +304,23 @@ export default {
               this.list.push(obj)
             })
           }
+       
+          //  setTimeout(()=>{
+          //    console.log(this.detailObj,'this.detailObj.tea_img_link')
+          //     var player = new Aliplayer({
+          //     id: 'J_prismPlayer',
+          //     width: '100%',
+          //     preload:false,
+          //     autoplay: false,
+          //     cover: this.detailObj.tea_img_link,
+          //     //支持播放地址播放,此播放优先级最高
+          //     source : this.detailObj.tea_vidio_link,
+             
+          //     },function(player){
+          //         console.log('播放器创建好了。')
+          //     });
+          //  },100)
+         
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -514,6 +537,9 @@ export default {
       position relative
       // border-radius 3% 0 3% 0
       #video
+        width 100%
+        height 100%
+      #J_prismPlayer
         width 100%
         height 100%
       .play
@@ -861,4 +887,6 @@ export default {
     width 100%
     height l(44) 
     margin-top l(20)
+
+
 </style>
