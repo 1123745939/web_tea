@@ -21,8 +21,8 @@
       <span class="d_t">{{detailObj.tea_date}}</span>
       <!--  @click.stop="playVideo" -->
       <div class="li_top">
-        <!-- <div  class="prism-player" id="J_prismPlayer" style="height:200px" ></div> -->
-        <video :src="detailObj.tea_vidio_link" id="video" style="width:100%;height:200px;"  :poster="detailObj.tea_img_link"  controls ></video>
+        <div  class="prism-player" id="J_prismPlayer" style="height:200px" ></div>
+        <!-- <video :src="detailObj.tea_vidio_link" id="video" style="width:100%;height:200px;"  :poster="detailObj.tea_img_link"  controls ></video> -->
         <!-- <div class="play"><span></span></div> -->
         <div class="data">
           <div class="d_l">
@@ -305,21 +305,21 @@ export default {
             })
           }
        
-          //  setTimeout(()=>{
-          //    console.log(this.detailObj,'this.detailObj.tea_img_link')
-          //     var player = new Aliplayer({
-          //     id: 'J_prismPlayer',
-          //     width: '100%',
-          //     preload:false,
-          //     autoplay: false,
-          //     cover: this.detailObj.tea_img_link,
-          //     //支持播放地址播放,此播放优先级最高
-          //     source : this.detailObj.tea_vidio_link,
+           setTimeout(()=>{
+             console.log(this.detailObj,'this.detailObj.tea_img_link')
+              var player = new Aliplayer({
+              id: 'J_prismPlayer',
+              width: '100%',
+              preload:false,
+              autoplay: false,
+              cover: this.detailObj.tea_img_link,
+              //支持播放地址播放,此播放优先级最高
+              source : this.detailObj.tea_vidio_link,
              
-          //     },function(player){
-          //         console.log('播放器创建好了。')
-          //     });
-          //  },100)
+              },function(player){
+                  console.log('播放器创建好了。')
+              });
+           },100)
          
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
