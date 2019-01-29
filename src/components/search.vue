@@ -136,6 +136,7 @@ import Vue from 'vue'
 import Scroll from './scroll/scroll'
 import {getHistory,delHistory,getSearchDate,getFilter,getSearch} from '../api/api.js'
 import utils from '../utils/js/style.js'
+import domain from '../api/domain';
 export default {
   components: {
     Confirm,
@@ -165,7 +166,7 @@ export default {
       priceUp:true,
       type:'',//0 无需筛选 1 排序 2 筛选
       threeArr:[{id:6,name:'播放量最高',eng:'tea_play_count '},{id:7,name:'收藏最多',eng:'tea_collect_count'},{id:8,name:'点赞最多',eng:'tea_thumb_count '}],
-      urls:'http://uat.chajisong.com/#/goodDetail?id=',
+      urls:domain.domain+'/#/goodDetail?id=',
 
 
       pullUpLoadThreshold: 0,

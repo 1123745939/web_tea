@@ -1,7 +1,6 @@
 import axios from './index'
-
-// import domain from './domain.js'
-let baseUrl = 'http://uat.api.chajisong.com'+'/v1'     //  http://fef9efe1dbfd5199.natapp.cc
+import domain from './domain'
+let baseUrl = domain.domain +'/v1' 
 const jsonToQuery = function (JSON, isEncode) {
   var _fdata = function (data, isEncode) {
     data = data == null ? '' : data;

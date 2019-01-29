@@ -193,6 +193,7 @@
 </template>
 
 <script>
+import domain from '../api/domain.js'
 import 'swiper/dist/css/swiper.css'
 import utils from '../utils/js/style.js'
 // import '../utils/js/aliplay.js'
@@ -437,7 +438,7 @@ export default {
     },
     //联系客服
     connectCustom(){
-      window.location.href = `http://uat.api.chajisong.com/v1/custom?token=${this.token}`
+      window.location.href = domain.domain+`/v1/custom?token=${this.token}`
     },
     //视频播放增加次数
     playVideo(){

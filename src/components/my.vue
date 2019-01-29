@@ -116,6 +116,7 @@
 </template>
 
 <script>
+import domain from '../api/domain.js'
 import utils from '../utils/js/style.js'
 import { myData , custom } from '../api/api.js'
 export default {
@@ -159,7 +160,7 @@ export default {
     },
     //联系客服
     connectCustom(){
-      window.location.href = `http://uat.api.chajisong.com/v1/custom?token=${this.token}`
+      window.location.href = domain.domain + `/v1/custom?token=${this.token}`
     }
   }
 }

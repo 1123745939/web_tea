@@ -128,6 +128,7 @@
 
 <script>
 import utils from '../utils/js/style.js'
+import domain from '../api/domain.js'
 import { Confirm,TransferDomDirective as TransferDom ,Swipeout, SwipeoutItem, SwipeoutButton, XButton ,LoadMore } from 'vux'
 import Scroll from './scroll/scroll'
 import {getAlltop, getAll, getRecommand, getAdvance, vidioThumb, vidioCollect, carList, myData} from '../api/api.js'
@@ -176,7 +177,7 @@ export default {
       startY: 0,
       scrollToTime: 700,
       copyBtn: null,
-      urls:'http://uat.chajisong.com/#/goodDetail?id=',
+      urls:domain.domain+'/#/goodDetail?id=',
     }
     
   },

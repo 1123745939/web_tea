@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import domain from '../api/domain.js'
 import utils from '../utils/js/style.js'
 import {  Alert, TransferDomDirective as TransferDom ,Confirm, } from 'vux'
 import {getAddress,orderSettle,orderCheck,orderPay,orderBuy,orderBuyCheck,jsapiUnion,jsapiBuy} from '../api/api.js'
@@ -407,7 +408,7 @@ export default {
               if (res.err_msg == 'get_brand_wcpay_request:ok') { // 支付成功
                   that.$vux.toast.text('支付成功')
                   sessionStorage.selectIndex = 0
-                  window.location.href = 'http://uat.chajisong.com/#/orders';
+                  window.location.href = domain.domain+'/#/orders';
               } else {
                 that.$vux.toast.text('支付失败')
               }
