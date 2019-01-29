@@ -235,7 +235,12 @@ export default {
       setTimeout(()=>{
         this.copyBtn = new this.clipboard(this.$refs.copy[0]);
       },10)
+      //scroll-content
+
+     // this.$refs.scroll.scrollTo(100,500)
+      //window.scrollTo(100,500)
     })
+    
   },
   methods:{
     //购物车数量

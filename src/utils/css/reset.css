@@ -147,13 +147,17 @@ datepicker::-webkit-input-placeholder {
 
 .prism-big-play-btn{
   position :absolute ;
-  top: 0;
+  top: 75px;
   left: 0;
   bottom: 0;
   right :0;
   margin :auto;
   height: 100%;
 }
+.prism-player .prism-cover{
+  background-color:none;
+  display:block;
+  } 
 
 
 /*common*/

@@ -10,7 +10,8 @@
             <video :src="i.vidio_url" v-else></video>
           </li> -->
           <li v-for="(i,index) in batch" :key="index">
-            <video :src="i.tea_vidio_link" ></video>
+            <video :src="i.tea_vidio_link" :poster="i.tea_img_link"></video>
+            <img src="../assets/img/play.png" alt="" class="play">
           </li>
         </ul>
       </div>
@@ -21,8 +22,8 @@
       <span class="d_t">{{detailObj.tea_date}}</span>
       <!--  @click.stop="playVideo" -->
       <div class="li_top">
-        <div  class="prism-player" id="J_prismPlayer" style="height:200px" ></div>
-        <!-- <video :src="detailObj.tea_vidio_link" id="video" style="width:100%;height:200px;"  :poster="detailObj.tea_img_link"  controls ></video> -->
+        <div  class="prism-player" id="J_prismPlayer" style="height:100%"></div>
+        <!-- <video :src="detailObj.tea_vidio_link" id="video" style="width:10ta0%;height:200px;"  :poster="detailObj.tea_img_link"  controls ></video> -->
         <!-- <div class="play"><span></span></div> -->
         <div class="data">
           <div class="d_l">
@@ -305,7 +306,7 @@ export default {
             })
           }
        
-           setTimeout(()=>{
+         
              console.log(this.detailObj,'this.detailObj.tea_img_link')
               var player = new Aliplayer({
               id: 'J_prismPlayer',
@@ -319,7 +320,12 @@ export default {
               },function(player){
                   console.log('播放器创建好了。')
               });
-           },100)
+
+              player.on('ready',()=>{
+                this.playVideo()
+              });
+              
+         
          
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
@@ -435,12 +441,12 @@ export default {
     },
     //视频播放增加次数
     playVideo(){
-     var  video1 = document.getElementById("video");  
-       if(video1.paused) { 
-            video.play()
-          }else{
-            video1.pause()
-          } 
+    //  var  video1 = document.getElementById("video");  
+    //    if(video1.paused) { 
+    //         video.play()
+    //       }else{
+    //         video1.pause()
+    //       } 
       const options = {
         id : this.id,
         vidio_id:'',
@@ -561,7 +567,7 @@ export default {
         display flex
         justify-content space-between
         position absolute
-        bottom 0
+        bottom -24px
         left 0
         font-family: PingFangSC-Regular;
         fz(12)
@@ -622,14 +628,14 @@ export default {
         line-height l(22)
         padding 0.9% 0 0 2.4%
         text-align left 
-        padding l(10) 4.3% 0
+        padding l(35) 4.3% 0
         .red
           width l(4)
           height l(16)
           background: #83271F;
           position absolute
           left 0
-          top l(10)
+          top l(35)
         span.t_t
           overflow: hidden;
           text-overflow: ellipsis;
