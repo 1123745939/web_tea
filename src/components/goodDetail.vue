@@ -9,7 +9,7 @@
             <img :src="i.image_url" alt="" class="goodimg previewer-demo-img"  v-if="!i.tea_play_count" @click="show(index)">
             <video :src="i.vidio_url" v-else></video>
           </li> -->
-          <li v-for="(i,index) in batch" :key="index">
+          <li v-for="(i,index) in batch" :key="index"  @click="$router.push({path:'/goodDetail',query:{id:i.id}})">
             <video :src="i.tea_vidio_link" :poster="i.tea_img_link"></video>
             <img src="../assets/img/play.png" alt="" class="play">
           </li>

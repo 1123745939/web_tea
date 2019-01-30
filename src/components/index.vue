@@ -1,8 +1,26 @@
 <template>
   <div class="con" ref="cons">
-    
+     <div class="content" @click.stop="moreShow = moreShow ? !moreShow : moreShow">
+        <div class="ul_box">
+          <ul class="tab">
+            <li class="tabli" @click="goAll();filterId=0" :class="tabIndex==1?'active':''">推荐</li>
+            <li class="tabli" @click="token == ''? loginMaskShow=true :GOrecommand('','',0);filterId=0" :class="tabIndex==2?'active':''">热评</li>
+            <li  class="tabli" @click="GOadvance('','',0);filterId=0" :class="tabIndex==3?'active':''">预告</li>
+            <li class="tabli" @click="token == ''? loginMaskShow=true : $router.push('/collection') " :class="tabIndex==4?'active':''">分类</li>
+            <!-- <li  class="tabli" @click.stop="moreShow = !moreShow">
+              <img src="../assets/img/tab5.png" alt="">更多 
+              <ul class="more" v-if="moreShow">
+                <li v-for="i in moreLists" :key="i.id" @click.stop="shilter(i.id)" :class="filterId==i.id ? 'active' :''">{{i.name}}</li>
+              </ul>
+            </li> -->
+          </ul>
+        </div>
+        <div class="search" @click="$router.push('/search')">
+          <img src="../assets/img/search.png" alt="">
+        </div>
+      </div>
     <!-- 列表 -->
-<div class="box" id="boxs">
+  <div class="box" id="boxs">
     <scroll ref="scroll"
         :data="list"
         :pullDownRefresh="pullDownRefreshObj"
@@ -12,33 +30,7 @@
         @pullingUp="onPullingUp">
 
         <!-- 头部 -->
-        <div class="content" @click.stop="moreShow = moreShow ? !moreShow : moreShow">
-          <div class="search" @click="$router.push('/search')"></div>
-          <div class="car" @click="token == ''? loginMaskShow=true : $router.push('/car')"><span class="carNum" v-show="carNum">{{carNum}}</span></div>
-          <ul class="tab">
-            <li  class="tabli" @click="goAll();filterId=0">
-              <img src="../assets/img/tab1_active.png" alt="" v-if="tabIndex==1">
-              <img src="../assets/img/tab1.png" alt="" v-else>全部
-            </li>
-            <li  class="tabli" @click="token == ''? loginMaskShow=true :GOrecommand('','',0);filterId=0">
-              <img src="../assets/img/tab2_active.png" alt="" v-if="tabIndex==2">
-              <img src="../assets/img/tab2.png" alt="" v-else>推荐
-            </li>
-            <li  class="tabli" @click="GOadvance('','',0);filterId=0" >
-              <img src="../assets/img/tab3_active.png" alt="" v-if="tabIndex==3">
-              <img src="../assets/img/tab3.png" alt="" v-else>预告
-            </li>
-            <li class="tabli" @click="token == ''? loginMaskShow=true : $router.push('/collection') ">
-              <img src="../assets/img/tab4.png" alt="">收藏
-            </li>
-            <li  class="tabli" @click.stop="moreShow = !moreShow">
-              <img src="../assets/img/tab5.png" alt="">更多 
-              <ul class="more" v-if="moreShow">
-                <li v-for="i in moreLists" :key="i.id" @click.stop="shilter(i.id)" :class="filterId==i.id ? 'active' :''">{{i.name}}</li>
-              </ul>
-            </li>
-          </ul>
-        </div>
+       
 
         <ul class="goodsList" id="lists">     
           <li v-for="(item,index) in list" :key="index" @click="$router.push({path:'/goodDetail',query:{id:item.id}})" class="listli">
@@ -54,25 +46,23 @@
                   <li><img src="../assets/img/talk.png" alt="">{{Number(item.tea_comment_count) < Number(10000) ? Number(item.tea_comment_count) : (Number(item.tea_comment_count)/10000).toFixed(2)}}</li>
                 </ul>
               </div>
-              <div class="time" v-if="!item.isAdvance">{{item.tea_date}}</div>
-              <div class="time" v-else>预售 {{item.tea_date}}</div>
-                <div class="new-tea" v-if="item.isAdvance==1">
-              <img src="../assets/img/tea_new.png" alt="">
-            </div>
+              <!-- <div class="time" v-if="!item.isAdvance">{{item.tea_date}}</div>
+              <div class="time" v-else>预售 {{item.tea_date}}</div> -->
+              <div class="new-tea" v-if="item.isAdvance==1">
+                <img src="../assets/img/tea_new.png" alt="">
+              </div>
             </div>
             <div class="li_mid">
-              <div class="red"></div>
-              <span class="t_t">{{item.tea_title}}</span>  
-              <div class="flower">
-                <ul class="fl">
-                  <li v-for="i in item.tea_score"></li>
-                </ul>
-                <input type="text" style="opacity:0;" v-model='urls+item.id' id="foo">
-                <img src="../assets/img/share.png" alt="" v-on:click.stop="share(item.id,index)" ref='copy' data-clipboard-action="copy" data-clipboard-target="#foo" class="aaa">
-              </div>
-              
+              <!-- <div class="red"></div> -->
+              <span class="t_t">{{item.tea_title}}</span> 
+              <div class="buy">
+                <span v-if="item.tea_count/item.tea_total!=0 && item.isAdvance!=1">马上抢购</span>
+                <span v-if="item.isAdvance==1 && item.tea_count/item.tea_total!=0">马上预购</span>
+                <span v-if="item.tea_count/item.tea_total==0" @click.stop="$router.push({path:'/teaLike',query:{id:item.id,tea_id:item.tea_type_id}})">查看相似</span>
+                <img src="../assets/img/more1.png" alt="">
+              </div> 
             </div>
-            <div class="li_bot">
+            <!-- <div class="li_bot">
               <div class="lt_l">
                 <div class="all">
                   <span :style="{width:item.tea_count/item.tea_total*100+'%'}"></span>
@@ -85,7 +75,7 @@
               <img src="../assets/img/l2.png" alt="" v-if="item.tea_count/item.tea_total==0" @click.stop="$router.push({path:'/teaLike',query:{id:item.id,tea_id:item.tea_type_id}})">
               <img src="../assets/img/l3.png" alt="" v-if="item.isAdvance==1 && item.tea_count/item.tea_total!=0">
             </div>
-           
+            -->
           </li>
         </ul>
 		    <div class="order-list" v-if="list.length == 0 && !loading">
@@ -93,26 +83,29 @@
 		    </div>
     </scroll>
   </div>
-    <div class="no_use"></div>
+    <!-- <div class="no_use"></div> -->
     <!-- 底部 -->
     <div class="footer">
-      <div class="f_l"  @click="token == ''? loginMaskShow=true : $router.push('/my') ">
+      <!-- <div class="f_l"  @click="token == ''? loginMaskShow=true : $router.push('/my') ">
         <img src="../assets/img/photo-no.png" alt="" v-if="!img_link">
         <img :src="img_link" alt="" v-else>
-        <!-- {{this.username}}  -->
-      </div>
+      </div> -->
       <ul class="f_r">
+         <li  @click="token == ''? loginMaskShow=true : $router.push('/infos') ">
+          <img src="../assets/img/foot3.png" alt="">
+          首页
+        </li>
         <li  @click="token == ''? loginMaskShow=true : $router.push('/infos') ">
           <img src="../assets/img/foot3.png" alt="">
-          通知
+          订单
         </li>
          <li @click="token == ''? loginMaskShow=true : $router.push('/orders')">
           <img src="../assets/img/foot2.png" alt="">
-          订单
+          茶友
         </li>
          <li @click="token == ''? loginMaskShow=true : $router.push('/hobby')">
           <img src="../assets/img/foot1.png" alt="">
-          爱好
+          我的
         </li>
       </ul>
     </div>
@@ -560,92 +553,87 @@ export default {
   position relative
   .content
     width 100%
-    height l(230)
-    backgroundIcon ('banner.png')
+    height l(50)
+    background #fff
+    padding 0 4.3%
+    // backgroundIcon ('banner.png')
     position relative
-    margin-bottom l(20)
+    overflow-x scroll
     .search
-      width l(20)
-      height l(20)
+      width 16.2%
+      height 100%
       position absolute
-      left 5.6%
-      top 4.8%
-      backgroundIcon ('search.png')
-    .car
-      width l(21)
-      height l(21)
-      position absolute
-      right 5.6%
-      top 4.8%
-      backgroundIcon ('car.png')
-      z-index 3
-      span.carNum  
-        background #E63443 
-        width l(15)
-        height l(15)
-        position absolute
-        top -25%
-        right -30%
-        border-radius 50%
-        text-align center
-        line-height l(15)
-        color #fff
-        fz(12)
-    ul.tab
-      width 91.5%
-      height l(74)
-      disFlex()
-      position absolute
-      top 72%
-      left 4.3%
-      background: #FFFFFF;
-      box-shadow: 0 0 2px 0 #F2F2F2;
-      border-radius: 18px;
-      li.tabli:last-of-type
-        color: #666666;
-        position relative
-        ul
-          width l(80)
-          height l(95)
-          position absolute
-          backgroundIcon ('btd.png')
-          bottom -2.5rem
-          right 0.7rem
-          z-index 88
-          fz(12)
-          color: #FFFFFF;
-          letter-spacing: 0.28px;
-          padding-top l(3)
-          li.active
-            color #83271f
-          li:last-of-type
-            border-bottom 0
-          li
-            height l(30)
-            line-height l(30)
-            border-bottom 1px solid rgba(255,255,255,0.20)
-        fz(11)
-      li.tabli
-        width 50%
-        height 100%
-        text-align center
-        font-family: PingFangSC-Regular;
-        fz(13)
-        color: #83271F;
-        letter-spacing: 0.21px;
-        display flex
-        flex-direction column
-        justify-content space-around
-        align-items center
-        img 
-          display block
-          width l(24)
-          height l(24)
+      right 0
+      top 0
+      padding-left l(10)
+      display flex
+      justify-content center
+      align-items center
+      img
+        display block
+        width l(18)
+        height l(18)
+    .ul_box
+      width 83.7%
+      overflow scroll
+      ul.tab
+        width 104%
+        height l(50)
+        disFlex()
+        background: #FFFFFF;
+        // padding-right l(25)
+        // position absolute
+        // top 72%
+        // left 4.3%
+        // box-shadow: 0 0 2px 0 #F2F2F2;
+        // border-radius: 18px;
+        // li.tabli:last-of-type
+        //   color: #666666;
+        //   position relative
+        //   fz(11)
+          // ul
+          //   width l(80)
+          //   height l(95)
+          //   position absolute
+          //   backgroundIcon ('btd.png')
+          //   bottom -2.5rem
+          //   right 0.7rem
+          //   z-index 88
+          //   fz(12)
+          //   color: #FFFFFF;
+          //   letter-spacing: 0.28px;
+          //   padding-top l(3)
+          //   li.active
+          //     color  #282828
+          //   li:last-of-type
+          //     border-bottom 0
+          //   li
+          //     height l(30)
+          //     line-height l(30)
+          //     border-bottom 1px solid rgba(255,255,255,0.20)
+        li.tabli.active
+          color #282828
+        li.tabli
+          // width 50%
+          height 100%
+          text-align center
+          font-family: PingFangSC-Regular;
+          fz(16)
+          color: #666666;
+          letter-spacing l(1)
+          display flex
+          flex-direction column
+          justify-content space-around
+          align-items center
+          img 
+            display block
+            width l(24)
+            height l(24)
   .box
     width 100%
-    height 100%
+    height l(570)
     position fixed
-    top 0
+    top l(60)
     left 0
     ul.goodsList
       width 100%
@@ -653,9 +641,9 @@ export default {
       margin-top l(20)
       li.listli
         width 100%
-        min-height l(300)
+        min-height l(250)
         background #ffffff
-        padding 1.7% 4.3% 0
+        padding l(20) 4.3% l(10)
         margin-bottom l(10)
         //position relative
         .li_top
@@ -663,7 +651,7 @@ export default {
           height l(190)
           // backgroundIcon('list1.png')
           position relative
-          border-radius 2% 2% 0 0
+          border-radius l(15)
           .play
             opacity: 0.3;
             backgroundIcon('play.png')
@@ -677,6 +665,7 @@ export default {
             bottom 0
             margin auto
           .data
+            border-radius 0 0 l(15) l(15)
             width 100%
             height l(25)
             background colorB(30)
@@ -729,17 +718,16 @@ export default {
               width 100%
               height 100%
         .li_mid
-          background: #F7F7F7;
           min-height l(50)
           position relative
-          font-family: PingFangSC-Medium;
-          fz(16)
+          fz(18)
           color: #333333;
-          letter-spacing: 0.28px;
-          line-height l(22)
-          padding 0.9% 0 0 2.4%
-          text-align left 
-          padding-top l(5)
+          letter-spacing: 1px;
+          line-height: 23px;
+          text-align left
+          overflow hidden
+          padding-top l(15) 
+          // disFlex()
           //padding-bottom l(5)
           .red
             width l(4)
@@ -749,11 +737,28 @@ export default {
             left 0
             top l(10)
           span.t_t
-            display: -webkit-box;
+            display block
+            // width 100%
+            height 100%
+            // display: -webkit-box;
             -webkit-box-orient: vertical;
             -webkit-line-clamp: 2;
             overflow: hidden;
             line-height l(24)
+            float left
+          .buy
+            float right 
+            disFlex()
+            // margin-top l(5)
+            span
+              fz(14)
+              color: #FF5100;
+              letter-spacing: l(1)
+            img
+              display block
+              width l(6)
+              height l(10)
+              margin-left l(5)
           .flower
             width 100%
             disFlex()
@@ -861,9 +866,9 @@ export default {
     .f_r  
       display flex
       justify-content space-between
-      width 73.7%
+      width 100%
       background #fff
-      padding l(10) 0
+      padding l(5) 0 l(17)
       li  
         width 33%
         display flex
