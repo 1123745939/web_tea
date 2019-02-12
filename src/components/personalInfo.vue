@@ -36,7 +36,7 @@
       <!-- 地区 -->
       <div class="photo" @click = "show6 = true">
         <div class="left">
-          <img src="../assets/img/diqu@1x.png" alt="">地区
+          <img src="../assets/img/diqu@1x.png" alt="">爱好
         </div>
         <div class="right">
           <span>{{address}}</span>

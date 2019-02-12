@@ -101,6 +101,7 @@ export default {
     this.id = this.$route.query.id
     this.tea_type_id = this.$route.query.tea_no_same
     this.init(this.page)
+    console.log(11111)
   },
   mounted(){
     this.$el.querySelector('#boxs').style.height=this.$refs.cons.offsetHeight +'px'
@@ -124,12 +125,13 @@ export default {
       const options = {
         // token: this.token,
         id:this.id,
-        tea_no_same:this.tea_no_same,
+        tea_no_same:this.tea_type_id,
         page:page,
         rows:10,
       }
       teaSame(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
+          console.log(res)
           this.count = res.data.data.length
           if(page==1){
             this.list = res.data.data

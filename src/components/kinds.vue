@@ -6,24 +6,27 @@
       <img src="../assets/img/search.png" alt="" @click.stop="search()">
     </div>
     <div class="content" v-if="!conShow">
-      <div class="his" v-if="historyArr.length > 0 && token">
+      <!-- <div class="his" v-if="historyArr.length > 0 && token">
         <div class="his_t">历史搜索<img src="../assets/img/del.png" alt="" @click.stop="show = true"></div>
         <ul class="his_word">
           <li v-for="(item,index) in historyArr8" :key="index" @click.stop="searchTxt=item.word;search()">{{item.word}}</li>
         </ul>
-        <img src="../assets/img/hobbym.png" alt="" v-if="historyArr.length>20 && upShow==false" @click.stop="historyArr8 = historyArr;upShow=true">
-        <img src="../assets/img/jian_up.png" alt="" v-if="historyArr.length>20 && upShow==true" @click.stop="historyArr8 = historyArr.slice(0,20);upShow=false">
-      </div>
+        <img src="../assets/img/hobbym.png" alt="" v-if="historyArr.length>8" @click.stop="historyArr8 = historyArr">
+      </div> -->
       <!-- 各种分类的茶叶 -->
-      <!-- <ul class="kinds">      
+      <ul class="kinds">      
         <li class="k_t" v-for="(item,index) in kindList" :key="item.group_id">
-          <div class="his_t"><img src="../assets/img/t_r.png" alt="">{{item.group_name}}</div>
+          <div class="his_t">
+            <!-- <img src="../assets/img/t_r.png" alt=""> -->
+            {{item.group_name}}
+          </div>
           <ul class="his_word">
             <li v-for="tea in item.type8" :key="tea.id" @click.stop="searchIdCon(tea.id)">{{tea.name}}</li>
           </ul>
           <img src="../assets/img/hobbym.png" alt="" class="more" v-show="item.moreKindShow" @click.stop="handle(index)">
+          <img src="../assets/img/jian_up.png" alt="" class="more" v-show="item.upShow" @click.stop="handleUp(index)">
         </li>
-      </ul> -->
+      </ul>
     </div>
 
     <!-- 搜索到的列表 -->
@@ -121,13 +124,6 @@
         </div>
       </div>
     </div>
-  
-    <!-- 删除的弹框提示 -->
-    <div>
-      <confirm v-model="show" title="" @on-confirm="onConfirm">
-        <p style="text-align:center;">确定要清空历史记录吗</p>
-      </confirm>
-    </div>
   </div>
 </template>
 
@@ -135,7 +131,7 @@
 import { Confirm } from 'vux'
 import Vue from 'vue'
 import Scroll from './scroll/scroll'
-import {getHistory,delHistory,getSearchDate,getFilter,getSearch} from '../api/api.js'
+import {getSearchDate,getFilter,getSearch} from '../api/api.js'
 import utils from '../utils/js/style.js'
 import domain from '../api/domain';
 export default {
@@ -152,7 +148,6 @@ export default {
       searchTxt:'',
       historyArr:[],
       historyArr8:[],
-      upShow:false,
       filterArr:[],
       kindList:[],
       searchResultList:[],//搜索到的列表
@@ -187,9 +182,8 @@ export default {
     }
   },
   created(){
-    document.title = '搜索'
+    document.title = '分类'
     this.init()
-    this.getHistoryDate()
     //this.historyArr = util.getHistory('teaSearch')
 
   },
@@ -234,6 +228,7 @@ export default {
         if(res.data.code == 200 && !res.data.error_code){
           this.kindList = res.data.data.types
           this.kindList.forEach(item=>{
+            item.upShow = false
             if(item.type.length>8){
               item.type = item.type.slice(0,12)
               item.type8 = item.type.slice(0,8)
@@ -258,29 +253,20 @@ export default {
         }
       })   
     },
-    //历史记录
-    getHistoryDate(){
-      if(this.token){
-        getHistory({token:this.token}).then(res=>{
-          if(res.data.code == 200 && !res.data.error_code){
-            console.log(res.data.data)
-            this.historyArr = res.data.data
-            console.log(this.historyArr,'this.historyArr')
-            if(this.historyArr.length>20){
-              this.historyArr8 = this.historyArr.slice(0,20)
-            }else{
-              this.historyArr8 = this.historyArr
-            }
-          }else{
-            this.$vux.toast.text(res.data.error_message||res.data.message)
-          }          
-        })
-      }
-    },
-    handle(index){
+    //展开
+     handle(index){
       this.$forceUpdate();//页面强制手动重新渲染
       Vue.set(this.kindList[index],'type8',this.kindList[index].type)
+      Vue.set(this.kindList[index],'upShow',true)
       Vue.set(this.kindList[index],'moreKindShow',false)
+    },
+    //收起
+     handleUp(index){
+      this.$forceUpdate();//页面强制手动重新渲染
+      Vue.set(this.kindList[index],'type8',this.kindList[index].type8.slice(0,8))
+      Vue.set(this.kindList[index],'upShow',false)
+      Vue.set(this.kindList[index],'moreKindShow',true)
+      console.log(this.kindList[index])
     },
     //在所搜页输入内容搜索
     search(){
@@ -296,8 +282,6 @@ export default {
         //有关键字也有类型
         this.searchCon(1,0,this.searchTxt,this.tea_type_id,0,'','')
       }
-      
-
          
     },
     //点击每个li，根据类型搜索
@@ -400,17 +384,6 @@ export default {
         } 
       })
     },
-    //确认删除历史记录
-    onConfirm () {
-      if(!this.token){return}
-      delHistory({token:this.token}).then(res=>{
-        if(res.data.code == 200 && !res.data.error_code){
-          this.historyArr = []
-        }else{
-          this.$vux.toast.text(res.data.error_message||res.data.message)
-        }
-      })
-    },
     //下拉刷新
     onPullingDown() {
       // 模拟更新数据
@@ -496,7 +469,7 @@ export default {
       width l(23)
       height l(23)
   .content
-    padding l(20) 4.3%
+    padding l(10) 4.3% 0
     background #F7F7F7
     margin-bottom l(20)
     // 头部

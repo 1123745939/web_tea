@@ -32,6 +32,7 @@ import personalInfo from '@/components/personalInfo'
 import changePhone from '@/components/changePhone'
 import discussAll from '@/components/discussAll' 
 import applySale from '@/components/applySale' //申请售后
+import kinds from '@/components/kinds' //申请售后
 
 Vue.use(Router)
 
@@ -196,6 +197,11 @@ const router =  new Router({
       path: '/applySale',
       name: 'applySale',
       component: applySale
+    },
+    {
+      path: '/kinds',
+      name: 'kinds',
+      component: kinds
     },
   ]
 })

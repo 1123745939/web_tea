@@ -1,6 +1,6 @@
 <template>
   <div class="con">
-    <div class="content">
+    <div class="content" v-if="list.length>0">
       <ul class="h_list">
         <li class="h_li" v-for="(i) in list" :key="i.id" @click.stop="$router.push({path:'/goodDetail',query:{id:i.id}})">
           <div class="left" :style="{background:'url(' + i.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
@@ -33,6 +33,12 @@
           </div>
         </li>  
       </ul>
+    </div>
+    <div class="noList" v-show="list.length==0">
+      <div class="box">
+        <img src="../assets/img/symbols-info.png" alt="">
+        <span>暂无数据</span>
+      </div>
     </div>
     <div class="xuan" @click="$router.push('/myInfo')">
       <img src="../assets/img/question.png" alt="">
@@ -77,6 +83,8 @@ export default {
   background #F7F7F7
   border-top 1px solid  #E8E8E8
   padding  l(10) 0 0
+  height 100vh
+  background #f7f7f7
   .xuan
     width l(120)
     height l(80)
@@ -230,4 +238,41 @@ export default {
               color: #E63443;
               letter-spacing: 0.23px;
               line-height l(23)
+  .noList
+    width l(175)
+    height l(200)
+    position absolute
+    top 0
+    bottom 0
+    left 0
+    right 0
+    margin auto
+    div
+      width l(175)
+      height l(200)
+      position absolute
+      top 0
+      left 0
+      display flex
+      flex-direction column
+      justify-content space-between
+      align-items center
+      img 
+        display block
+        width l(150)
+        height l(147)
+      span 
+        font-family: PingFangSC-Regular;
+        font-size: 14px;
+        color: #BABABA;
+        letter-spacing: 1px;
+      p
+        width l(160)
+        height l(44)
+        background: #83271F;
+        border-radius: 100px;
+        font-size: 18px;
+        color: #FFFFFF;
+        letter-spacing: 1.12px;
+        line-height l(44)
 </style>

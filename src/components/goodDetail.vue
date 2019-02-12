@@ -10,7 +10,8 @@
             <video :src="i.vidio_url" v-else></video>
           </li> -->
           <li v-for="(i,index) in batch" :key="index"  @click="$router.push({path:'/goodDetail',query:{id:i.id}})">
-            <video :src="i.tea_vidio_link" :poster="i.tea_img_link"></video>
+            <!-- <video :src="i.tea_vidio_link" :poster="i.tea_img_link"></video> -->
+            <img :src="i.tea_img_link" alt="" class="goodimg">
             <img src="../assets/img/play.png" alt="" class="play">
           </li>
         </ul>
@@ -19,7 +20,7 @@
     <!-- 详情 -->
 
     <div class="d">
-      <span class="d_t">{{detailObj.tea_date}}</span>
+      <!-- <span class="d_t">{{detailObj.tea_date}}</span> -->
       <!--  @click.stop="playVideo" -->
       <div class="li_top">
         <div  class="prism-player" id="J_prismPlayer" style="height:100%"></div>
@@ -51,18 +52,19 @@
           </swiper>
       </div>
       <div class="li_mid">
-        <div class="red"></div>
+        <!-- <div class="red"></div> -->
         <span class="t_t">{{detailObj.tea_title}}</span>
         <div class="t_star">
           <div>￥<span class="p1">{{detailObj.tea_price}}</span>.00 <span class="p2">/{{detailObj.tea_format}}g</span></div>
-          <ul>
+          <!-- <ul>
             <li v-for="i in detailObj.tea_score" :key="i"></li>
-          </ul>
+          </ul> -->
         </div>
         <div class="t_re">
           <img src="../assets/img/fire.png" alt="">
           <span>推荐理由：{{detailObj.tea_reason}}</span>
         </div>
+        <hr>
       </div>    
     </div>
     <!-- 评价 -->
@@ -170,7 +172,7 @@
       </div>
       <div class="buy_box">
         <p @click="token? addCar():loginMaskShow = true">加入购物车</p>
-        <p class="buy" @click="token == ''? loginMaskShow=true : $router.push({path:'/pay',query:{id:id,type:'buy'}})">我要购买</p>
+        <p class="buy" @click="token == ''? loginMaskShow=true : $router.push({path:'/pay',query:{id:id,type:'buy'}})">购买</p>
       </div>
     </div>
     <!-- 提示去登录的弹框 -->
@@ -564,15 +566,15 @@ export default {
       .data
         width 100%
         height l(25)
-        background colorB(30)
+        // background colorB(30)
         display flex
         justify-content space-between
         position absolute
-        bottom -24px
+        bottom -30px
         left 0
         font-family: PingFangSC-Regular;
         fz(12)
-        color: #FFFFFF;
+        color:  #B5B6B7;
         letter-spacing: 0.28px;
         padding 0 4.3%
         z-index 99
@@ -629,7 +631,7 @@ export default {
         line-height l(22)
         padding 0.9% 0 0 2.4%
         text-align left 
-        padding l(35) 4.3% 0
+        padding l(35) 4.3% l(20)
         .red
           width l(4)
           height l(16)
@@ -644,11 +646,15 @@ export default {
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           line-height l(24)
+          fz(18)
+          color: #282828;
+          letter-spacing: 0.31px;
         div.t_star
           width 100%
           display flex
           justify-content space-between
           align-items center
+          margin-top l(10)
           div
             color: #E63443;
             fz(14)
@@ -671,6 +677,7 @@ export default {
           display flex
           justify-content flex-start
           align-items center
+          margin  l(10) 0
           img 
             display block
             width l(13)
@@ -681,6 +688,9 @@ export default {
             color: #666666;
             letter-spacing: l(0.31)
             line-height l(18)
+        hr
+          margin l(20) 0
+          border: l(0.5) solid #E8E8E8;
   // 评论列表
   .pre
     background #fff
@@ -850,13 +860,13 @@ export default {
     p
       height 100%
       width l(111)
-      background: #D4D4D4;
+      background: #FF5100;
       fz(18)
-      color: #83271F;
+      color: #ffffff;
       letter-spacing: 0.26px;
       line-height l(44)
     p.buy
-      background: #83271F;
+      background: #FF6633;
       color: #FFFFFF;
     div.f1
       width 20%

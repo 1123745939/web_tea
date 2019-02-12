@@ -103,10 +103,10 @@
 
     
     <div class="noList" v-show="orderList.length==0">
-    <div class="box">
-      <img src="../assets/img/symbols-order.png" alt="">
-      <span>暂无订单</span>
-    </div>
+      <div class="box">
+        <img src="../assets/img/symbols-order.png" alt="">
+        <span>暂无订单</span>
+      </div>
   </div>
   </div>
 </template>

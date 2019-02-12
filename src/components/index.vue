@@ -6,7 +6,7 @@
             <li class="tabli" @click="goAll();filterId=0" :class="tabIndex==1?'active':''">推荐</li>
             <li class="tabli" @click="token == ''? loginMaskShow=true :GOrecommand('','',0);filterId=0" :class="tabIndex==2?'active':''">热评</li>
             <li  class="tabli" @click="GOadvance('','',0);filterId=0" :class="tabIndex==3?'active':''">预告</li>
-            <li class="tabli" @click="token == ''? loginMaskShow=true : $router.push('/collection') " :class="tabIndex==4?'active':''">分类</li>
+            <li class="tabli" @click="$router.push('/kinds') " :class="tabIndex==4?'active':''">分类</li>
             <!-- <li  class="tabli" @click.stop="moreShow = !moreShow">
               <img src="../assets/img/tab5.png" alt="">更多 
               <ul class="more" v-if="moreShow">
@@ -26,14 +26,18 @@
         :pullDownRefresh="pullDownRefreshObj"
         :pullUpLoad="pullUpLoadObj"
         :startY="parseInt(startY)"
+        :listenScroll=true
         @pullingDown="onPullingDown"
-        @pullingUp="onPullingUp">
+        @pullingUp="onPullingUp"
+        @scroll="getScrollPage"
+    >
 
         <!-- 头部 -->
        
 
-        <ul class="goodsList" id="lists">     
-          <li v-for="(item,index) in list" :key="index" @click="$router.push({path:'/goodDetail',query:{id:item.id}})" class="listli">
+        <ul class="goodsList" id="lists"> 
+          <!-- <li v-for="(item,index) in list" :key="index" @click="$router.push({path:'/goodDetail',query:{id:item.id}})" class="listli">     -->
+          <li v-for="(item,index) in list" :key="index" @click="goDetail(item.id)" class="listli">
             <div class="li_top" :style="{background:'url(' + item.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
               <div class="play"><span></span></div>
               <div class="data">
@@ -95,17 +99,17 @@
           <img src="../assets/img/foot3.png" alt="">
           首页
         </li>
-        <li  @click="token == ''? loginMaskShow=true : $router.push('/infos') ">
+        <li  @click="token == ''? loginMaskShow=true : $router.push('/my') ">
           <img src="../assets/img/foot3.png" alt="">
-          订单
+          所爱
         </li>
          <li @click="token == ''? loginMaskShow=true : $router.push('/orders')">
           <img src="../assets/img/foot2.png" alt="">
-          茶友
+          订单
         </li>
-         <li @click="token == ''? loginMaskShow=true : $router.push('/hobby')">
+         <li @click="token == ''? loginMaskShow=true : $router.push('/my')">
           <img src="../assets/img/foot1.png" alt="">
-          我的
+          更多
         </li>
       </ul>
     </div>
@@ -167,14 +171,48 @@ export default {
       pullUpLoadThreshold: 0,
       pullUpLoadMoreTxt: '数据加载中',
       pullUpLoadNoMoreTxt: '没有更多数据了',
-      startY: 0,
+      startY: localStorage.getItem('scrollY')||0,
       scrollToTime: 700,
       copyBtn: null,
+      scrollYPages:0,
       urls:domain.domain+'/#/goodDetail?id=',
+      
     }
     
   },
   created(){
+    if(localStorage.scrollY){
+      this.startY=localStorage.scrollY;
+      setTimeout(()=>{
+        localStorage.scrollY=0;
+      })
+    }else{
+      this.startY=0
+    }
+
+    if(sessionStorage.page){
+      if(sessionStorage.page!=1){
+        this.page = sessionStorage.page
+         this.list = JSON.parse(sessionStorage.list)
+      }else{
+        if(this.tabIndex == 1){
+          this.goAll()
+        }else if(this.tabIndex == 2){
+          this.GOrecommand('','',0)
+        }else if(this.tabIndex == 3){
+          this.GOadvance('','',0)
+        }
+      }
+      
+    }else{
+       if(this.tabIndex == 1){
+        this.goAll()
+      }else if(this.tabIndex == 2){
+        this.GOrecommand('','',0)
+      }else if(this.tabIndex == 3){
+        this.GOadvance('','',0)
+      }
+    }
     if(localStorage.firstTime){
       let firstTime = localStorage.firstTime
       let nowTime = new Date().getTime()
@@ -201,13 +239,7 @@ export default {
     }else{
       this.tabIndex = sessionStorage.tabIndex
     }
-      if(this.tabIndex == 1){
-        this.goAll()
-      }else if(this.tabIndex == 2){
-        this.GOrecommand('','',0)
-      }else if(this.tabIndex == 3){
-        this.GOadvance('','',0)
-      }
+     
    
   },
   computed:{
@@ -225,18 +257,32 @@ export default {
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      setTimeout(()=>{
-        this.copyBtn = new this.clipboard(this.$refs.copy[0]);
-      },10)
-      //scroll-content
-
-     // this.$refs.scroll.scrollTo(100,500)
-      //window.scrollTo(100,500)
-    })
+    // this.$nextTick(() => {
+    //   setTimeout(()=>{
+    //     this.copyBtn = new this.clipboard(this.$refs.copy[0]);
+    //   },10)
+    // })
     
   },
   methods:{
+   
+    // 获得滚动坐标
+    getScrollPage(pos){
+      this.scrollYPages=pos.y;
+    },
+     // 去详情
+    goDetail(id){
+       console.log(this.scrollYPages,222222)
+      localStorage.setItem('scrollY',this.scrollYPages);
+      if(this.page!=1){
+        sessionStorage.list = JSON.stringify(this.list)
+        sessionStorage.page = this.page
+      }
+      setTimeout(()=>{
+         this.$router.push({name:'goodDetail',query:{id:id}})
+      })
+     
+    },
     //购物车数量
     init(){
       if(!this.token){return}
@@ -255,19 +301,20 @@ export default {
         }
       })
     },
-    share(id,index) {
+    //分享
+    // share(id,index) {
      
-      this.copyBtn = new this.clipboard(this.$refs.copy[index]);
-      let _this = this;
-      let clipboard = this.copyBtn;
-      console.log(clipboard,'clipboard')
-      clipboard.on('success', function() {
-         _this.$vux.toast.text('复制成功，可直接粘贴给好友！')
-      });
-      clipboard.on('error', function() {
-          _this.$vux.toast.text('复制失败，请重新复制！')
-      });
-    },
+    //   this.copyBtn = new this.clipboard(this.$refs.copy[index]);
+    //   let _this = this;
+    //   let clipboard = this.copyBtn;
+    //   console.log(clipboard,'clipboard')
+    //   clipboard.on('success', function() {
+    //      _this.$vux.toast.text('复制成功，可直接粘贴给好友！')
+    //   });
+    //   clipboard.on('error', function() {
+    //       _this.$vux.toast.text('复制失败，请重新复制！')
+    //   });
+    // },
     //收藏
     collect(id,index){
       if(!this.token){
@@ -325,7 +372,7 @@ export default {
           }
           this.topArr = res.data.data.advance.concat(res.data.data.top)
             console.log(this.topArr,'预售+置顶')
-          }else{
+        }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
       })

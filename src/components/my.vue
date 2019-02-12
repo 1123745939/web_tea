@@ -1,13 +1,29 @@
 <template>
-  <div class="con">
-    <!-- 头部 -->
-     <div class="content">
-      <div class="car" @click="connectCustom"></div>
-      <div class="tab">
-        <div class="tab_top">
-          <img :src="infoObj.img_link" alt="" @click="$router.push('/personalInfo')" v-if="infoObj.img_link!=''">
-          <img src="../assets/img/photo-no.png" alt="" @click="$router.push('/personalInfo')" v-else>
+  <div class="con"  ref="cons">
+        <!-- 列表 -->
+  <div class="box" id="boxs">
+    <scroll ref="scroll"
+        :data="hobbies"
+        :pullUpLoad="pullUpLoadObj"
+        :startY="parseInt(startY)"
+        :listenScroll=true
+        @pullingUp="onPullingUp"
+        @scroll="getScrollPage"
+    >
+
+      <!-- 头部 -->
+     <div class="content"  ref="navs">
+      <div class="tab_top">
+        <img :src="infoObj.img_link" alt="" @click="$router.push('/personalInfo')" v-if="infoObj.img_link!=''">
+        <img src="../assets/img/photo-no.png" alt="" @click="$router.push('/personalInfo')" v-else>
+      </div>
+      <div class="tab_right">
+        <div class="name">
           <p>{{infoObj.username}}</p>
+          <div class="infoss">
+            <div class="car" @click="connectCustom"></div>
+            <div class="infos" @click="$router.push('/infos')"></div>
+          </div>
         </div>
         <ul class="leb">
           <li @click="$router.push('/collection')"><p>{{count.collect_count}}</p>收藏</li>
@@ -16,68 +32,15 @@
         </ul>
       </div>
     </div>
-    <!-- 通知 -->
-    <div class="order">
-      <div class="o_h"  @click="$router.push('/infos')">
-        <div class="oh_l">
-          <img src="../assets/img/logo.png" alt="">通知
-        </div>
-        <img src="../assets/img/more2.png" alt="">
-      </div>
-      <ul class="tips"  v-if="notifies.length">
-        <li v-for="item in notifies" :key="item.notify_target_id">
-          <span></span>{{item.notify_content}}
-        </li>
-      </ul>
-    </div>
-    <!-- 订单 -->
-    <div class="order">
-      <div class="o_h"  @click="$router.push('/orders')">
-        <div class="oh_l">
-          <img src="../assets/img/order.png" alt="">订单
-        </div>
-        <img src="../assets/img/more2.png" alt="">
-      </div>
-      <ul class="o_l"  v-if="orders.length">
-        <li v-for="item in orders" :key="item.id"  @click="$router.push({path:'/orderDetail',query:{id:item.id,tea_id:item.tea_id}})">
-          <div class="li_h">
-            <p class="time">{{item.created_at}}</p>
-            <p>{{item.status_text}}</p>
-          </div>
-          <div class="li_m" >
-            <div class="t_img"  :style="{background:'url(' + item.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
-              <img src="../assets/img/play.png" alt="">
-            </div>
-            <div class="t_info">
-              <p>{{item.tea_title}}</p>
-              <span>{{item.tea_date}}</span>
-              <div class="in_num">
-                <p>￥<span>{{item.tea_price}}</span>.00</p>
-                <span>X{{item.order_count}}</span>
-              </div>
-            </div>
-            <!-- <div class="red" @click.stop="evluate(item)" v-if="item.order_status==1 && item.reject_status==0">申请退款</div>
-            <div class="red" @click.stop="evluate(item)" v-if="item.order_status==1 && item.reject_status==1">查看详情</div>
-            <div class="red" @click.stop="evluate(item)" v-if="item.order_status==1 && item.reject_status==2">取消退款</div>
-            <div class="red" @click.stop="evluate(item)" v-if="item.order_status==1 && item.reject_status==3">查看详情</div>
-            <div class="red" @click.stop="evluate(item)" v-if="item.order_status==1 && item.reject_status==4">确认收货</div>
-            <div class="red" @click.stop="evluate(item)" v-if="item.order_status==2">查看详情</div>
-            <div class="red" @click.stop="evluate(item)" v-if="item.order_status==3">去评价</div>
-            <div class="red" @click.stop="evluate(item)" v-if="item.order_status==4">查看详情</div> -->
-            <div class="red" @click.stop="$router.push({path:'/orderDetail',query:{id:item.id,tea_id:item.tea_id}})">查看详情</div>
-          </div>          
-        </li>
-      </ul>
-    </div>
-    <!-- 爱好 -->
-    <div class="order hobby">
+		  <!--列表  -->
+    <div class="order hobby" >
       <div class="o_h"  @click="$router.push('/hobby')">
         <div class="oh_l">
-          <img src="../assets/img/hobby.png" alt="">爱好
+          爱好
         </div>
-        <img src="../assets/img/more2.png" alt="" >
+        <img src="../assets/img/more1.png" alt="" >
       </div>
-       <ul class="o_l"  v-if="hobbies.length">
+       <ul class="o_l"  v-show="hobbies.length">
         <li class="li_f" v-for="item in hobbies" :key="item.id">
           <div class="li_m">
             <div class="t_img" :style="{background:'url(' + item.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
@@ -89,29 +52,19 @@
             </div>
             <div class="red" @click="$router.push({path:'/goodDetail',query:{id:item.tea_id}})">我要买</div>
           </div>            
-        </li>
+        </li>ss
       </ul>
-      <!-- <img src="../assets/img/hobbym.png" alt="" class="hobbym"> -->
-    </div>
-    <!-- 热评 -->
-    <div class="order hot">
-      <div class="o_h"  @click="$router.push('/evaluate')">
-        <div class="oh_l">
-          <img src="../assets/img/hot.png" alt="">热评
-        </div>
-        <img src="../assets/img/edit.png" alt="">
+      <div class="noList" v-show="hobbies.length==0">
+      <div class="box">
+        <img src="../assets/img/symbols-order.png" alt="">
+        <span>暂无数据</span>
       </div>
-      <ul class="h_d"  v-if="comments.length">
-        <li @click="$router.push({path:'/hotDiscuss',query:{id:item.id}})" v-for="item in comments" :key="item.id">
-          <div class="li_top">
-            <div></div>
-            <span>{{item.created_at}}</span>
-          </div>
-          <p>{{item.content}}.</p>
-          <span class="li_u">有用{{item.thumb_count}}&nbsp;&nbsp;&nbsp;评价{{item.comment_count}}</span>
-        </li>
-      </ul>
     </div>
+    </div>
+    </scroll>
+  </div>
+   
+   
   </div>
 </template>
 
@@ -119,6 +72,7 @@
 import domain from '../api/domain.js'
 import utils from '../utils/js/style.js'
 import { myData , custom } from '../api/api.js'
+import Scroll from './scroll/scroll'
 export default {
   data () {
     return {
@@ -128,23 +82,61 @@ export default {
       count:{},
       notifies:[],
       orders:[],
-      hobbies:[]
+      hobbies:[],
+
+      pullUpLoadThreshold: 0,
+      pullDownRefresh: true,
+      pullDownRefreshThreshold: 40,
+      pullDownRefreshStop: 40,
+      pullUpLoad: true,
+      pullUpLoadThreshold: 0,
+      pullUpLoadMoreTxt: '数据加载中',
+      pullUpLoadNoMoreTxt: '没有更多数据了',
+      startY: localStorage.getItem('scrollY')||0,
+      scrollToTime: 700,
+      copyBtn: null,
+      scrollYPages:0,
+      urls:domain.domain+'/#/goodDetail?id=',
+      
     }
+  },
+   components: {
+    Scroll,
   },
   created(){
     document.title = '茶急送'
     this.init()
   },
+  // mounted(){
+  //   this.$el.querySelector('#boxs').style.height=this.$refs.cons.offsetHeight-this.$refs.navs.offsetHeight+'px'
+  // },
+  computed:{
+    pullDownRefreshObj: function () {
+      return this.pullDownRefresh ? {
+        threshold: parseInt(this.pullDownRefreshThreshold),
+        stop: parseInt(this.pullDownRefreshStop)
+      } : false
+    },
+    pullUpLoadObj: function () {
+      return this.pullUpLoad ? {
+        threshold: parseInt(this.pullUpLoadThreshold),
+        txt: {more: this.pullUpLoadMoreTxt, noMore: this.pullUpLoadNoMoreTxt}
+      } : false
+    }
+  },
   methods:{
+    getScrollPage(pos){
+      this.scrollYPages=pos.y;
+    },
     init(){
       //个人信息
       myData({token:this.token}).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.infoObj = res.data.data.info
-          this.comments = res.data.data.comments
+          // this.comments = res.data.data.comments
           this.count = res.data.data.count
-          this.notifies = res.data.data.notifies
-          this.orders = res.data.data.orders
+          // this.notifies = res.data.data.notifies
+          // this.orders = res.data.data.orders
           this.hobbies = res.data.data.hobbies
 
           console.log(res,'res')  
@@ -161,7 +153,47 @@ export default {
     //联系客服
     connectCustom(){
       window.location.href = domain.domain + `/v1/custom?token=${this.token}`
+    },
+       //下拉刷新
+    onPullingDown() {
+      // 模拟更新数据is_ref
+     
+     },
+     //上拉加载
+    onPullingUp() {
+      // 更新数据
+      console.log('pulling up and load data')
+      this.$refs.scroll.forceUpdate()
+    },
+    rebuildScroll() {
+      Vue.nextTick(() => {
+        this.$refs.scroll.destroy()
+        this.$refs.scroll.initScroll()
+      })
     }
+  },
+  watch: {
+    scrollbarObj: {
+      handler() {
+        this.rebuildScroll()
+      },
+      deep: true
+    },
+    pullDownRefreshObj: {
+      handler() {
+        this.rebuildScroll()
+      },
+      deep: true
+    },
+    pullUpLoadObj: {
+      handler() {
+        this.rebuildScroll()
+      },
+      deep: true
+    },
+    startY() {
+      this.rebuildScroll()
+    },
   }
 }
 </script>
@@ -176,70 +208,79 @@ export default {
   flex-direction column
   justify-content flex-start
   align-items center
-  padding-bottom l(20)
+  height 100vh
+  position relative
+  .box
+    width 100%
+    height 100vh
   .content
-    width l(375)
-    height l(230)
-    backgroundIcon ('mybg.png')
-    position relative
-    margin-bottom l(66)
+    width 100%
+    height l(110)
+    padding 0 4.3%
+    background #fff
+    margin-bottom l(10)
+    disFlex()
     .car
       width l(21)
       height l(21)
-      position absolute
-      right 5.6%
-      top 4.8%
       backgroundIcon ('kefu1.png')
       z-index 3
-    .tab
-      width l(343)
-      height l(158)
-      position absolute
-      top 56%
-      left 4.3%
-      background: #FFFFFF;
-      box-shadow: 0 0 2px 0 #F2F2F2;
-      border-radius: 18px;
-      backgroundIcon ('bg.png')
-      .tab_top
-        width 100%
-        position absolute
-        top -30%
-        display flex
-        flex-direction column
-        justify-content center
-        align-items center
-        img 
-          display block
-          width l(94)
-          height l(94)
-          border-radius 50%
-        p  
-          font-size: 18px;
-          color: #333333;
-          letter-spacing: 1.12px;
-          line-height l(40)
+    .tab_top
+      width 18.7%
+      display flex
+      flex-direction column
+      justify-content center
+      align-items center
+      img 
+        display block
+        width l(70)
+        height l(70)
+        border-radius 50%
+      p  
+        font-size: 18px;
+        color: #333333;
+        letter-spacing: 1.12px;
+        line-height l(40)
+    .tab_right
+      width 75%
+      height 100%
+      padding l(10) 0
+      .name
+        height 50%
+        disFlex()
+        fz(16)
+        color: #282828;
+        letter-spacing: 1px;
+        font-weight bold
+        disFlex()
+        .infoss
+          width 30%
+          height 100%
+          disFlex()
+          .infos
+            width l(21)
+            height l(21)
+            backgroundIcon ('shezhi@1x.png')
+            z-index 3 
       ul  
-        position absolute
-        bottom 14%
-        left 0
         width 100%  
         disFlex()
         li
-          width 33%
-          font-size: 14px;
-          color: #666666;
+          // width 33%
+          fz(12)
+          color:  #B5B6B7;
           letter-spacing: 0.32px;
           line-height l(20)
           p
-            font-size: 16px;
-            color: #333333;
+            fz(14)
+            color: #666;
             letter-spacing: 0.37px;
             line-height l(22)
-            font-weight bold
+            // font-weight bold
 // 订单
   .order.hobby
     padding-bottom l(15)
+    height 100vh - l(190)
   .order
     width 100%
     background #ffffff
@@ -252,14 +293,13 @@ export default {
       border-bottom 1px solid #E8E8E8
       img 
         display block
-        width l(17)
-        height l(17)
+        width l(6)
+        height l(10)
       .oh_l
         disFlex ()
-        font-size: 16px;
-        color: #000000;
+        fz(14)
+        color: #666;
         letter-spacing: 0.37px;
-        font-weight bold
         img 
           display block
           width l(29)
@@ -347,7 +387,7 @@ export default {
               line-height l(17)
               text-align left 
             span.t_f
-              color: #E63443;
+              color:  #FF5100;
             .in_num
               fz(12)
               color: #333333;
@@ -371,8 +411,8 @@ export default {
             width l(70)
             height l(24)
             line-height l(24)
-            border 1px solid #83271F
-            color #83271F
+            border 1px solid #FFBD9E
+            color #FFBD9E
             border-radius l(100)
 //热评的ul
   .order.hot
@@ -421,4 +461,41 @@ export default {
           letter-spacing: 0.26px;
           line-height l(17)
           text-align right
+  .noList
+    width l(175)
+    height l(200)
+    position absolute
+    top 0
+    bottom 0
+    left 0
+    right 0
+    margin auto
+    div.box
+      width l(175)
+      height l(200)
+      position absolute
+      top 0
+      left 0
+      display flex
+      flex-direction column
+      justify-content space-between
+      align-items center
+      img 
+        display block
+        width l(150)
+        height l(147)
+      span 
+        font-family: PingFangSC-Regular;
+        font-size: 14px;
+        color: #BABABA;
+        letter-spacing: 1px;
+      p
+        width l(160)
+        height l(44)
+        background: #83271F;
+        border-radius: 100px;
+        font-size: 18px;
+        color: #FFFFFF;
+        letter-spacing: 1.12px;
+        line-height l(44)
 </style>
