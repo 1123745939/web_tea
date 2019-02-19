@@ -95,8 +95,8 @@
           </div>
           <div class="li_bt">
             <span>{{i.created_at}}</span>
-            <span @click="zan(i.id,i.is_thumb,index)"><img src="../assets/img/zanbb.png" alt="" v-if="i.is_thumb==0">
-            <img src="../assets/img/zan1_active.png" alt="" v-else>
+            <span @click="zan(i.id,i.is_thumb,index)"><img src="../assets/img/xin2x.png" alt="" v-if="i.is_thumb==0">
+            <img src="../assets/img/xin-active.png" alt="" v-else>
             &nbsp;&nbsp;{{i.thumb_count}}</span>
           </div>
           <!-- 追评 -->
@@ -242,6 +242,7 @@ export default {
       h1:0,
       h2:0,
       h3:0,
+      scroll:'',
       options: {
         getThumbBoundsFn (index) {
           // find thumbnail element
@@ -306,6 +307,9 @@ export default {
         return this.$refs.mySwiper.swiper
       }
     },
+  updated(){
+
+  },
   methods:{
     init(id){
       getGoodDetail({id:id,token:this.token}).then(res=>{
@@ -376,15 +380,17 @@ export default {
       console.log(this.ind);
     },
     handleScroll (e) {
-      // this.scroll = document.documentElement.scrollTop || document.body.scrollTop;
-      // var h2 = JSON.parse(this.h1+this.h2);
-      // if(this.scroll>0&&this.scroll<JSON.parse(this.h1)){
-      //   this.tabIndex =0
-      // } else if(this.scroll>JSON.parse(this.h1)&this.scroll<h2){
-      //   this.tabIndex =1
-      // } else if(this.scroll>h2){
-      //   this.tabIndex =2
-      // }
+      this.scroll = document.documentElement.scrollTop || document.body.scrollTop;
+      console.log(this.scroll,'this.scroll')
+      return
+      var h2 = JSON.parse(this.h1+this.h2);
+      if(this.scroll>0&&this.scroll<JSON.parse(this.h1)){
+        this.tabIndex =0
+      } else if(this.scroll>JSON.parse(this.h1)&this.scroll<h2){
+        this.tabIndex =1
+      } else if(this.scroll>h2){
+        this.tabIndex =2
+      }
     },
     //购物车的数量
     getcarNum(){
@@ -808,7 +814,7 @@ export default {
         letter-spacing: 0.36px;
         fz(14)
       span.pr_ms
-        color: #95514C;
+        color: #B5B6B7;
         fz(12)
         display flex
         justify-content space-between
