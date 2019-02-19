@@ -2,7 +2,7 @@
   <div class="con"  ref="cons">
     <!-- <div class="blank"></div> -->
     <div class="o_h"  ref="navs">
-      <tab :scroll-threshold="6" bar-active-color="#F6AF15" active-color="#83271F" :line-width=4>
+      <tab :scroll-threshold="6" bar-active-color="#FF5100" active-color="#FF5100" :line-width=4>
         <tab-item :selected="index == selectIndex ? true:false" @on-item-click="onItemClick(item.id,index)" v-for="(item,index) in tabs" :key="item.id">{{item.name}}</tab-item>
       </tab>
     </div>
@@ -108,10 +108,12 @@
         <span>暂无订单</span>
       </div>
   </div>
+  <footers :index = 3></footers>
   </div>
 </template>
 
 <script>
+import footers from './footers'
 import utils from '../utils/js/style.js'
 import { Tab, TabItem , XButton ,Confirm, TransferDomDirective as TransferDom} from 'vux'
 import Scroll from './scroll/scroll'
@@ -125,7 +127,8 @@ export default {
     Tab,
     TabItem,
     XButton,
-    Scroll
+    Scroll,
+    footers
   },
   data () {
     return {

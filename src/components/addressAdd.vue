@@ -214,7 +214,7 @@ export default {
       display block
       width l(160)
       height l(44)
-      background: #83271F;
+      background: #FF5100;
       border-radius: l(100)
       fz(18)
       color: #FFFFFF;

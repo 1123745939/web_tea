@@ -2,33 +2,23 @@
   <div class="con" @click.stop="moreShow = moreShow ? !moreShow : moreShow">
     <!-- 頭部 -->
     <div class="s_h">
-      <input type="text" placeholder="关键词搜索" v-model="searchTxt" @focus="getHistoryDate();conShow = false">
+      <input type="text" placeholder="关键词搜索" v-model="searchTxt" >
       <img src="../assets/img/search.png" alt="" @click.stop="search()">
     </div>
     <div class="content" v-if="!conShow">
       <div class="his" v-if="historyArr.length > 0 && token">
         <div class="his_t">历史搜索<img src="../assets/img/del.png" alt="" @click.stop="show = true"></div>
         <ul class="his_word">
-          <li v-for="(item,index) in historyArr8" :key="index" @click.stop="searchTxt=item.word;search()">{{item.word}}</li>
+          <li v-for="(item,index) in historyArr8" :key="index" @click.stop="searchTxt = item.word;search()">{{item.word}}</li>
         </ul>
         <img src="../assets/img/hobbym.png" alt="" v-if="historyArr.length>20 && upShow==false" @click.stop="historyArr8 = historyArr;upShow=true">
         <img src="../assets/img/jian_up.png" alt="" v-if="historyArr.length>20 && upShow==true" @click.stop="historyArr8 = historyArr.slice(0,20);upShow=false">
       </div>
-      <!-- 各种分类的茶叶 -->
-      <!-- <ul class="kinds">      
-        <li class="k_t" v-for="(item,index) in kindList" :key="item.group_id">
-          <div class="his_t"><img src="../assets/img/t_r.png" alt="">{{item.group_name}}</div>
-          <ul class="his_word">
-            <li v-for="tea in item.type8" :key="tea.id" @click.stop="searchIdCon(tea.id)">{{tea.name}}</li>
-          </ul>
-          <img src="../assets/img/hobbym.png" alt="" class="more" v-show="item.moreKindShow" @click.stop="handle(index)">
-        </li>
-      </ul> -->
     </div>
 
     <!-- 搜索到的列表 -->
-    <div class="big_box" v-if="conShow " style="position:relative" @click.stop="makeShow = false;placeShow=false;yearShow=false">
-        <!-- tab选项 -->
+    <!-- <div class="big_box" v-if="conShow " style="position:relative" @click.stop="makeShow = false;placeShow=false;yearShow=false">
+        
       <ul class="tab">
         <li class="tab_li" :class="selectLi == 1 ?'active':''" @click.stop="selectLi=1;searchResultList = [];sort(1,'tea_period');yearShow=false;makeShow=false;placeShow=false">期数
           <img src="../assets/img/jian_up.png" alt="" v-if="preiodUp">
@@ -60,7 +50,7 @@
             </ul>
         </li>
       </ul>
-      <!-- 搜索列表 -->
+     
     <div class="boxbox" v-if="searchResultList.length>0">
       <scroll ref="scroll"
           :data="searchResultList"
@@ -112,16 +102,16 @@
           </div>
 
         </scroll>
-      </div>
+      </div> -->
         <!-- 没有数据的话 -->
-      <div class="noList" v-else>
+      <!-- <div class="noList" v-else>
         <div class="box">
           <img src="../assets/img/symbols-search.png" alt="">
           <span>暂无数据</span>
         </div>
       </div>
-    </div>
-  
+    </div> -->
+    <footers :index = tabIndex></footers>
     <!-- 删除的弹框提示 -->
     <div>
       <confirm v-model="show" title="" @on-confirm="onConfirm">
@@ -132,20 +122,23 @@
 </template>
 
 <script>
+import footers from './footers'
 import { Confirm } from 'vux'
 import Vue from 'vue'
-import Scroll from './scroll/scroll'
+// import Scroll from './scroll/scroll'
 import {getHistory,delHistory,getSearchDate,getFilter,getSearch} from '../api/api.js'
 import utils from '../utils/js/style.js'
 import domain from '../api/domain';
 export default {
   components: {
     Confirm,
-    Scroll
+    // Scroll,
+    footers,
   },
   data () {
     return {
       token : localStorage.token || '',
+      tabIndex:1,
       show:false,//弹框是否显示
       moreShow :false,
       conShow :false,//列表和历史记录的切换
@@ -188,7 +181,7 @@ export default {
   },
   created(){
     document.title = '搜索'
-    this.init()
+    //this.init()
     this.getHistoryDate()
     //this.historyArr = util.getHistory('teaSearch')
 
@@ -200,64 +193,51 @@ export default {
     //   },10)
     // })
   },
-  computed:{
-    pullDownRefreshObj: function () {
-      return this.pullDownRefresh ? {
-        threshold: parseInt(this.pullDownRefreshThreshold),
-        stop: parseInt(this.pullDownRefreshStop)
-      } : false
-    },
-    pullUpLoadObj: function () {
-      return this.pullUpLoad ? {
-        threshold: parseInt(this.pullUpLoadThreshold),
-        txt: {more: this.pullUpLoadMoreTxt, noMore: this.pullUpLoadNoMoreTxt}
-      } : false
-    }
-  },
+  // computed:{
+  //   pullDownRefreshObj: function () {
+  //     return this.pullDownRefresh ? {
+  //       threshold: parseInt(this.pullDownRefreshThreshold),
+  //       stop: parseInt(this.pullDownRefreshStop)
+  //     } : false
+  //   },
+  //   pullUpLoadObj: function () {
+  //     return this.pullUpLoad ? {
+  //       threshold: parseInt(this.pullUpLoadThreshold),
+  //       txt: {more: this.pullUpLoadMoreTxt, noMore: this.pullUpLoadNoMoreTxt}
+  //     } : false
+  //   }
+  // },
   methods:{
-    // share(id,index) {
-     
-    //   this.copyBtn = new this.clipboard(this.$refs.copy[index]);
-    //   let _this = this;
-    //   let clipboard = this.copyBtn;
-    //   console.log(clipboard,'clipboard')
-    //   clipboard.on('success', function() {
-    //      _this.$vux.toast.text('复制成功，可直接粘贴给好友！')
-    //   });
-    //   clipboard.on('error', function() {
-    //       _this.$vux.toast.text('复制失败，请重新复制！')
-    //   });
+    // init(){
+    //   //茶的数据
+    //   getSearchDate().then(res=>{
+    //     if(res.data.code == 200 && !res.data.error_code){
+    //       this.kindList = res.data.data.types
+    //       this.kindList.forEach(item=>{
+    //         if(item.type.length>8){
+    //           item.type = item.type.slice(0,12)
+    //           item.type8 = item.type.slice(0,8)
+    //           item.moreKindShow = true
+    //         }else{
+    //           item.type8 = item.type
+    //           item.moreKindShow = false
+    //         }
+    //       })
+    //       console.log(this.kindList)
+    //     }else{
+    //       this.$vux.toast.text(res.data.error_message||res.data.message)
+    //     }
+    //   })
+    //   //filter
+    //   getFilter().then(res=>{
+    //     if(res.data.code == 200 && !res.data.error_code){
+    //       this.filterArr = res.data.data
+    //       console.log(this.filterArr,555555555555)
+    //     }else{
+    //       this.$vux.toast.text(res.data.error_message||res.data.message)
+    //     }
+    //   })   
     // },
-    init(){
-      //茶的数据
-      getSearchDate().then(res=>{
-        if(res.data.code == 200 && !res.data.error_code){
-          this.kindList = res.data.data.types
-          this.kindList.forEach(item=>{
-            if(item.type.length>8){
-              item.type = item.type.slice(0,12)
-              item.type8 = item.type.slice(0,8)
-              item.moreKindShow = true
-            }else{
-              item.type8 = item.type
-              item.moreKindShow = false
-            }
-          })
-          console.log(this.kindList)
-        }else{
-          this.$vux.toast.text(res.data.error_message||res.data.message)
-        }
-      })
-      //filter
-      getFilter().then(res=>{
-        if(res.data.code == 200 && !res.data.error_code){
-          this.filterArr = res.data.data
-          console.log(this.filterArr,555555555555)
-        }else{
-          this.$vux.toast.text(res.data.error_message||res.data.message)
-        }
-      })   
-    },
     //历史记录
     getHistoryDate(){
       if(this.token){
@@ -288,16 +268,15 @@ export default {
         this.$vux.toast.text('请输入要搜索的内容','middle')
         return
       }
+      this.$router.push({path:'/searchResult',query:{word:this.searchTxt}})
       
-      if(!this.tea_type_id){
-        //只根据关键字搜索
-        this.searchCon(1,1,this.searchTxt,'',0,'','')
-      }else{
-        //有关键字也有类型
-        this.searchCon(1,0,this.searchTxt,this.tea_type_id,0,'','')
-      }
-      
-
+      // if(!this.tea_type_id){
+      //   //只根据关键字搜索
+      //   this.searchCon(1,1,this.searchTxt,'',0,'','')
+      // }else{
+      //   //有关键字也有类型
+      //   this.searchCon(1,0,this.searchTxt,this.tea_type_id,0,'','')
+      // }
          
     },
     //点击每个li，根据类型搜索
@@ -434,12 +413,6 @@ export default {
     }
   },
   watch:{
-    searchTxt(oldV,newV){
-      if(oldV =='' || newV == ''){
-        this.getHistoryDate()
-        this.conShow = false
-      }
-    },
     scrollbarObj: {
       handler() {
         this.rebuildScroll()
@@ -498,7 +471,7 @@ export default {
   .content
     padding l(20) 4.3%
     background #F7F7F7
-    margin-bottom l(20)
+    // margin-bottom l(20)
     // 头部
     .his
       display flex
@@ -522,15 +495,18 @@ export default {
           height l(20)
       .his_word
         width 100%
-        display flex
-        justify-content flex-start
-        flex-wrap wrap
+        overflow hidden
+        // display flex
+        // justify-content flex-start
+        // flex-wrap wrap
         li
-          width 25%
+          // width 25%
           line-height l(30)
           fz(14)
           color: #333333;
-          letter-spacing: 0.2px;    
+          letter-spacing: 0.2px;  
+          float left  
+          padding l(5) l(10)
       img 
         display block
         width l(25)

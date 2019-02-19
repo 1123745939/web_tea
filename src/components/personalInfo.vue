@@ -4,9 +4,7 @@
       <!-- 头像 -->
       <div class="photo">
         <input type="file" accept="image/*"  id="photoInput" @change="tirggerFile($event)">
-        <div class="left">
-          <img src="../assets/img/touxiang@1x.png" alt="">头像
-        </div>
+        <div class="left">头像</div>
         <div class="right">
           <img src="../assets/img/photo-no.png" alt="" class="tou" v-if="havePhoto">
           <img :src="photoSrc" alt="" class="tou" v-else>
@@ -15,9 +13,7 @@
       </div>
       <!-- 昵称 -->
       <div class="photo" @click="show5 = true">
-        <div class="left">
-          <img src="../assets/img/nicheng@1x.png" alt="">昵称
-        </div>
+        <div class="left">昵称</div>
         <div class="right">
           <span>{{nickname}}</span>
           <img src="../assets/img/more1.png" alt="">
@@ -25,29 +21,23 @@
       </div>
       <!-- 性别 -->
       <div class="photo" @click = "show2 = true">
-        <div class="left">
-          <img src="../assets/img/xingbie@1x.png" alt="">性别
-        </div>
+        <div class="left">性别</div>
         <div class="right">
           <span>{{sex}}</span>
           <img src="../assets/img/more1.png" alt="">
         </div>
       </div>
       <!-- 地区 -->
-      <div class="photo" @click = "show6 = true">
-        <div class="left">
-          <img src="../assets/img/diqu@1x.png" alt="">爱好
-        </div>
+      <div class="photo" @click = "$router.push('/myInfo')">
+        <div class="left">爱好</div>
         <div class="right">
-          <span>{{address}}</span>
+          <span></span>
           <img src="../assets/img/more1.png" alt="">
         </div>
       </div>
       <!-- 手机号 -->
       <div class="photo"  @click="$router.push('/changePhone')">
-        <div class="left">
-          <img src="../assets/img/shoujihao@1x.png" alt="">手机号
-        </div>
+        <div class="left">手机号</div>
         <div class="right">
           <span>{{tel}}</span>
           <img src="../assets/img/more1.png" alt="" class="more1">
@@ -55,18 +45,14 @@
       </div>
       <!-- 更换密码 -->
       <div class="photo" @click="$router.push('/changePass')">
-        <div class="left">
-          <img src="../assets/img/suo1.png" alt="">更换密码
-        </div>
+        <div class="left">更换密码</div>
         <div class="right">
           <img src="../assets/img/more1.png" alt="">
         </div>
       </div>
       <!-- 收货地址 -->
       <div class="photo"  @click="$router.push('/address')">
-        <div class="left">
-          <img src="../assets/img/dizhi@1x.png" alt="">收货地址
-        </div>
+        <div class="left">收货地址</div>
         <div class="right">
           <span>{{ifHasAddress ? '查看':'去添加'}}</span>
           <img src="../assets/img/more1.png" alt="">
@@ -77,11 +63,6 @@
     <!-- 昵称弹框 -->
     <div v-transfer-dom>
       <confirm v-model="show5" show-input ref="confirm5" title="修改昵称"  @on-confirm="onConfirm5" @on-show="onShow5">
-      </confirm>
-    </div>
-    <!-- 地区弹框 -->
-    <div v-transfer-dom>
-      <confirm v-model="show6" show-input ref="confirm6" title="修改地区"  @on-confirm="onConfirm6" @on-show="onShow6">
       </confirm>
     </div>
     <!-- 性别弹框 -->
@@ -114,13 +95,11 @@ export default {
       havePhoto :false,
       photoSrc :'',
       show5:false,
-      show6:false,
       nickname :'请设置',
       menus2:['男','女'],
       show2:false,
       sex:'',
       tel:'',
-      address:'',
       showLoginOut:false,
       img:'',
       ifHasAddress:false,
@@ -149,7 +128,6 @@ export default {
         console.log(this.photoSrc)
         this.tel = res.data.data.mobile
         res.data.data.nickname ? this.nickname = res.data.data.nickname : this.nickname ="请设置"
-        res.data.data.address ? this.address = res.data.data.address : this.address ="请完善地址"
         
       })
     },
@@ -391,10 +369,6 @@ export default {
         }
       })
     },
-    //地区
-    onShow6(){
-      this.$refs.confirm6.setInputValue(this.address)
-    },
     onConfirm6 (value) {
       this.$refs.confirm6.setInputValue('')
       console.log(value)
@@ -441,7 +415,7 @@ export default {
   padding l(10) 4.3% 0
   text-align left 
   .content
-    height l(656)
+    height 100%
     background: #FFFFFF;
     box-shadow: 0 0 5px 0 #E8E8E8;
     border-radius 10px 10px  0 0 
@@ -515,7 +489,7 @@ export default {
   .save
     width l(160)
     height l(44)
-    background: #83271F;
+    background: #FF5100
     border-radius: 100px;
     font-size: 18px;
     color: #FFFFFF;

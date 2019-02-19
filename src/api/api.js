@@ -385,3 +385,19 @@ export const friend = function (params) {
 export const custom = function (params) {
   return axios.get(`${baseUrl}`+"/custom", {params});
 }
+   //提反馈
+export const feedbackCreated = function (params) {
+  return axios.post(`${baseUrl}`+"/more/feedback/create", jsonToQuery(params));
+}   
+  //反馈列表
+export const feedbackList = function (params) {
+  return axios.get(`${baseUrl}`+"/more/feedback", {params});
+} 
+   //删除反馈
+export const delFeed = function (params) {
+  return axios.post(`${baseUrl}`+"/more/feedback/delete", jsonToQuery(params));
+}   
+   //客服反馈/more/feedback/replies
+export const replies = function (params) {
+  return axios.get(`${baseUrl}`+"/more/feedback/replies", {params});
+}

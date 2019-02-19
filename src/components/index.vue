@@ -1,12 +1,15 @@
 <template>
   <div class="con" ref="cons">
      <div class="content" @click.stop="moreShow = moreShow ? !moreShow : moreShow">
+        <div class="search" @click="$router.push('/search')">
+          <img src="../assets/img/search.png" alt="">
+        </div>
         <div class="ul_box">
           <ul class="tab">
-            <li class="tabli" @click="goAll();filterId=0" :class="tabIndex==1?'active':''">推荐</li>
-            <li class="tabli" @click="token == ''? loginMaskShow=true :GOrecommand('','',0);filterId=0" :class="tabIndex==2?'active':''">热评</li>
-            <li  class="tabli" @click="GOadvance('','',0);filterId=0" :class="tabIndex==3?'active':''">预告</li>
-            <li class="tabli" @click="$router.push('/kinds') " :class="tabIndex==4?'active':''">分类</li>
+            <li class="tabli" @click="GOrecommand('','',0);filterId=0" :class="tabIndex==1?'active':''">推荐</li>
+            <!-- <li class="tabli" @click="token == ''? loginMaskShow=true : GOrecommand('','',0);filterId=0" :class="tabIndex==2?'active':''">热评</li> -->
+            <li  class="tabli" @click="GOadvance('','',0);filterId=0" :class="tabIndex==2?'active':''">预告</li>
+            <li class="tabli" @click="$router.push('/kinds') " :class="tabIndex==3?'active':''">分类</li>
             <!-- <li  class="tabli" @click.stop="moreShow = !moreShow">
               <img src="../assets/img/tab5.png" alt="">更多 
               <ul class="more" v-if="moreShow">
@@ -15,9 +18,7 @@
             </li> -->
           </ul>
         </div>
-        <div class="search" @click="$router.push('/search')">
-          <img src="../assets/img/search.png" alt="">
-        </div>
+       
       </div>
     <!-- 列表 -->
   <div class="box" id="boxs">
@@ -33,8 +34,6 @@
     >
 
         <!-- 头部 -->
-       
-
         <ul class="goodsList" id="lists"> 
           <!-- <li v-for="(item,index) in list" :key="index" @click="$router.push({path:'/goodDetail',query:{id:item.id}})" class="listli">     -->
           <li v-for="(item,index) in list" :key="index" @click="goDetail(item.id)" class="listli">
@@ -46,8 +45,8 @@
                 </div>
                 <ul class="p_r">
                   <li @click.stop="collect(item.id,index)"><img src="../assets/img/star.png" alt="">{{Number(item.tea_collect_count) < Number(10000) ? Number(item.tea_collect_count) : (Number(item.tea_collect_count)/10000).toFixed(2)}}</li>
-                  <li @click.stop="thumb(item.id,index)"><img src="../assets/img/zan.png" alt="">{{Number(item.tea_thumb_count) < Number(10000) ? Number(item.tea_thumb_count) : (Number(item.tea_thumb_count)/10000).toFixed(2)}}</li>
-                  <li><img src="../assets/img/talk.png" alt="">{{Number(item.tea_comment_count) < Number(10000) ? Number(item.tea_comment_count) : (Number(item.tea_comment_count)/10000).toFixed(2)}}</li>
+                  <li @click.stop="thumb(item.id,index)"><img src="../assets/img/xin1.png" alt="">{{Number(item.tea_thumb_count) < Number(10000) ? Number(item.tea_thumb_count) : (Number(item.tea_thumb_count)/10000).toFixed(2)}}</li>
+                  <li><img src="../assets/img/talk.png" alt="" class="hua">{{Number(item.tea_comment_count) < Number(10000) ? Number(item.tea_comment_count) : (Number(item.tea_comment_count)/10000).toFixed(2)}}</li>
                 </ul>
               </div>
               <!-- <div class="time" v-if="!item.isAdvance">{{item.tea_date}}</div>
@@ -87,32 +86,7 @@
 		    </div>
     </scroll>
   </div>
-    <!-- <div class="no_use"></div> -->
-    <!-- 底部 -->
-    <div class="footer">
-      <!-- <div class="f_l"  @click="token == ''? loginMaskShow=true : $router.push('/my') ">
-        <img src="../assets/img/photo-no.png" alt="" v-if="!img_link">
-        <img :src="img_link" alt="" v-else>
-      </div> -->
-      <ul class="f_r">
-         <li  @click="token == ''? loginMaskShow=true : $router.push('/infos') ">
-          <img src="../assets/img/foot3.png" alt="">
-          首页
-        </li>
-        <li  @click="token == ''? loginMaskShow=true : $router.push('/my') ">
-          <img src="../assets/img/foot3.png" alt="">
-          所爱
-        </li>
-         <li @click="token == ''? loginMaskShow=true : $router.push('/orders')">
-          <img src="../assets/img/foot2.png" alt="">
-          订单
-        </li>
-         <li @click="token == ''? loginMaskShow=true : $router.push('/my')">
-          <img src="../assets/img/foot1.png" alt="">
-          更多
-        </li>
-      </ul>
-    </div>
+    <footers :index = 1></footers>
 
     <!-- 提示去登录的弹框 -->
     <div v-transfer-dom>
@@ -124,6 +98,7 @@
 </template>
 
 <script>
+import footers from './footers'
 import utils from '../utils/js/style.js'
 import domain from '../api/domain.js'
 import { Confirm,TransferDomDirective as TransferDom ,Swipeout, SwipeoutItem, SwipeoutButton, XButton ,LoadMore } from 'vux'
@@ -141,6 +116,7 @@ export default {
     SwipeoutButton,
     XButton ,
     LoadMore,
+    footers
   },
   data () {
     return {
@@ -150,7 +126,6 @@ export default {
       moreShow : false,//更多那个按钮是否显示
       list:[],
       page:1,
-      tabIndex: 1,
       loading :true,
       advanceCount:'',
       recommendCount:'',
@@ -161,6 +136,7 @@ export default {
       topArr:[],//置顶和预售的数组
       carNum:'',
       is_ref:false,
+      tabIndex:1,
 
       
       pullUpLoadThreshold: 0,
@@ -181,6 +157,7 @@ export default {
     
   },
   created(){
+    //上次浏览的位置定位
     if(localStorage.scrollY){
       this.startY=localStorage.scrollY;
       setTimeout(()=>{
@@ -189,30 +166,7 @@ export default {
     }else{
       this.startY=0
     }
-
-    if(sessionStorage.page){
-      if(sessionStorage.page!=1){
-        this.page = sessionStorage.page
-         this.list = JSON.parse(sessionStorage.list)
-      }else{
-        if(this.tabIndex == 1){
-          this.goAll()
-        }else if(this.tabIndex == 2){
-          this.GOrecommand('','',0)
-        }else if(this.tabIndex == 3){
-          this.GOadvance('','',0)
-        }
-      }
-      
-    }else{
-       if(this.tabIndex == 1){
-        this.goAll()
-      }else if(this.tabIndex == 2){
-        this.GOrecommand('','',0)
-      }else if(this.tabIndex == 3){
-        this.GOadvance('','',0)
-      }
-    }
+    //token存90天
     if(localStorage.firstTime){
       let firstTime = localStorage.firstTime
       let nowTime = new Date().getTime()
@@ -228,6 +182,35 @@ export default {
     }else{
       this.token = ''
     }
+
+    if(sessionStorage.page){
+      if(sessionStorage.page!=1){
+        this.page = sessionStorage.page
+         this.list = JSON.parse(sessionStorage.list)
+      }else{
+        if(this.tabIndex == 1){
+          // this.goAll()
+          this.GOrecommand('','',0)
+        }else if(this.tabIndex == 2){
+           //this.GOrecommand('','',0)
+        this.GOadvance('','',0)
+        }else if(this.tabIndex == 3){
+          //this.GOadvance('','',0)
+        }
+      }
+      
+    }else{
+       if(this.tabIndex == 1){
+        //this.goAll()
+        this.GOrecommand('','',0)
+      }else if(this.tabIndex == 2){
+        //this.GOrecommand('','',0)
+        this.GOadvance('','',0)
+      }else if(this.tabIndex == 3){
+        //this.GOadvance('','',0)
+      }
+    }
+   
     if(this.$route.query.oid){
       //utils.setCookie('oid',this.$route.query.oid,90)
       localStorage.oid = this.$route.query.oid
@@ -272,7 +255,7 @@ export default {
     },
      // 去详情
     goDetail(id){
-       console.log(this.scrollYPages,222222)
+      console.log(this.scrollYPages,222222)
       localStorage.setItem('scrollY',this.scrollYPages);
       if(this.page!=1){
         sessionStorage.list = JSON.stringify(this.list)
@@ -407,8 +390,12 @@ export default {
       
     },
     GOrecommand(key,order,is_order){
-      //this.filterId =0
-      this.tabIndex = 2
+      // this.tabIndex = 2
+      // this.indexActive = this.tabIndex
+      // this.list = []
+      // this.page = 1
+      // this.recommand(1,key,order,is_order)
+      this.tabIndex = 1
       this.indexActive = this.tabIndex
       this.list = []
       this.page = 1
@@ -426,7 +413,6 @@ export default {
         key = ''
       }
       const options = {
-        token: this.token,
         key:key,
         page:page,
         rows:10,
@@ -451,7 +437,7 @@ export default {
     },
     GOadvance(key,order,is_order){
       //this.filterId =0
-      this.tabIndex = 3
+      this.tabIndex = 2
       this.indexActive = this.tabIndex
       this.list = []
       this.page = 1
@@ -610,7 +596,7 @@ export default {
       width 16.2%
       height 100%
       position absolute
-      right 0
+      left 0
       top 0
       padding-left l(10)
       display flex
@@ -623,11 +609,15 @@ export default {
     .ul_box
       width 83.7%
       overflow scroll
+      position absolute 
+      right 0 
+      top 0
       ul.tab
-        width 104%
+        width 111%
         height l(50)
         disFlex()
         background: #FFFFFF;
+        padding  0 l(50) 
         // padding-right l(25)
         // position absolute
         // top 72%
@@ -660,6 +650,7 @@ export default {
           //     border-bottom 1px solid rgba(255,255,255,0.20)
         li.tabli.active
           color #282828
+          font-family: PingFangSC-Medium;
         li.tabli
           // width 50%
           height 100%
@@ -738,10 +729,12 @@ export default {
                 align-items center
                 padding 0 5px
                 background colorB(0)
+                img.hua
+                  height l(12)
                 img 
                   display block
-                  width l(15)
-                  height l(15)
+                  width l(14)
+                  height l(13)
                   margin-right 5px
           .time
             font-size: 12px;
@@ -793,10 +786,11 @@ export default {
             overflow: hidden;
             line-height l(24)
             float left
+            font-family: PingFangSC-Medium;
           .buy
             float right 
             disFlex()
-            // margin-top l(5)
+            // margin-top l(2)
             span
               fz(14)
               color: #FF5100;
@@ -916,6 +910,8 @@ export default {
       width 100%
       background #fff
       padding l(5) 0 l(17)
+      li.active
+        color #FF5100
       li  
         width 33%
         display flex
@@ -923,11 +919,11 @@ export default {
         justify-content space-around
         align-items center
         fz(10)
-        color: #83271F;
+        color #666
         letter-spacing: 1px;
         img
           width l(26)
-          height l(26)
+          height l(22)
           display block
 
 

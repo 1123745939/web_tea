@@ -1,16 +1,14 @@
 <template>
   <div class="con">
+    <!-- 顶部的tab栏 -->
+    <ul class="tab">
+      <li v-for="(item,index) in navlist" :key="index" :class="index == tabIndex ? 'active' :''"   @click="pos(index)">{{item}}</li>
+    </ul>
     <!-- 头部的banner -->
-    <div class="banner">
-      <div class="bt">同一批茶</div>
+    <div class="banner" v-show="batch.length>0">
       <div class="t_b">
         <ul>
-          <!-- <li v-for="(i,index) in topArr" :key="index">
-            <img :src="i.image_url" alt="" class="goodimg previewer-demo-img"  v-if="!i.tea_play_count" @click="show(index)">
-            <video :src="i.vidio_url" v-else></video>
-          </li> -->
           <li v-for="(i,index) in batch" :key="index"  @click="$router.push({path:'/goodDetail',query:{id:i.id}})">
-            <!-- <video :src="i.tea_vidio_link" :poster="i.tea_img_link"></video> -->
             <img :src="i.tea_img_link" alt="" class="goodimg">
             <img src="../assets/img/play.png" alt="" class="play">
           </li>
@@ -18,27 +16,22 @@
       </div>
     </div>
     <!-- 详情 -->
-
     <div class="d">
-      <!-- <span class="d_t">{{detailObj.tea_date}}</span> -->
-      <!--  @click.stop="playVideo" -->
       <div class="li_top">
         <div  class="prism-player" id="J_prismPlayer" style="height:100%"></div>
-        <!-- <video :src="detailObj.tea_vidio_link" id="video" style="width:10ta0%;height:200px;"  :poster="detailObj.tea_img_link"  controls ></video> -->
-        <!-- <div class="play"><span></span></div> -->
         <div class="data">
           <div class="d_l">
             {{detailObj.tea_play_count}}次播放
           </div>
           <ul class="p_r">
             <li @click="cangV()">
-              <img src="../assets/img/star.png" alt="" v-if="is_collect==0">
+              <img src="../assets/img/xing2x.png" alt="" v-if="is_collect==0">
               <img src="../assets/img/star_active.png" alt="" v-else>
               {{detailObj.tea_collect_count}}
             </li>
             <li @click="zanV()">
-              <img src="../assets/img/zan.png" alt="" v-if="is_thumb==0">
-              <img src="../assets/img/zan1_active.png" alt="" v-else>
+              <img src="../assets/img/xin2x.png" alt="" v-if="is_thumb==0" class="xin">
+              <img src="../assets/img/xin-active.png" alt="" v-else class="xin">
               {{detailObj.tea_thumb_count}}
             </li>
           </ul>
@@ -64,14 +57,24 @@
           <img src="../assets/img/fire.png" alt="">
           <span>推荐理由：{{detailObj.tea_reason}}</span>
         </div>
-        <hr>
-      </div>    
+      </div>   
     </div>
+     <!-- 参数 -->
+      <ul class="newData">
+        <li>{{detailObj.tea_short_name}}</li>
+        <li>{{detailObj.ingredients_name}}</li>
+        <li>{{detailObj.place_name}}</li>
+        <li>{{detailObj.tea_make}}</li>
+        <li>{{detailObj.tea_format}}</li>
+        <li>{{detailObj.storage_name}}</li>
+        <li>{{detailObj.tea_quality}}</li>
+        <li>{{detailObj.producted_at}}</li>
+      </ul>
     <!-- 评价 -->
-    <div class="pre" v-show="comment.length">
+    <div class="pre" v-show="comment.length" ref="m2">
       <div class="pr_m">
         <span>评论：{{comment.length || 0}}</span>
-        <span class="pr_ms" @click="$router.push({path:'/discussAll',query:{id:id}})">更多&nbsp;&nbsp;<img src="../assets/img/more.png" alt=""></span>
+        <span class="pr_ms" @click="$router.push({path:'/discussAll',query:{id:id}})">更多&nbsp;&nbsp;<img src="../assets/img/more1.png" alt=""></span>
       </div>
       <ul class="pr_list">
         <li class="pr_li" v-for="(i,index) in comment" :key="i.id">
@@ -127,11 +130,15 @@
               </div>
         </li>
       </ul>
+    </div>   
+    <!--图文详情  -->
+    <div class="intro" v-show="intro" ref="m3">
+      <div v-html="intro" ></div>
     </div>
     <!-- 同一款茶 -->
-    <div class="one_t" v-if="sameList.length">
+    <div class="one_t" v-show="sameList.length" ref="m4">
       <div class="ont_tt" @click="goSame">
-        同一款茶<img src="../assets/img/more.png" alt="">                                                 
+        同一款茶<img src="../assets/img/more1.png" alt="">                                                 
       </div>
       <ul style="border-bottom:1px solid #E8E8E8">
         <li v-for="item in sameList" :key="item.tea_title" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">
@@ -146,7 +153,7 @@
     <!-- 相似的茶 -->
     <div class="one_t" v-if="likeList.length">
       <div class="ont_tt" @click="goLike">
-        相似的茶<img src="../assets/img/more.png" alt="">                                                 
+        相似的茶<img src="../assets/img/more1.png" alt="">                                                 
       </div>
       <ul>
         <li v-for="item in likeList" :key="item.tea_title" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">
@@ -229,7 +236,12 @@ export default {
       idd:'',
       is_thumb:0,
       is_collect:0,
-
+      intro:'',
+      navlist:['商品','评价','详情','推荐'],
+      tabIndex:'',
+      h1:0,
+      h2:0,
+      h3:0,
       options: {
         getThumbBoundsFn (index) {
           // find thumbnail element
@@ -277,7 +289,16 @@ export default {
     this.$forceUpdate()
     this.getcarNum()
     this.swiper.slideTo(4, 1000, false)
-    
+    this.$nextTick(()=>{
+      console.log('qqqqqqqqqqqqqqqqqqqqq')
+      this.h1 = this.$refs.m2.offsetTop
+      console.log(this.h1,'this.h1')
+      this.h2 = this.$refs.m3.offsetTop
+      console.log(this.h2,'this.h2')
+      this.h4 = this.$refs.m4.offsetTop
+      console.log(this.h4,'this.h4')
+      })
+    window.addEventListener('scroll', this.handleScroll)
     
   },
   computed: {
@@ -289,10 +310,11 @@ export default {
     init(id){
       getGoodDetail({id:id,token:this.token}).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          console.log(res.data.data)
+          console.log(res.data.data,'res.data.data')
           this.is_thumb = res.data.data.isthumb
           this.is_collect= res.data.data.isCollect
           this.detailObj = res.data.data.detail
+          this.intro = res.data.data.detail.tea_detail
           this.sameList = res.data.data.same
           this.likeList = res.data.data.like 
           this.comment = res.data.data.comments
@@ -308,9 +330,7 @@ export default {
               this.list.push(obj)
             })
           }
-       
-         
-             console.log(this.detailObj,'this.detailObj.tea_img_link')
+
               var player = new Aliplayer({
               id: 'J_prismPlayer',
               width: '100%',
@@ -334,6 +354,37 @@ export default {
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
       })
+    },
+    // 点击导航
+    clicknav (index){
+      console.log("index=="+index);
+      var h2 = JSON.parse(this.h1+this.h2);
+      if(index == 0){
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+        this.currentCompon = 'infoMain'
+      } else if(index == 1){
+        document.documentElement.scrollTop = this.h1;
+        document.body.scrollTop = this.h1;
+        this.currentCompon = 'infoDetail'
+      } else if(index == 2){
+        document.documentElement.scrollTop = h2;
+        document.body.scrollTop = h2;
+        this.currentCompon = 'infoEvaluate'
+      }
+      this.ind = index;
+      console.log(this.ind);
+    },
+    handleScroll (e) {
+      // this.scroll = document.documentElement.scrollTop || document.body.scrollTop;
+      // var h2 = JSON.parse(this.h1+this.h2);
+      // if(this.scroll>0&&this.scroll<JSON.parse(this.h1)){
+      //   this.tabIndex =0
+      // } else if(this.scroll>JSON.parse(this.h1)&this.scroll<h2){
+      //   this.tabIndex =1
+      // } else if(this.scroll>h2){
+      //   this.tabIndex =2
+      // }
     },
     //购物车的数量
     getcarNum(){
@@ -482,10 +533,32 @@ export default {
 @import '../utils/css/util.styl';
 .con
   background #F7F7F7
+  .tab
+    position fixed
+    top 0
+    left 0
+    disFlex()
+    width 100%
+    z-index 9999
+    padding 0 20%
+    background #F7F7F7;
+    border-bottom 1px solid #d4d4d4
+    li.active
+      color  #FF5100;
+      border-bottom 2px solid #FF5100;
+    li
+      width 25%
+      font-family: PingFangSC-Medium;
+      fz(12)
+      color: #282828;
+      letter-spacing: 0.26px; 
+      line-height l(40)
   .banner
     width 100%
     height l(60)
-    background: #E8E8E8;
+    margin-bottom l(10)
+    background #fff
+    // padding-bottom l(10)
     div.bt
       width 20%
       fz(12)
@@ -495,9 +568,10 @@ export default {
       float left
     div.t_b
       float left
-      width 80%
+      width 100%
       height 100%
       overflow-x scroll
+      padding-left l(10)
       ul
         height 100%
         padding 1.4% 0
@@ -509,6 +583,7 @@ export default {
           height l(48)
           margin-right l(10)
           position relative
+          border-radius 10px
           video     
             width 100%
             height 100%
@@ -566,7 +641,7 @@ export default {
       .data
         width 100%
         height l(25)
-        // background colorB(30)
+        background #f3f3f3
         display flex
         justify-content space-between
         position absolute
@@ -590,10 +665,13 @@ export default {
             align-items center
             padding 0 5px
             background colorB(0)
+            img.xin
+              width l(12)
+              height l(12)
             img 
               display block
-              width l(15)
-              height l(15)
+              width l(14)
+              height l(13)
               margin-right 5px
       .swiper-container 
         width: l(180)
@@ -601,8 +679,8 @@ export default {
         border-radius: 4px;
         background rgba(0,0,0,0.4)
         position absolute
-        top l(20)
-        left l(20)
+        top l(10)
+        left l(30)
         .swiper-wrapper
           height l(30)
           width 100%
@@ -646,6 +724,7 @@ export default {
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           line-height l(24)
+          padding-top l(10)
           fz(18)
           color: #282828;
           letter-spacing: 0.31px;
@@ -656,7 +735,7 @@ export default {
           align-items center
           margin-top l(10)
           div
-            color: #E63443;
+            color: #F5430B;
             fz(14)
             letter-spacing: 0.31px;
             line-height l(30)
@@ -677,7 +756,7 @@ export default {
           display flex
           justify-content flex-start
           align-items center
-          margin  l(10) 0
+          margin  l(10) 0 0
           img 
             display block
             width l(13)
@@ -691,6 +770,28 @@ export default {
         hr
           margin l(20) 0
           border: l(0.5) solid #E8E8E8;
+  ul.newData
+    overflow hidden
+    background #fff
+    padding l(10) 4.3% l(10)
+    //margin-bottom l(10)
+    li
+      background: #FFFFFF;
+      border: 1px solid #E8E8E8;
+      border-radius: l(100)
+      font-family: PingFangSC-Regular;
+      fz(14)
+      color: #666666;
+      letter-spacing: 0.2px;
+      float left
+      padding l(5) l(10)
+      margin-right l(13)
+      margin-bottom l(10)
+  .intro
+    padding l(10) 0
+    div
+      background #fff
+      padding l(15) 4.3%
   // 评论列表
   .pre
     background #fff
@@ -714,8 +815,8 @@ export default {
         align-items center
         img
           display block
-          width l(18)
-          height l(12)
+          width l(6)
+          height l(10)
     ul.pr_list
       li.pr_li:last-of-type
         border-bottom 0
@@ -806,8 +907,8 @@ export default {
       letter-spacing: 0.36px;
       img 
         display block
-        width l(16)
-        height l(13)
+        width l(8)
+        height l(10)
     ul
       disFlex ()
       padding l(5) 0
@@ -860,13 +961,13 @@ export default {
     p
       height 100%
       width l(111)
-      background: #FF5100;
+      background: #FFA442;
       fz(18)
       color: #ffffff;
       letter-spacing: 0.26px;
       line-height l(44)
     p.buy
-      background: #FF6633;
+      background: #FF5100;
       color: #FFFFFF;
     div.f1
       width 20%
@@ -885,7 +986,7 @@ export default {
         position absolute
         top -1%
         right 27%
-        background #E63443;
+        background #F5430B
         line-height l(15)
         color #ffffff
         fz(10)
@@ -904,6 +1005,7 @@ export default {
     width 100%
     height l(44) 
     margin-top l(20)
-
+vidio
+  object-fit: fill;
 
 </style>

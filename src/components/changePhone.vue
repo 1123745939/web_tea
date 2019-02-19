@@ -144,7 +144,7 @@ export default {
 <style lang="stylus" scoped>
 @import '../utils/css/util.styl';
 .con
-  height l(667)
+  height 100vh
   background  #F7F7F7;
   border-top 1px solid #E8E8E8
   padding-top l(10)
@@ -182,7 +182,7 @@ export default {
         background: #E8E8E8;
         border-radius: 6px;
         font-size: 12px;
-        color: #95514C;
+        color: #FF5100;
         letter-spacing: 0.2px;
         width l(100)
         height l(32)
@@ -205,7 +205,7 @@ export default {
   .sub
     width l(160)
     height l(44)
-    background: #83271F;
+    background: #FF5100;
     border-radius: 100px;
     font-size: 18px;
     color: #FFFFFF;

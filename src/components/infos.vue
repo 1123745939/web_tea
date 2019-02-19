@@ -17,19 +17,21 @@
             <div slot="content" class="demo-content vux-1px-t">
               <li @click="linker(item.target_type,item.notify_target_id,item.sender_id)">         
                 <img :src="item.user.img_link" alt="" class="logo" v-if="item.target_type =='friend'">
-                <img src="../assets/img/logo2.png" alt="" class="logo" v-else>
+                <img src="../assets/img/tips.png" alt="" class="logo" v-else>
                 <div class="li_r">
                   <div class="li_mm">
-                    <p  v-if="item.target_type == 'product '">通知</p>
-                    <p  v-if="item.target_type == 'order'">订单</p>
-                    <p  v-if="item.target_type == 'friend'">{{item.user.username}}</p>
+                    <div class="in_top">
+                      <p  v-if="item.target_type == 'product'">通知</p>
+                      <p  v-if="item.target_type == 'order'">订单</p>
+                      <p  v-if="item.target_type == 'friend'">{{item.user.username}}</p>
+                      <span class="ti">{{item.created_at}}</span>
+                    </div>
                     <span class="t">{{item.notify_content}}</span>
-                    <span class="ti">{{item.created_at}}</span>
                   </div>
-                  <div class="li_img" v-if="item.target_type !='friend'">
+                  <!-- <div class="li_img" v-if="item.target_type !='friend'">
                     <img :src="item.tea_img_link" alt="" class="img1">
                     <img src="../assets/img/play.png" alt="" class="img2">
-                  </div>
+                  </div> -->
                 </div>      
               </li>
             </div>
@@ -58,10 +60,12 @@
         <span>暂无数据</span>
       </div>
     </div>
+    <footers :index = 2></footers>
   </div>
 </template>
 
 <script>
+import footers from './footers'
 import utils from '../utils/js/style.js'
 import {  Swipeout, SwipeoutItem, SwipeoutButton, XButton ,LoadMore ,Confirm,TransferDomDirective as TransferDom ,} from 'vux'
 import Scroll from './scroll/scroll'
@@ -78,6 +82,7 @@ export default {
     SwipeoutButton,
     XButton ,
     LoadMore,
+    footers
   },
   data () {
     return {
@@ -109,7 +114,7 @@ export default {
     this.init(1)
   },
   mounted(){
-    this.$el.querySelector('#boxs').style.height=this.$refs.cons.offsetHeight+'px'
+    this.$el.querySelector('#boxs').style.height=this.$refs.cons.offsetHeight - 70 +'px'
   },
   computed:{
     pullDownRefreshObj: function () {
@@ -240,7 +245,7 @@ export default {
   position relative
   .content
     width 100%
-    height l(656)
+    height 89vh
     background #F7F7F7
     overflow-y scroll
     box-shadow: 0 0 5px 0 #E8E8E8;
@@ -250,8 +255,8 @@ export default {
       width l(44)
       height l(44)
       position fixed
-      right l(16)
-      bottom l(40)
+      right l(20)
+      bottom l(100)
       img 
         display block
         width 100%
@@ -279,21 +284,23 @@ export default {
           disFlex ()
           margin-left l(10)
           .li_mm
-            width 70%
+            width 100%
             display flex
             flex-direction column
             justify-content space-between
             text-align left 
-            p 
-              line-height l(28)
-              fz(16)
-              color: #333333;
-              letter-spacing: 0.32px; 
-              text-align left  
+            .in_top
+              disFlex()
+              p 
+                line-height l(28)
+                fz(14)
+                color:  #282828
+                letter-spacing: 0.28px; 
+                text-align left  
             span.t 
-              fz(14)
+              fz(13)
               color: #666666;
-              letter-spacing: 0.22px;
+              letter-spacing: 1.08px
               line-height l(28)
               text-align left 
             span.ti

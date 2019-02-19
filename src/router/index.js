@@ -11,7 +11,7 @@ import orderDetail from '@/components/orderDetail'
 import my from '@/components/my'
 import myInfo from '@/components/myInfo'
 import search from '@/components/search'
-// import searchResult from '@/components/searchResult'
+import searchResult from '@/components/searchResult'
 import infos from '@/components/infos'
 import address from '@/components/address'
 import addressAdd from '@/components/addressAdd'
@@ -32,7 +32,13 @@ import personalInfo from '@/components/personalInfo'
 import changePhone from '@/components/changePhone'
 import discussAll from '@/components/discussAll' 
 import applySale from '@/components/applySale' //申请售后
-import kinds from '@/components/kinds' //申请售后
+import kinds from '@/components/kinds' 
+import more from '@/components/more' 
+import aboutUs from '@/components/aboutUs' 
+import feedback from '@/components/feedback' 
+import contact from '@/components/contact' 
+import help from '@/components/help' 
+
 
 Vue.use(Router)
 
@@ -93,11 +99,11 @@ const router =  new Router({
       name: 'search',
       component: search
     },
-    // {
-    //   path: '/searchResult',
-    //   name: 'searchResult',
-    //   component: searchResult
-    // },
+    {
+      path: '/searchResult',
+      name: 'searchResult',
+      component: searchResult
+    },
     {
       path: '/infos',
       name: 'infos',
@@ -202,6 +208,31 @@ const router =  new Router({
       path: '/kinds',
       name: 'kinds',
       component: kinds
+    },
+    {
+      path: '/more',
+      name: 'more',
+      component: more
+    },
+    {
+      path: '/aboutUs',
+      name: 'aboutUs',
+      component: aboutUs
+    },
+    {
+      path: '/feedback',
+      name: 'feedback',
+      component: feedback
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: contact
+    },
+    {
+      path: '/help',
+      name: 'help',
+      component: help
     },
   ]
 })

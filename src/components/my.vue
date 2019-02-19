@@ -40,7 +40,7 @@
         </div>
         <img src="../assets/img/more1.png" alt="" >
       </div>
-       <ul class="o_l"  v-show="hobbies.length">
+       <ul class="o_l"  v-show="hobbies.length>0">
         <li class="li_f" v-for="item in hobbies" :key="item.id">
           <div class="li_m">
             <div class="t_img" :style="{background:'url(' + item.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
@@ -56,12 +56,13 @@
       </ul>
       <div class="noList" v-show="hobbies.length==0">
       <div class="box">
-        <img src="../assets/img/symbols-order.png" alt="">
+        <img src="../assets/img/data-n.png" alt="">
         <span>暂无数据</span>
       </div>
     </div>
     </div>
     </scroll>
+    <footers :index = 2></footers>
   </div>
    
    
@@ -69,9 +70,10 @@
 </template>
 
 <script>
+import footers from './footers'
 import domain from '../api/domain.js'
 import utils from '../utils/js/style.js'
-import { myData , custom } from '../api/api.js'
+import { myData , custom ,hobbiesList} from '../api/api.js'
 import Scroll from './scroll/scroll'
 export default {
   data () {
@@ -102,6 +104,7 @@ export default {
   },
    components: {
     Scroll,
+    footers
   },
   created(){
     document.title = '茶急送'
@@ -133,13 +136,16 @@ export default {
       myData({token:this.token}).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
           this.infoObj = res.data.data.info
-          // this.comments = res.data.data.comments
           this.count = res.data.data.count
-          // this.notifies = res.data.data.notifies
-          // this.orders = res.data.data.orders
-          this.hobbies = res.data.data.hobbies
-
           console.log(res,'res')  
+        }else{
+          this.$vux.toast.text(res.data.error_message||res.data.message)
+        }
+      }),
+      hobbiesList({token:this.token}).then(res=>{
+        if(res.data.code == 200 && !res.data.error_code){
+          this.hobbies = res.data.data
+          console.log(this.hobbies,'this.hobbies')
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -223,7 +229,7 @@ export default {
     .car
       width l(21)
       height l(21)
-      backgroundIcon ('kefu1.png')
+      backgroundIcon ('kefu3.png')
       z-index 3
     .tab_top
       width 18.7%
@@ -254,16 +260,16 @@ export default {
         font-weight bold
         disFlex()
         .infoss
-          width 30%
+          width 25%
           height 100%
           disFlex()
           .infos
             width l(21)
             height l(21)
-            backgroundIcon ('shezhi@1x.png')
+            backgroundIcon ('xiaoxi.png')
             z-index 3 
       ul  
-        width 100%  
+        width 90%  
         disFlex()
         li
           // width 33%
@@ -280,7 +286,7 @@ export default {
 // 订单
   .order.hobby
     padding-bottom l(15)
-    height 100vh - l(190)
+    height l(500)
   .order
     width 100%
     background #ffffff
@@ -290,7 +296,6 @@ export default {
       width 100%
       disFlex ()
       padding l(15) 0 l(10)
-      border-bottom 1px solid #E8E8E8
       img 
         display block
         width l(6)

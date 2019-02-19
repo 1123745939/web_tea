@@ -316,11 +316,11 @@ export default {
           disFlex()
           margin-top l(10)
           p
-            color #E63443
+            color #FF5100
             fz(14)
             span 
               fz(18)
-              color #E63443
+              color #FF5100
           div
             width l(82)
             height l(23)
@@ -349,7 +349,7 @@ export default {
     padding 0 4.3%
     background #fff
     span 
-      color: #E63443;
+      color: #FF5100;
       fz(14)
 
   .footer
@@ -381,17 +381,17 @@ export default {
       line-height l(44)
       margin-left l(30)
       p
-        color: #E63443;
+        color: #FF5100;
         letter-spacing: 0.17px;
         fz(14)
         margin-left l(5)
         span 
           fz(18)
-          color: #E63443;
+          color: #FF5100;
     p.goPay
       height 100%
       width l(117)
-      background: #83271F;
+      background: #FF5100;
       fz(18)
       color: #FFFFFF;
       letter-spacing: 1.12px;
@@ -432,7 +432,7 @@ export default {
     p
       width l(160)
       height l(44)
-      background: #83271F;
+      background: #ff5100;
       border-radius: 100px;
       font-size: 18px;
       color: #FFFFFF;

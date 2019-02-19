@@ -1,34 +1,34 @@
 <template>
   <div class="con">
     <div class="content"  v-if="addressList.length>0">
-      <ul>
-        <li v-for="(item,index) in addressList" :key="item.id" @click="go(item)">
-          <div class="a_l">
-            <div class="a">
-              <p>收货人：</p>
-              <span class="name">{{item.username}}</span>
-              <span class="tel">{{item.mobile}}</span>
-            </div>
-            <div class="a">
-              <p>地址：</p>
-              <span class="add">{{item.addr_content}}{{item.addr_detail}}</span>
-            </div>
-            <div class="default" @click.stop="setDefault(item.id,index)">
-              <img src="../assets/img/c_blank.png" alt="" v-if="item.is_default==0">
-              <img src="../assets/img/c_active.png" alt="" v-else>
-              设为默认
-            </div>
+      <swipeout>
+        <swipeout-item @on-close="handleEvents('on-close')" @on-open="handleEvents('on-open')" transition-mode="follow" v-for="(item,index) in addressList" :key="item.id" @click="go(item)">
+          <div slot="right-menu">
+            <swipeout-button @click.native="editAddress(item)" type="primary">编辑</swipeout-button>
+            <swipeout-button @click.native="delAddress(item.id)" type="warn">删除</swipeout-button>
           </div>
-          <div class="a_r">
-            <div @click.stop="editAddress(item)">
-              <img src="../assets/img/edit.png" alt="">
-            </div>
-            <div class="del" @click.stop="delAddress(item.id)"> 
-              <img src="../assets/img/del.png" alt="">
-            </div>
+          <div slot="content" class="demo-content vux-1px-t">
+            <li>
+              <div class="a_l">
+                <div class="a">
+                  <p>收货人：</p>
+                  <span class="name">{{item.username}}</span>
+                  <span class="tel">{{item.mobile}}</span>
+                </div>
+                <div class="a">
+                  <p>地址：</p>
+                  <span class="add">{{item.addr_content}}{{item.addr_detail}}</span>
+                </div>
+                <div class="default" @click.stop="setDefault(item.id,index)">
+                  <img src="../assets/img/c_blank.png" alt="" v-if="item.is_default==0">
+                  <img src="../assets/img/c_active.png" alt="" v-else>
+                  设为默认
+                </div>
+              </div>
+            </li>
           </div>
-        </li>
-      </ul>
+        </swipeout-item>
+      </swipeout>
       <div class="addPlue" @click="$router.push({path:'/addressAdd',query:{type:'add'}})">
         + 添加新地址
       </div>
@@ -40,19 +40,31 @@
       <p @click="$router.push('/addressAdd')">去添加</p>
     </div>
   </div>
+  <footers :index = 2></footers>
   </div>
 </template>
 
 <script>
+import footers from './footers'
+import { GroupTitle, Swipeout, SwipeoutItem, SwipeoutButton, XButton } from 'vux'
 import utils from '../utils/js/style.js'
 import {getAddress,defaultAddress,deleteAddress, thumbsList} from '../api/api.js'
 export default {
+  components: {
+    GroupTitle,
+    Swipeout,
+    SwipeoutItem,
+    SwipeoutButton,
+    XButton,
+    footers
+  },
   data () {
     return {
       token : localStorage.token || '',
       addressList:[],
     }
   },
+
   created(){
     document.title = '地址'
     this.getAddressList()
@@ -123,6 +135,12 @@ export default {
     editAddress(item){
       this.$router.push({path:'/addressAdd',query:{type:'edit'}})
       sessionStorage.addItem = JSON.stringify(item)
+    },
+    onButtonClick (type) {
+      alert('on button click ' + type)
+    },
+    handleEvents (type) {
+      console.log('event: ', type)
     }
   }
 }
@@ -142,20 +160,17 @@ export default {
     background #fff
     overflow-y scroll
     box-shadow: 0 0 5px 0 #E8E8E8;
-    ul
+    ul,.demo-content
       padding 0 4.3%
       li
         disFlex ()
         padding l(20) 0
         border-bottom  2px solid #E8E8E8;
         .a_l
-          width 85%
+          width 100%
           padding-right l(20)
-          border-right 2px solid #E8E8E8
           .a
-            display flex
-            justify-content flex-start
-            align-items center
+            overflow hidden
             padding l(5) 0
             p
               width l(70)
@@ -165,16 +180,18 @@ export default {
               line-height l(20)
               text-align left 
               font-weight 700
+              float left
             span 
               fz(14)
               color: #333333;
               letter-spacing: 0.3px;
               line-height: l(20)
+              float left
             span.name
               padding-right l(10)
             span.add
               display block
-              width l(200)
+              width l(250)
               text-align left 
           .default.active
             color: #83271F;
@@ -210,7 +227,7 @@ export default {
               margin-bottom l(8)
     .addPlue
       fz(13)
-      color: #83271F;
+      color: #FF5100;
       letter-spacing: 0.16px;
       line-height l(18)
       padding l(20) 4.3%

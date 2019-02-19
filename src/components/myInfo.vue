@@ -147,7 +147,7 @@ export default {
   .sub
     width l(160)
     height l(44)
-    background: #83271F;
+    background: #FF5100;
     border-radius: 100px;
     font-size: 18px;
     color: #FFFFFF;

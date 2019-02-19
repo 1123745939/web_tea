@@ -84,7 +84,7 @@ export default {
 <style lang="stylus" scoped>
 @import '../utils/css/util.styl';
 .con
-  height l(667)
+  height 100vh
   background  #F7F7F7;
   border-top 1px solid #E8E8E8
   padding-top l(10)
@@ -116,7 +116,7 @@ export default {
           margin-right l(10)
         input 
           display block
-          width 75%
+          width 72%
           height l(44)
           line-height l(60)
           font-size: 16px;
@@ -130,7 +130,7 @@ export default {
     .sub
       width l(160)
       height l(44)
-      background: #83271F;
+      background: #FF5100;
       border-radius: 100px;
       font-size: 18px;
       color: #FFFFFF;

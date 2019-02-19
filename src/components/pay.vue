@@ -563,7 +563,7 @@ export default {
     padding 0 4.3%
     background #fff
     span 
-      color: #E63443;
+      color: #FF5100
       fz(14)
 //留言
   .word
@@ -636,12 +636,12 @@ export default {
       letter-spacing: 0.31px;
       fz(14)
     div
-      color: #E63443;
+      color: #FF5100;
       fz(14)
       margin-left l(20)
       span 
         fz(18)
-        color: #E63443;
+        color: #FF5100;
 //底部
   .footer
     width 100%
@@ -649,7 +649,7 @@ export default {
     fz(18)
     color: #FFFFFF;
     letter-spacing: 1.12px;
-    background: #83271F;
+    background:#FF5100;
     position fixed
     bottom 0
     left 0
