@@ -87,10 +87,14 @@ datepicker::-webkit-input-placeholder {
   width: 90%;
 }
 .weui-input {
-  font-size: 16px!important;
-  color: #333333;
-  letter-spacing: 0.34px;
+  font-size: 14px!important;
+  color: #666!important;
+  letter-spacing: 0.3px;
   line-height: 20px;
+}
+input::placeholder{
+  font-size: 14px!important;
+  color: #B5B6B7;
 }
 
 /* cell组件 文字左对齐 */

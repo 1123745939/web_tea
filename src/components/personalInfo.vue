@@ -73,10 +73,12 @@
         <p style="text-align:center;">确定要退出吗</p>
       </confirm>
     </div>
+    <footers :index = 2></footers>
   </div>
 </template>
 
 <script>
+import footers from './footers'
 import Exif from 'exif-js'
 import utils from '../utils/js/style.js'
 import {addressInfo,getMyInfo,updataPhoto,updataName,updataSex,updataAddress,loginOut,getAddress} from '../api/api.js'
@@ -88,6 +90,7 @@ export default {
   components: {
     Actionsheet,
     Confirm,
+    footers
   },
   data () {
     return {

@@ -173,13 +173,13 @@ export default {
     background: #FFFFFF;
     box-shadow: 0 0 5px 0 #E8E8E8;
     img.img1
-      width l(16)
+      width l(14)
     img.img2
-      width l(20)
+      width l(16)
     img 
       display block
-      width l(20)
-      height l(20)
+      width l(16)
+      height l(16)
       margin-right l(10)
     input::placeholder
       fz(16)
@@ -194,21 +194,24 @@ export default {
       border-bottom 1px solid #E8E8E8
       .input1
         width 90%
+      input::placeholder
+        color: #B5B6B7;
+        FZ(12)
       input 
         display block
         width 60%
         height 100%
         line-height l(60)
-        font-size: 16px;
-        color: #333333;
-        letter-spacing: 0.34px;
+        fz(12)
+        color:#666
+        letter-spacing: 0.3px;
         line-height: 20px;
       p 
         width l(100)
         background: #E8E8E8;
         border-radius: 6px;
         font-size: 12px;
-        color: #95514C;
+        color: #ff5100;
         letter-spacing: 0.2px;
         padding 0 l(5)
         height l(32)
@@ -219,7 +222,7 @@ export default {
     justify-content flex-start
     align-items center
     fz(14)
-    color #83271F
+    color #ff5100
     line-height l(20)
     margin l(15) 0
     padding 0 4.3%
@@ -231,9 +234,9 @@ export default {
   .sub
     width l(160)
     height l(44)
-    background: #83271F;
+    background: #ff5100
     border-radius: 100px;
-    font-size: 18px;
+    fz(16)
     color: #FFFFFF;
     letter-spacing: 1.12px;
     line-height l(44)

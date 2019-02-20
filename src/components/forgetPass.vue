@@ -167,7 +167,8 @@ export default {
     background: #FFFFFF;
     box-shadow: 0 0 5px 0 #E8E8E8;
     input::placeholder
-      fz(16)
+      fz(14)
+      color #B5B6B7;
     .input:last-of-type
       border-bottom 0
     .input
@@ -178,13 +179,13 @@ export default {
       align-items center
       border-bottom 1px solid #E8E8E8
       img.img1
-        width l(16)
+        width l(14)
       img.img2
-        width l(20)
+        width l(14)
       img 
         display block
-        width l(20)
-        height l(20)
+        width l(14)
+        height l(16)
         margin-right l(10)
       .input1
         width 90%
@@ -193,7 +194,7 @@ export default {
         width 60%
         height 100%
         line-height l(60)
-        font-size: 16px;
+        fz(14)
         color: #333333;
         letter-spacing: 0.34px;
         line-height: 20px;

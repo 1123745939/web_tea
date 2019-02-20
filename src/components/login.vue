@@ -7,14 +7,26 @@
           <img src="../assets/img/login1.png" alt="">
           <input type="tel" placeholder="请输入手机号" v-model="tel">
         </div>
-         <div class="tel">
+        <div class="tel">
           <img src="../assets/img/suo.png" alt="">
           <input type="password" placeholder="请输入密码" v-model="pass">
         </div>
-        <p @click="$router.push('/forgetPass')">忘记密码？</p>
+        <div class="pass">
+          <p @click="$router.push('/forgetPass')">忘记密码？</p>
+          <p @click="$router.push('/register')" class="reguister">立即注册</p>
+          
+        </div>
         <div class="login"  @click="GoLogin">登录</div>
       </div>
-      <div class="registe" @click="$router.push('/register')"> 没有账号？马上注册<img src="../assets/img/more1.png" alt=""></div>
+      <div class="bot">
+        <div class="three">
+          <img src="../assets/img/login3.png" alt="">
+        </div>
+        <div class="wx">
+          <img src="../assets/img/QQ@23x.png" alt="">
+          <img src="../assets/img/WEIXIN@2x.png" alt="">
+        </div>
+      </div>
     </div>
     
   </div>
@@ -90,29 +102,29 @@ export default {
     flex-direction column
     justify-content space-between
     align-items center
-    padding-bottom l(20)
+    padding-bottom l(50)
     .blank
       width 100%
-      height l(180)
+      height l(150)
     .box
       display flex
       flex-direction column
       justify-content flex-start
       align-items center
       padding 0 12.5%
-      height l(350)
+      height l(300)
       .tel
         width 100%
-        height l(64)
+        height l(54)
         display flex
         justify-content flex-start
         align-items center
-        border-bottom 2px solid rgba(255,255,255,0.40)
-        padding l(50) 0 l(30)
+        border-bottom 2px solid rgba(255,255,255,0.15)
+        padding l(40) 0 l(30)
         img 
           display block
-          width l(18)
-          height l(18)
+          width l(16)
+          height l(16)
           margin-right l(15)
         input 
           outline none 
@@ -122,33 +134,38 @@ export default {
           height l(30)
           width 90%
           line-height l(30)
-          fz(16)
+          fz(14)
           letter-spacing: 0.2px;
           color rgba(255,255,255,0.70)
           padding-left l(5)
         input::placeholder
-          fz(16)
-          color: rgba(255,255,255,0.70);
+          fz(14)
+          color: rgba(255,255,255,0.60);
           letter-spacing: 0.2px;
           line-height l(30)
-      p
+      .pass
+        disFlex()
         width 100%
-        font-size: 12px;
-        color: #95514C;
-        letter-spacing: 0.2px;
-        line-height l(17)
-        text-align right 
-        padding-top l(10)
+        p.reguister 
+          color: rgba(255,81,0,0.60);
+        p
+          font-size: 12px;
+          color: rgba(255,255,255,0.7);
+          letter-spacing: 0.2px;
+          line-height l(17)
+          text-align right 
+          padding-top l(10)
       .login
         width l(280)
         height l(44)
-        background: #83271F;
+        background: #ff5100
         border-radius: l(100)
-        fz(18)
+        fz(16)
         color: #FFFFFF;
         letter-spacing: 0.2px;
         line-height l(44)
-        margin-top l(55)
+        margin-top l(70)
+        font-family: PingFangSCM;
     .registe
       font-size: 14px;
       color: #FFFFFF;
@@ -163,4 +180,24 @@ export default {
         width l(8)
         height l(13)
         margin-left l(10)
+  .bot
+    .three
+      width 100%
+      display flex
+      justify-content center
+      align-items center
+      img 
+        display block
+        width 70%
+        height l(12)
+    .wx
+      width 100%
+      height l(35)
+      padding 0 28.8%
+      disFlex()
+      margin-top l(10)
+      img 
+        display block
+        width l(35)
+        height l(35)
 </style>

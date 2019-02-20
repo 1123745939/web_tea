@@ -15,7 +15,7 @@
           <input type="password"  placeholder="请再次输入新密码"  v-model="passNew2">
         </div>
       </div>
-    <div class="sub" @click="submit">提交</div>
+    <div class="sub" @click="submit">保存</div>
     </div>
      <!-- 去登陆的弹框 -->
     <div v-transfer-dom>
@@ -23,10 +23,12 @@
         <p style="text-align:center;">请重新登录</p>
       </confirm>
     </div>
+    <footers :index = 2></footers>
   </div>
 </template>
 
 <script>
+import footers from './footers'
 import utils from '../utils/js/style.js'
 import {updataPass} from '../api/api.js'
 import { Confirm, TransferDomDirective as TransferDom} from 'vux'
@@ -37,6 +39,7 @@ export default {
   },
    components: {
     Confirm,
+    footers
   },
   data () {
     return {
@@ -89,13 +92,14 @@ export default {
   border-top 1px solid #E8E8E8
   padding-top l(10)
   .content
-    height l(656)
+    height 87vh
     background: #FFFFFF;
     box-shadow: 0 0 5px 0 #E8E8E8;
     .table
       padding l(10) 4.3% 0
       input::placeholder
-        fz(16)
+        fz(14)
+        color  #B5B6B7;
       .input:last-of-type
         border-bottom 0
       .input
@@ -104,7 +108,7 @@ export default {
         display flex
         justify-content space-between
         align-items center
-        font-size: 16px;
+        fz(14)
         color: #333333;
         letter-spacing: 0.34px;
         padding l(5) 0
@@ -119,8 +123,8 @@ export default {
           width 72%
           height l(44)
           line-height l(60)
-          font-size: 16px;
-          color: #333333;
+          fz(14)
+          color:  #666
           letter-spacing: 0.34px;
           line-height: 20px;
           margin-left l(20)

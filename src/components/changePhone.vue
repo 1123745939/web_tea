@@ -18,10 +18,12 @@
         <p style="text-align:center;">请重新登录</p>
       </confirm>
     </div>
+    <footers :index= 2></footers>
   </div>
 </template>
 
 <script>
+import footers from './footers'
 import utils from '../utils/js/style.js'
 import {sendCode,smsCkeck,updataPhone} from '../api/api.js'
 import { XInput ,Confirm, TransferDomDirective as TransferDom  } from 'vux'
@@ -32,6 +34,7 @@ export default {
    components: {
     XInput,
     Confirm,
+    footers
   },
   data () {
     return {
@@ -154,7 +157,8 @@ export default {
     background: #FFFFFF;
     box-shadow: 0 0 5px 0 #E8E8E8;
     input::placeholder
-      fz(16)
+      fz(14)
+      color #B5B6B7
     div.input:nth-of-type(2)
       border-bottom 0
     .input
@@ -166,22 +170,22 @@ export default {
       border-bottom 1px solid #E8E8E8
       img 
         display block
-        width l(17)
-        height l(18)
+        width l(14)
+        height l(16)
         margin-right l(10)
       input 
         display block
         width 70%
         height 100%
         line-height l(60)
-        font-size: 16px;
-        color: #333333;
+        fz(14)
+        color:  #666
         letter-spacing: 0.34px;
         line-height: 20px;
       p 
         background: #E8E8E8;
         border-radius: 6px;
-        font-size: 12px;
+        fz(12)
         color: #FF5100;
         letter-spacing: 0.2px;
         width l(100)

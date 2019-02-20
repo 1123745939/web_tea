@@ -2,7 +2,7 @@
   <div class="con">
     <!-- 顶部的tab栏 -->
     <ul class="tab">
-      <li v-for="(item,index) in navlist" :key="index" :class="index == tabIndex ? 'active' :''"   @click="clicknav(index)">{{item}}</li>
+      <li v-for="(item,index) in navlist" :key="index" :class="index == tabIndex ? 'active' :''"   @click.stop="clicknav(index)">{{item}}</li>
     </ul>
     <!-- 头部的banner -->
     <!--  -->
@@ -27,7 +27,7 @@
           <ul class="p_r">
             <li @click="cangV()">
               <img src="../assets/img/xing2x.png" alt="" v-if="is_collect==0">
-              <img src="../assets/img/star_active.png" alt="" v-else>
+              <img src="../assets/img/zan1_active.png" alt="" v-else>
               {{detailObj.tea_collect_count}}
             </li>
             <li @click="zanV()">
@@ -77,7 +77,7 @@
         <span>评论：{{comment.length || 0}}</span>
         <span class="pr_ms" @click="$router.push({path:'/discussAll',query:{id:id}})">更多&nbsp;&nbsp;<img src="../assets/img/more1.png" alt=""></span>
       </div>
-      <ul class="pr_list">
+      <ul class="pr_list" v-show="comment.length">
         <li class="pr_li" v-for="(i,index) in comment" :key="i.id">
           <div class="li_t">
             <img :src="i.user.img_link" alt="">&nbsp;
@@ -134,7 +134,8 @@
     </div>   
     <!--图文详情  -->
     <div class="intro" ref="m3">
-      <div v-html="intro" ></div>
+      <span>宝贝详情</span>
+      <div v-html="intro"  v-show="intro"></div>
     </div>
     <!-- 同一款茶 -->
     <div class="one_t" ref="m4">
@@ -293,16 +294,13 @@ export default {
     this.swiper.slideTo(4, 1000, false)
     this.$nextTick(()=>{
       setTimeout(()=>{
-        console.log(this.$refs.m2,'this.$refs.m2')
-        console.log(this.$refs.m3,'this.$refs.m3')
-        console.log(this.$refs.m4,'this.$refs.m4')
         this.h1 = this.$refs.m2.offsetTop
         console.log(this.h1,'this.h1')
         this.h2 = this.$refs.m3.offsetTop
         console.log(this.h2,'this.h2')
         this.h3 = this.$refs.m4.offsetTop
         console.log(this.h3,'this.h3')
-      },500)
+      },2000)
       })
     window.addEventListener('scroll', this.handleScroll)
     
@@ -366,22 +364,21 @@ export default {
     },
     // 点击导航
     clicknav (index){
+      console.log(index,'----------index')
       this.tabIndex = index;
-      var h2 = JSON.parse(this.h1+this.h2);
       if(index == 0){
         document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
       } else if(index == 1){
-        document.documentElement.scrollTop = this.h1 - 40;
-        document.body.scrollTop = this.h1 - 40;
+        document.documentElement.scrollTop = this.h1;
+        document.body.scrollTop = this.h1;
       } else if(index == 2){
-        document.documentElement.scrollTop = this.h2 - 40;
-        document.body.scrollTop = this.h2 - 40;
+        document.documentElement.scrollTop = this.h2;
+        document.body.scrollTop = this.h2 
       } else if(index == 3){
-        document.documentElement.scrollTop = this.h3 - 40;
-        document.body.scrollTop = this.h3 - 40;
+        document.documentElement.scrollTop = this.h3
+        document.body.scrollTop = this.h3 
       }
-      
     },
     handleScroll (e) {
       this.scroll = document.documentElement.scrollTop || document.body.scrollTop;
@@ -800,6 +797,12 @@ export default {
       margin-bottom l(10)
   .intro
     padding l(10) 0
+    background: #fff;
+    margin-bottom: l(10)
+    span
+      line-height l(20)
+      background #fff
+      color #8e8e8e
     div
       background #fff
       padding l(15) 4.3%
@@ -808,7 +811,7 @@ export default {
     background #fff
     width 100%
     padding 0 4.3% 
-    margin-bottom l(20)
+    margin l(10) 0
     div.pr_m
       display flex
       justify-content space-between
