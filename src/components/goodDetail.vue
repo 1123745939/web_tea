@@ -2,9 +2,10 @@
   <div class="con">
     <!-- 顶部的tab栏 -->
     <ul class="tab">
-      <li v-for="(item,index) in navlist" :key="index" :class="index == tabIndex ? 'active' :''"   @click="pos(index)">{{item}}</li>
+      <li v-for="(item,index) in navlist" :key="index" :class="index == tabIndex ? 'active' :''"   @click="clicknav(index)">{{item}}</li>
     </ul>
     <!-- 头部的banner -->
+    <!--  -->
     <div class="banner" v-show="batch.length>0">
       <div class="t_b">
         <ul>
@@ -71,7 +72,7 @@
         <li>{{detailObj.producted_at}}</li>
       </ul>
     <!-- 评价 -->
-    <div class="pre" v-show="comment.length" ref="m2">
+    <div class="pre" ref="m2">
       <div class="pr_m">
         <span>评论：{{comment.length || 0}}</span>
         <span class="pr_ms" @click="$router.push({path:'/discussAll',query:{id:id}})">更多&nbsp;&nbsp;<img src="../assets/img/more1.png" alt=""></span>
@@ -132,11 +133,11 @@
       </ul>
     </div>   
     <!--图文详情  -->
-    <div class="intro" v-show="intro" ref="m3">
+    <div class="intro" ref="m3">
       <div v-html="intro" ></div>
     </div>
     <!-- 同一款茶 -->
-    <div class="one_t" v-show="sameList.length" ref="m4">
+    <div class="one_t" ref="m4">
       <div class="ont_tt" @click="goSame">
         同一款茶<img src="../assets/img/more1.png" alt="">                                                 
       </div>
@@ -151,7 +152,7 @@
       </ul>
     </div>
     <!-- 相似的茶 -->
-    <div class="one_t" v-if="likeList.length">
+    <div class="one_t" >
       <div class="ont_tt" @click="goLike">
         相似的茶<img src="../assets/img/more1.png" alt="">                                                 
       </div>
@@ -291,13 +292,17 @@ export default {
     this.getcarNum()
     this.swiper.slideTo(4, 1000, false)
     this.$nextTick(()=>{
-      console.log('qqqqqqqqqqqqqqqqqqqqq')
-      this.h1 = this.$refs.m2.offsetTop
-      console.log(this.h1,'this.h1')
-      this.h2 = this.$refs.m3.offsetTop
-      console.log(this.h2,'this.h2')
-      this.h4 = this.$refs.m4.offsetTop
-      console.log(this.h4,'this.h4')
+      setTimeout(()=>{
+        console.log(this.$refs.m2,'this.$refs.m2')
+        console.log(this.$refs.m3,'this.$refs.m3')
+        console.log(this.$refs.m4,'this.$refs.m4')
+        this.h1 = this.$refs.m2.offsetTop
+        console.log(this.h1,'this.h1')
+        this.h2 = this.$refs.m3.offsetTop
+        console.log(this.h2,'this.h2')
+        this.h3 = this.$refs.m4.offsetTop
+        console.log(this.h3,'this.h3')
+      },500)
       })
     window.addEventListener('scroll', this.handleScroll)
     
@@ -361,35 +366,34 @@ export default {
     },
     // 点击导航
     clicknav (index){
-      console.log("index=="+index);
+      this.tabIndex = index;
       var h2 = JSON.parse(this.h1+this.h2);
       if(index == 0){
         document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
-        this.currentCompon = 'infoMain'
       } else if(index == 1){
-        document.documentElement.scrollTop = this.h1;
-        document.body.scrollTop = this.h1;
-        this.currentCompon = 'infoDetail'
+        document.documentElement.scrollTop = this.h1 - 40;
+        document.body.scrollTop = this.h1 - 40;
       } else if(index == 2){
-        document.documentElement.scrollTop = h2;
-        document.body.scrollTop = h2;
-        this.currentCompon = 'infoEvaluate'
+        document.documentElement.scrollTop = this.h2 - 40;
+        document.body.scrollTop = this.h2 - 40;
+      } else if(index == 3){
+        document.documentElement.scrollTop = this.h3 - 40;
+        document.body.scrollTop = this.h3 - 40;
       }
-      this.ind = index;
-      console.log(this.ind);
+      
     },
     handleScroll (e) {
       this.scroll = document.documentElement.scrollTop || document.body.scrollTop;
-      console.log(this.scroll,'this.scroll')
-      return
-      var h2 = JSON.parse(this.h1+this.h2);
+      console.log(this.scroll)
       if(this.scroll>0&&this.scroll<JSON.parse(this.h1)){
         this.tabIndex =0
-      } else if(this.scroll>JSON.parse(this.h1)&this.scroll<h2){
+      } else if(this.scroll>JSON.parse(this.h1)&this.scroll<this.h2){
         this.tabIndex =1
-      } else if(this.scroll>h2){
+      } else if(this.scroll>this.h2&this.scroll<this.h3){
         this.tabIndex =2
+      }else if(this.scroll>this.h3&this.scroll<this.h4){
+        this.tabIndex =4
       }
     },
     //购物车的数量
@@ -559,6 +563,7 @@ export default {
       color: #282828;
       letter-spacing: 0.26px; 
       line-height l(40)
+      border-bottom 2px solid #fff;
   .banner
     width 100%
     height l(60)
@@ -672,8 +677,8 @@ export default {
             padding 0 5px
             background colorB(0)
             img.xin
-              width l(12)
-              height l(12)
+              width l(14)
+              height l(13)
             img 
               display block
               width l(14)
@@ -897,8 +902,8 @@ export default {
             fz(12)
             img 
               display block
-              width l(15)
-              height l(15)
+              width l(14)
+              height l(13)
         div.zhui
             padding 0 l(30)
   // 同一款茶
@@ -913,7 +918,7 @@ export default {
       letter-spacing: 0.36px;
       img 
         display block
-        width l(8)
+        width l(6)
         height l(10)
     ul
       disFlex ()

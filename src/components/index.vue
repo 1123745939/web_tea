@@ -795,6 +795,7 @@ export default {
               fz(14)
               color: #FF5100;
               letter-spacing: l(1)
+              font-family:PingFangSCM
             img
               display block
               width l(6)

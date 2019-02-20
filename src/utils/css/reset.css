@@ -200,3 +200,16 @@ datepicker::-webkit-input-placeholder {
   clear: both;
   visibility: hidden
 }
+@font-face { 
+  font-family: 'PingFangSC'; 
+  src: url('pingfang.ttf'); 
+  font-weight: normal; 
+  font-style: normal; 
+  }
+  
+  @font-face { 
+  font-family: 'PingFangSCM'; 
+  src: url('pingfangscm.otf'); 
+  font-weight: normal; 
+  font-style: normal; 
+  }

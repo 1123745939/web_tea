@@ -95,21 +95,21 @@ export default {
       color: #333333;
       letter-spacing: 0.21px;
       padding l(10) 0
-      font-family: PingFangSC-Medium;
+      font-family: PingFangSCM;
     .tips
       display block
       color #282828
       fz(13)
       margin-bottom l(5)
       line-height l(20)
-      font-family: PingFangSC-Regular;
+      font-family: PingFangSCM;
     p
       font-size: 13px;
       color: #2A2A2A;
       letter-spacing: 0.21px;
       line-height: 20px;
       margin-bottom l(8)
-      font-family: PingFangSC-Regular;
+      font-family: PingFangSC;
     .table  
       width 100%
       height l(177)

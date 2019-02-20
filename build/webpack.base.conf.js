@@ -20,7 +20,6 @@ const webpackConfig= {
 			'./src/utils/js/flexible',
 			'./src/utils/css/reset.css',
 			'./src/utils/css/util.styl',
-			'./src/utils/css/font.css',
 		]
   },
   output: {
