@@ -52,7 +52,7 @@
             </div>
             <div class="red" @click="$router.push({path:'/goodDetail',query:{id:item.tea_id}})">我要买</div>
           </div>            
-        </li>ss
+        </li>
       </ul>
       <div class="noList" v-show="hobbies.length==0">
       <div class="box">
@@ -286,7 +286,7 @@ export default {
 // 订单
   .order.hobby
     padding-bottom l(15)
-    height l(500)
+    height 73vh
   .order
     width 100%
     background #ffffff

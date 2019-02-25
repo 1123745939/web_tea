@@ -27,11 +27,11 @@
           <img src="../assets/img/more1.png" alt="">
         </div>
       </div>
-      <!-- 地区 -->
-      <div class="photo" @click = "$router.push('/myInfo')">
+      <!-- 爱好 -->
+      <div class="photo" @click = "goHobby">
         <div class="left">爱好</div>
         <div class="right">
-          <span></span>
+          <span>{{hobbyTxt}}</span>
           <img src="../assets/img/more1.png" alt="">
         </div>
       </div>
@@ -106,6 +106,7 @@ export default {
       showLoginOut:false,
       img:'',
       ifHasAddress:false,
+      hobbyTxt:'',
     }
   },
   created(){
@@ -127,12 +128,23 @@ export default {
         }else{
           this.sex = '女'
         }
+        if(res.data.data.is_fill==1){
+          this.hobbyTxt = '查看'
+        }else{
+          this.hobbyTxt = ''
+        }
         this.photoSrc = res.data.data.img_link
         console.log(this.photoSrc)
         this.tel = res.data.data.mobile
         res.data.data.nickname ? this.nickname = res.data.data.nickname : this.nickname ="请设置"
         
       })
+    },
+    //去爱好页面
+    goHobby(){
+      var is_fill = this.hobbyTxt == '' ? 0:1
+      this.$router.push({path:'/myInfo',query:{is_fill:is_fill}})
+      
     },
     //init  有没有地址
     getAddressList(){

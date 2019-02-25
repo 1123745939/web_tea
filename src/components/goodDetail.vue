@@ -294,11 +294,11 @@ export default {
     this.swiper.slideTo(4, 1000, false)
     this.$nextTick(()=>{
       setTimeout(()=>{
-        this.h1 = this.$refs.m2.offsetTop
+        this.h1 = this.$refs.m2.offsetTop - 40
         console.log(this.h1,'this.h1')
-        this.h2 = this.$refs.m3.offsetTop
+        this.h2 = this.$refs.m3.offsetTop - 40
         console.log(this.h2,'this.h2')
-        this.h3 = this.$refs.m4.offsetTop
+        this.h3 = this.$refs.m4.offsetTop - 40
         console.log(this.h3,'this.h3')
       },2000)
       })
@@ -370,14 +370,14 @@ export default {
         document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
       } else if(index == 1){
-        document.documentElement.scrollTop = this.h1;
-        document.body.scrollTop = this.h1;
+        document.documentElement.scrollTop = this.h1 
+        document.body.scrollTop = this.h1
       } else if(index == 2){
-        document.documentElement.scrollTop = this.h2;
+        document.documentElement.scrollTop = this.h2
         document.body.scrollTop = this.h2 
       } else if(index == 3){
         document.documentElement.scrollTop = this.h3
-        document.body.scrollTop = this.h3 
+        document.body.scrollTop = this.h3
       }
     },
     handleScroll (e) {
@@ -390,7 +390,7 @@ export default {
       } else if(this.scroll>this.h2&this.scroll<this.h3){
         this.tabIndex =2
       }else if(this.scroll>this.h3&this.scroll<this.h4){
-        this.tabIndex =4
+        this.tabIndex =3
       }
     },
     //购物车的数量

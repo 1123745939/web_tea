@@ -7,16 +7,8 @@
       </tab>
     </div>
     
-    <div class="box" v-show="orderList.length" id="boxs">
-      <scroll ref="scroll"
-        :data="orderList"
-        :pullDownRefresh="pullDownRefreshObj"
-        :pullUpLoad="pullUpLoadObj"
-        :startY="parseInt(startY)"
-        @pullingDown="onPullingDown"
-        @pullingUp="onPullingUp">
-
-        <div class="o_l">
+    <!-- <div class="box" v-show="orderList.length" id="boxs" ref="viewBox"> -->
+        <div class="o_l" >
           <li v-for="(item,index) in orderList" :key="item.id">
             <div class="li_h">
               <p class="time">{{item.created_at}}</p>
@@ -96,10 +88,13 @@
                   </confirm>
                 </div>
           </li>
+          <!--上拉加载-->
+          <div class="load" v-show="loadMore">
+            {{loadMoreText}}
+          </div>
        </div>
-    </scroll>
-
-    </div>
+    
+    <!-- </div> -->
 
     
     <div class="noList" v-show="orderList.length==0">
@@ -116,7 +111,6 @@
 import footers from './footers'
 import utils from '../utils/js/style.js'
 import { Tab, TabItem , XButton ,Confirm, TransferDomDirective as TransferDom} from 'vux'
-import Scroll from './scroll/scroll'
 import { orderList , orderCancel , orderConfirm ,orderDel , orderRefundCancel } from '../api/api.js'
 export default {
    directives: {
@@ -127,7 +121,6 @@ export default {
     Tab,
     TabItem,
     XButton,
-    Scroll,
     footers
   },
   data () {
@@ -147,22 +140,11 @@ export default {
       confirmShow:false,
       indexindex:'',
       count:'',
-
-      pullUpLoadThreshold: 0,
-      pullDownRefresh: true,
-      pullDownRefreshThreshold: 40,
-      pullDownRefreshStop: 40,
-      pullUpLoad: true,
-      pullUpLoadThreshold: 0,
-      pullUpLoadMoreTxt: '数据加载中',
-      pullUpLoadNoMoreTxt: '没有更多数据了',
-      startY: 0,
-      scrollToTime: 700,
-      loading :true,
+      loadMore:false,
+      loadMoreText:'上拉加载更多',
     }
   },
   created(){
-
     document.title = '我的订单'
     if(sessionStorage.selectIndex){
       this.selectIndex = sessionStorage.selectIndex
@@ -171,25 +153,13 @@ export default {
     }
     
     this.init(1,this.selectIndex)
-
-  },
-  
-  computed:{
-    pullDownRefreshObj: function () {
-      return this.pullDownRefresh ? {
-        threshold: parseInt(this.pullDownRefreshThreshold),
-        stop: parseInt(this.pullDownRefreshStop)
-      } : false
-    },
-    pullUpLoadObj: function () {
-      return this.pullUpLoad ? {
-        threshold: parseInt(this.pullUpLoadThreshold),
-        txt: {more: this.pullUpLoadMoreTxt, noMore: this.pullUpLoadNoMoreTxt}
-      } : false
-    }
+    
   },
   mounted(){
-    this.$el.querySelector('#boxs').style.height=this.$refs.cons.offsetHeight-this.$refs.navs.offsetHeight+'px'
+    // this.$el.querySelector('#boxs').style.height=this.$refs.cons.offsetHeight-this.$refs.navs.offsetHeight+'px'
+    setTimeout(()=>{
+        this.scrollMore()
+    },500)
   },
  
   methods:{
@@ -216,6 +186,43 @@ export default {
         }
       })
     },
+    getScrollTop() {
+      var scrollTop = 0;
+      if (document.documentElement && document.documentElement.scrollTop) {
+        scrollTop = document.documentElement.scrollTop;
+      }else if (document.body) {
+        scrollTop = document.body.scrollTop;
+      }
+      return scrollTop;
+	  },
+    getClientHeight() {
+      var clientHeight = 0;
+      if (document.body.clientHeight && document.documentElement.clientHeight) {
+        var clientHeight = (document.body.clientHeight < document.documentElement.clientHeight) ? document.body.clientHeight : document.documentElement.clientHeight;
+      }
+      else {
+        var clientHeight = (document.body.clientHeight > document.documentElement.clientHeight) ? document.body.clientHeight : document.documentElement.clientHeight;
+      }
+      return clientHeight;
+    },
+    getScrollHeight() {
+      return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+    },
+    scrollMore() {
+      window.addEventListener('scroll', () => {
+        if (this.getScrollTop() + this.getClientHeight() == this.getScrollHeight()) {
+          console.log('到死了')
+          this.loadMore=true
+          console.log(this.count,this.page)
+          if(this.count>this.page*10){
+              this.page ++ ;
+              this.init(this.page,this.selectIndex)
+            }else{
+              this.loadMoreText = '没有更多数据了'
+            }
+        }
+      }, false)
+    },
     //点击tab切换
     onItemClick(id,index){
       this.orderList = []
@@ -234,26 +241,11 @@ export default {
           this.$vux.toast.text('订单已删除')
           this.orderList.splice(this.indexindex,1)
           this.$forceUpdate()
-          //this.scroll.scrollTo(0, 0, 500)
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
       })
     },
-    //取消订单
-    // cancel(index){
-    //   const options = {
-    //     token :this.token,
-    //     id:this.id
-    //   }
-    //   orderCancel(options).then(res=>{
-    //     if(res.data.code == 200 && !res.data.error_code){
-    //       this.$vux.toast.text('订单已取消成功')
-    //     }else{
-    //       this.$vux.toast.text(res.data.error_message||res.data.message)
-    //     }
-    //   })
-    // },
     //确认收货
     confirm(){
        const options = {
@@ -266,8 +258,6 @@ export default {
           this.selectIndex = 3
           sessionStorage.selectIndex = 3
           this.init(1,3)
-          this.$forceUpdate()
-          //this.scroll.scrollTo(0, 0, 500)
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
@@ -297,52 +287,8 @@ export default {
       this.$router.push('/evaluate');
       sessionStorage.orderComment = JSON.stringify(item)
     },
-    onPullingDown() {
-      // 模拟更新数据
-      this.ifRefrush = true
-      this.init(1,this.selectIndex)
-      this.$refs.scroll.forceUpdate()
-     },
-     //上拉加载
-    onPullingUp() {
-      // 更新数据
-      console.log('pulling up and load data')
-      if(this.count>this.page*10){
-        this.page ++ ;
-        this.init(this.page,this.selectIndex)
-        this.$refs.scroll.forceUpdate()
-      }
-      this.$refs.scroll.forceUpdate()
-    },
-    rebuildScroll() {
-      Vue.nextTick(() => {
-        this.$refs.scroll.destroy()
-        this.$refs.scroll.initScroll()
-      })
-    }
   },
   watch: {
-    scrollbarObj: {
-      handler() {
-        this.rebuildScroll()
-      },
-      deep: true
-    },
-    pullDownRefreshObj: {
-      handler() {
-        this.rebuildScroll()
-      },
-      deep: true
-    },
-    pullUpLoadObj: {
-      handler() {
-        this.rebuildScroll()
-      },
-      deep: true
-    },
-    startY() {
-      this.rebuildScroll()
-    },
     tabIndex(oldV,neWV){
       sessionStorage.tabIndex = oldV
     },
@@ -371,13 +317,14 @@ export default {
     left 0
     top 0
   .box
-    height l(627)
+    height 83vh
     width: 100%;
     position fixed;
     top l(40)
     overflow-y scroll
     background #F7F7F7 
   div.o_l
+    padding-top l(50)
     li
       width 100%
       margin-bottom l(10)
@@ -386,7 +333,7 @@ export default {
       list-style none
       .li_h
         disFlex ()
-        color: #E63443;
+        color: #ff5100
         letter-spacing: 0.23px;
         line-height l(20)
         fz(14)
@@ -470,8 +417,8 @@ export default {
         align-items center
         margin-top l(10)
         p:last-of-type
-          border 1px solid #83271F
-          color #83271F
+          border 1px solid #ff5100
+          color #ff5100
           margin-left l(15)
         p
           width l(73)

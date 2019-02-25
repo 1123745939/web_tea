@@ -11,7 +11,7 @@
         <textarea  v-else @change="write(index)" v-model="item.value" placeholder="请输入"></textarea>
       </div>
     </div>
-    <div class="sub" @click="checkCode">保存并提交</div>
+    <div class="sub" @click="checkCode">{{txt}}</div>
   </div>
 </template>
 
@@ -29,12 +29,19 @@ export default {
     return {
       token : localStorage.token || '',
       questionList:[],
-      value:''
+      value:'',
+      is_fill:0,
+      txt:''
     }
   },
   created(){
     document.title = '爱好调查'
     this.init()
+    if(this.$route.query.is_fill == 0){
+      this.txt = '保存并提交'
+    }else{
+      this.txt = '编辑'
+    }
   },
   methods:{
     init(){
@@ -90,6 +97,31 @@ export default {
       console.log()
     },
     checkCode(){
+      //变成重新编辑状态
+      if(this.txt == '编辑'){
+       this.questionList.forEach(item=>{
+         if(item.type=='text'){
+           item.value = ''
+         }
+            item.values.forEach(ele=>{
+              if(item.value){
+                if(item.value.split(',').indexOf(ele.key)!=-1){
+                  ele.if_select = false
+                }else{
+                  ele.if_select = false
+                }
+              }else{
+                ele.if_select = false
+              }
+              
+            })
+          })     
+        console.log(this.questionList)
+        this.$forceUpdate()
+        this.txt = '保存并提交'
+        return
+      }
+      //保存的时候
       var arr = []
       this.questionList.forEach(item=>{
         var obj = {}
@@ -110,9 +142,18 @@ export default {
         arr.push(obj)
       })
       console.log(arr)
-      console.log(this.questionList)
+
+      // //判断有没有填完
+      let ifSelectAll = arr.every(item=>{
+        return item[item.key] != '' 
+      })
+      if(!ifSelectAll){
+        this.$vux.toast.text('请填写完毕')
+        return
+      }
+      console.log(this.questionList,'this.questionListthis.questionList')
    
-      //接下来 调接口 保存
+      //接口 保存
       const options = {
         token :this.token,
         data :JSON.stringify({values:arr})
@@ -123,7 +164,7 @@ export default {
         if(res.data.code == 200 && !res.data.error_code){
           this.$vux.toast.text('提交成功')
           setTimeout(()=>{
-            this.$router.push('/hobby')
+            this.$router.push('/my')
           },1000)
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)

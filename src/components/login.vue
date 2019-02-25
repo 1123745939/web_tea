@@ -23,8 +23,8 @@
           <img src="../assets/img/login3.png" alt="">
         </div>
         <div class="wx">
-          <img src="../assets/img/QQ@23x.png" alt="">
-          <img src="../assets/img/WEIXIN@2x.png" alt="">
+          <img src="../assets/img/QQ@23x.png" alt="" @click="goQQ">
+          <img src="../assets/img/WEIXIN@2x.png" alt=""  @click="goWX" class="wximg" v-if="is_wx"> 
         </div>
       </div>
     </div>
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import domain from '../api/domain.js'
 import utils from '../utils/js/style.js'
 import {Login} from '../api/api.js'
 import md5 from 'js-md5';
@@ -41,14 +42,25 @@ export default {
     return {
       tel: '',
       pass: '',
-      redirect:''
+      redirect:'',
+      is_wx:false,
     }
   },
   
   created(){
+    this.init()
     document.title = '登录'
   },
   methods:{
+    //判断是不是微信浏览器  如果是 则不显示微信登录图标 如果不是 那就显示微信图标
+    init(){
+      var ua = window.navigator.userAgent.toLowerCase();
+      if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+        this.is_wx = true
+      }else{
+        this.is_wx = false
+      }
+    },
     GoLogin(){
       if(!utils.regPhone(this.tel)){
         this.$vux.toast.text('请输入正确手机号!', 'middle')
@@ -59,7 +71,6 @@ export default {
           options = {
           mobile : this.tel,
           password : md5(this.pass),
-          //openid:utils.getCookie('oid')
           openid:localStorage.oid
 
         }
@@ -82,6 +93,14 @@ export default {
         }
       }) 
     },
+    //跳转qq
+    goQQ(){
+      window.location.href = domain.domain + `/v1/qq`
+    },
+    //去微信
+    goWX(){
+      window.location.href = domain.domain + `/v1/jsapi/redirect`
+    }
   },
 
 }
@@ -159,6 +178,7 @@ export default {
         width l(280)
         height l(44)
         background: #ff5100
+        opacity 0.8
         border-radius: l(100)
         fz(16)
         color: #FFFFFF;
@@ -191,11 +211,14 @@ export default {
         width 70%
         height l(12)
     .wx
-      width 100%
       height l(35)
       padding 0 28.8%
-      disFlex()
+      display flex
+      justify-content center
+      align-items center
       margin-top l(10)
+      img.wximg
+        margin-left l(30)
       img 
         display block
         width l(35)

@@ -16,7 +16,7 @@
             </div>
             <div slot="content" class="demo-content vux-1px-t">
               <li @click="linker(item.target_type,item.notify_target_id,item.sender_id)">         
-                <img :src="item.user.img_link" alt="" class="logo" v-if="item.target_type =='friend'">
+                <img :src="item.user.img_link" alt="" class="logo" v-if="item.target_type =='friend' || item.target_type =='hotcomment'">
                 <img src="../assets/img/tips.png" alt="" class="logo" v-else>
                 <div class="li_r">
                   <div class="li_mm">
@@ -24,6 +24,7 @@
                       <p  v-if="item.target_type == 'product'">通知</p>
                       <p  v-if="item.target_type == 'order'">订单</p>
                       <p  v-if="item.target_type == 'friend'">{{item.user.username}}</p>
+                      <p  v-if="item.target_type == 'hotcomment'">{{item.user.username}}</p>
                       <span class="ti">{{item.created_at}}</span>
                     </div>
                     <span class="t">{{item.notify_content}}</span>
@@ -184,6 +185,8 @@ export default {
         this.$router.push({path:"/orderDetail",query:{id:id}})
       }else if(type=='product'){
         this.$router.push({path:"/goodDetail",query:{id:id}})
+      }else if(type=='hotcomment'){
+        this.$router.push({path:"/hotDiscuss",query:{id:id}})
       }
     },  
     //下拉刷新

@@ -131,19 +131,45 @@ export default {
         this.$vux.toast.text('请同意用户协议','middle')
         return
       }
-      const options = {
-        mobile :this.tel,
-        code:this.code,
-        smsType:'register',
-        password :md5(this.pass1),
-        password_confirmation :md5(this.pass2),
-        sign :sessionStorage.sign
-      }
+      var options = {}
+
+    
+      if(localStorage.oid){
+        options = {
+          mobile :this.tel,
+          code:this.code,
+          smsType:'register',
+          password :md5(this.pass1),
+          password_confirmation :md5(this.pass2),
+          sign :sessionStorage.sign,
+          openid:localStorage.oid
+        }
+      }else if (localStorage.qid) {
+        options = {
+          mobile :this.tel,
+          code:this.code,
+          smsType:'register',
+          password :md5(this.pass1),
+          password_confirmation :md5(this.pass2),
+          sign :sessionStorage.sign,
+          qid:localStorage.qid
+        }
+      }else{
+        options = {
+          mobile :this.tel,
+          code:this.code,
+          smsType:'register',
+          password :md5(this.pass1),
+          password_confirmation :md5(this.pass2),
+          sign :sessionStorage.sign
+        }
+      }   
       regist(options).then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
-          this.$vux.toast.text('注册成功','middle')
+          this.$vux.toast.text('注册成功','middle')      
+          localStorage.token = res.data.data.access_token
           setTimeout(()=>{
-            this.$router.push('/login')
+            this.$router.push('/')
           },1000)
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)

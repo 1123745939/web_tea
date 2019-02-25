@@ -609,7 +609,7 @@ export default {
     display block
     width l(160)
     height l(44)
-    background: #83271F;
+    background: #ff5100;
     border-radius: 100px;
     font-size: 18px;
     color: #FFFFFF;

@@ -14,6 +14,7 @@ axios.interceptors.request.use(function (config) {
     return config;
   }, function (error) {
     // Do something with request error
+    
     return Promise.reject(error);
   });
  
@@ -21,11 +22,17 @@ axios.interceptors.request.use(function (config) {
 axios.interceptors.response.use(function (response) {
     // Do something with response data
     //加载动画
-    Vue.$vux.loading.hide()
-
+    Vue.$vux.loading.hide() 
     return response;
 }, function (error) {
     // Do something with response error
+    // if(error.response.status == 401){
+    //   alert('401')
+    //   this.$vux.toast.text('token已过期，请重新登录')
+    //   setTimeout(()=>{
+    //     this.$router.push('/login')
+    //   },2000)
+    // }
     Vue.$vux.loading.hide()
     return Promise.reject(error);
 });

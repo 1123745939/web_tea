@@ -4,9 +4,10 @@
         <div class="search" @click="$router.push('/search')">
           <img src="../assets/img/search.png" alt="">
         </div>
-        <div class="ul_box">
+        <div class="ul_box" ref="headBox">
           <ul class="tab">
-            <li class="tabli" @click="GOrecommand('','',0);filterId=0" :class="tabIndex==1?'active':''">推荐</li>
+            <li class="tabli" @click="goAll" :class="tabIndex==1?'active':''">推荐</li>
+            <!-- <li class="tabli" @click="GOrecommand('','',0);filterId=0" :class="tabIndex==1?'active':''">推荐</li> -->
             <!-- <li class="tabli" @click="token == ''? loginMaskShow=true : GOrecommand('','',0);filterId=0" :class="tabIndex==2?'active':''">热评</li> -->
             <li  class="tabli" @click="GOadvance('','',0);filterId=0" :class="tabIndex==2?'active':''">预告</li>
             <li class="tabli" @click="$router.push('/kinds') " :class="tabIndex==3?'active':''">分类</li>
@@ -189,8 +190,8 @@ export default {
          this.list = JSON.parse(sessionStorage.list)
       }else{
         if(this.tabIndex == 1){
-          // this.goAll()
-          this.GOrecommand('','',0)
+          this.goAll()
+          //this.GOrecommand('','',0)
         }else if(this.tabIndex == 2){
            //this.GOrecommand('','',0)
         this.GOadvance('','',0)
@@ -201,8 +202,8 @@ export default {
       
     }else{
        if(this.tabIndex == 1){
-        //this.goAll()
-        this.GOrecommand('','',0)
+        this.goAll()
+        //this.GOrecommand('','',0)
       }else if(this.tabIndex == 2){
         //this.GOrecommand('','',0)
         this.GOadvance('','',0)
@@ -216,7 +217,7 @@ export default {
       localStorage.oid = this.$route.query.oid
     }
     document.title = '茶急送'
-    this.init()
+    // this.init()
     if(!sessionStorage.tabIndex){
       this.tabIndex = 1
     }else{
@@ -245,7 +246,7 @@ export default {
     //     this.copyBtn = new this.clipboard(this.$refs.copy[0]);
     //   },10)
     // })
-    
+    this.$el.querySelector('#boxs').style.height=this.$refs.cons.offsetHeight-this.$refs.headBox.offsetHeight - 70 +'px'
   },
   methods:{
    
@@ -348,6 +349,7 @@ export default {
     topData(){
       getAlltop().then(res=>{
         if(res.data.code == 200 && !res.data.error_code){
+          console.log(res,'res')
           if(res.data.data.advance){
             res.data.data.advance.forEach(item=>{
               item.isAdvance = true
@@ -505,8 +507,6 @@ export default {
       if(this.tabIndex==1){
         this.goAll()
       }else if(this.tabIndex == 2){
-        this.GOrecommand('','',0)
-      }else if(this.tabIndex == 3){
         this.GOadvance('','',0)
       }
      },
@@ -530,14 +530,16 @@ export default {
       }else if(this.tabIndex == 2){
         if(this.recommendCount>this.page*10){
           this.page++
-          this.recommand(this.page,this.filterId,this.order,this.is_order)
-        }   
-      }else if(this.tabIndex == 3){
-        if(this.advanceCount>this.page*10){
-          this.page++
           this.advance(this.page,this.filterId,this.order,this.is_order)
+          // this.recommand(this.page,this.filterId,this.order,this.is_order)
         }   
       }
+      // else if(this.tabIndex == 3){
+      //   if(this.advanceCount>this.page*10){
+      //     this.page++
+      //     this.advance(this.page,this.filterId,this.order,this.is_order)
+      //   }   
+      // }
       this.$refs.scroll.forceUpdate()
     },
     rebuildScroll() {
@@ -606,6 +608,9 @@ export default {
         display block
         width l(18)
         height l(18)
+    .ul_box::-webkit-scrollbar {
+        display: none;
+    }
     .ul_box
       width 83.7%
       overflow scroll
@@ -669,7 +674,7 @@ export default {
             height l(24)
   .box
     width 100%
-    height l(570)
+    height 80vh
     position fixed
     top l(60)
     left 0

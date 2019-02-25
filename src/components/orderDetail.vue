@@ -499,9 +499,9 @@ export default {
         color: #333333;
         font-weight 700
       span 
-        color #E63443 
+        color #ff5100
         span 
-          color #E63443 
+          color #ff5100
   .o_time 
     padding 0 4.3% 
     div
@@ -541,8 +541,8 @@ export default {
       justify-content flex-end
       align-items center
       p:last-of-type
-        border 1px solid #83271F
-        color #83271F
+        border 1px solid #ff5100
+        color #ff5100
         margin-left l(15)
       p
         width l(90)

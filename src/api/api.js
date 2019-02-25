@@ -131,7 +131,7 @@ export const HobbyList = function (params) {
 } 
   //提交调查问卷
 export const saveQuestion = function (params) {
-  return axios.post(`${baseUrl}`+"/my/hobby/create", jsonToQuery(params));
+  return axios.get(`${baseUrl}`+"/my/hobby/create", {params});
 }      
   //我的收藏
 export const collectList = function (params) {
@@ -401,3 +401,8 @@ export const delFeed = function (params) {
 export const replies = function (params) {
   return axios.get(`${baseUrl}`+"/more/feedback/replies", {params});
 }
+
+  //绑定qq 
+export const bindQQ = function (params) {
+  return axios.post(`${baseUrl}`+"/qq/bind", jsonToQuery(params));
+}   

@@ -71,7 +71,7 @@ datepicker::-webkit-input-placeholder {
 }
 /* 弹框的的确定按钮的颜色变成主题色---红色 */
 .weui-dialog__btn.weui-dialog__btn_primary {
-  color: red
+  color: #FF5100;
 }
 /* 带有叉号的x-input框清除上边框 */
 .weui-cell{
