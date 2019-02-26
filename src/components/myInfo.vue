@@ -1,5 +1,5 @@
 <template>
-  <div class="con">
+  <div class="con" ref="cons">
     <div class="sex">
       <div class="aa" v-for="(item,index) in questionList" :key="item.question_nid">
         <span>{{item.title}}</span>
@@ -12,6 +12,9 @@
       </div>
     </div>
     <div class="sub" @click="checkCode">{{txt}}</div>
+    <div class="mask" id="mask" v-show="tiao" @click.stop="tiao = false">
+      <span @click="$router.push('/my')" class="tiao">跳过</span>
+    </div>
   </div>
 </template>
 
@@ -31,7 +34,8 @@ export default {
       questionList:[],
       value:'',
       is_fill:0,
-      txt:''
+      txt:'',
+      tiao:false
     }
   },
   created(){
@@ -39,9 +43,19 @@ export default {
     this.init()
     if(this.$route.query.is_fill == 0){
       this.txt = '保存并提交'
-    }else{
+      this.tiao = false
+    }if(this.$route.query.is_fill == 1){
       this.txt = '编辑'
+      this.tiao = false
+    }if(this.$route.query.is_fill == 7){
+      this.txt = '保存并提交'
+      this.tiao = true
     }
+  },
+  mounted(){
+    setTimeout(()=>{
+      this.$el.querySelector('#mask').style.height=this.$refs.cons.offsetHeight +'px'
+    },2000)
   },
   methods:{
     init(){
@@ -182,7 +196,6 @@ export default {
 .con
   background #F7F7F7
   border-top 1px solid #E8E8E8;
-  height l(667)
   text-align left 
   padding-bottom l(20)
   .sub
@@ -197,7 +210,24 @@ export default {
     margin-left 28.8%
     margin-top l(50)
     text-align center
-    margin-bottom l(50)
+    margin-bottom l(20)
+  .mask
+    width 100%
+    height 100%
+    background rgba(0,0,0,0.5)
+    position absolute
+    top 0
+    left 0
+    z-index 333
+    .tiao
+      text-align right
+      color #ff5100
+      padding l(7) l(15)
+      background #fff
+      border-radius l(20)
+      position absolute
+      right l(20)
+      top l(20)
   .gr
     background #ffffff
     padding 0 4.3%

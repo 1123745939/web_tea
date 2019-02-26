@@ -169,14 +169,12 @@ export default {
           this.$vux.toast.text('注册成功','middle')      
           localStorage.token = res.data.data.access_token
           setTimeout(()=>{
-            this.$router.push('/')
+            this.$router.push({path:'/myInfo',query:{is_fill :7}})
           },1000)
         }else{
           this.$vux.toast.text(res.data.error_message||res.data.message)
         }
       })
-     
-
     },
    
 
