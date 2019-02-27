@@ -50,7 +50,7 @@
               <p>{{item.tea_title}}</p>
               <span class="t_f" @click.stop="$router.push({path:'/teaFriendsList'})">{{item.friend_count}}个共同茶朋友</span>
             </div>
-            <div class="red" @click="$router.push({path:'/goodDetail',query:{id:item.tea_id}})">我要买</div>
+            <div class="red" @click="$router.push({path:'/goodDetail',query:{id:item.id}})">我要买</div>
           </div>            
         </li>
       </ul>
