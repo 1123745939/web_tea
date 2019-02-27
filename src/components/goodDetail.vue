@@ -204,6 +204,7 @@
 </template>
 
 <script>
+import $ from 'jquery'
 import domain from '../api/domain.js'
 import 'swiper/dist/css/swiper.css'
 import utils from '../utils/js/style.js'
@@ -303,7 +304,7 @@ export default {
       },2000)
       })
     window.addEventListener('scroll', this.handleScroll)
-    
+    $('.tab').addClass('part1')
   },
   computed: {
       swiper() {
@@ -369,28 +370,38 @@ export default {
       if(index == 0){
         document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
+        // $('.tab').addClass('part1').removeClass('part2')
       } else if(index == 1){
         document.documentElement.scrollTop = this.h1 
         document.body.scrollTop = this.h1
+        // $('.tab').addClass('part2').removeClass('part1').removeClass('part3')
       } else if(index == 2){
         document.documentElement.scrollTop = this.h2
         document.body.scrollTop = this.h2 
+        // $('.tab').addClass('part3').removeClass('part2').removeClass('part4')
       } else if(index == 3){
         document.documentElement.scrollTop = this.h3
         document.body.scrollTop = this.h3
+        // $('.tab').addClass('part4').removeClass('part3')
       }
     },
     handleScroll (e) {
       this.scroll = document.documentElement.scrollTop || document.body.scrollTop;
       console.log(this.scroll)
-      if(this.scroll>0&&this.scroll<JSON.parse(this.h1)){
+      if(this.scroll ==0){
+        $('.tab').addClass('part1').removeClass('part2')
+      }else if(this.scroll>0&&this.scroll<JSON.parse(this.h1)){
         this.tabIndex =0
+        $('.tab').addClass('part2')
       } else if(this.scroll>JSON.parse(this.h1)&this.scroll<this.h2){
         this.tabIndex =1
+        $('.tab').addClass('part2').removeClass('part1').removeClass('part3')
       } else if(this.scroll>this.h2&this.scroll<this.h3){
         this.tabIndex =2
+        $('.tab').addClass('part3').removeClass('part2').removeClass('part4')
       }else if(this.scroll>this.h3&this.scroll<this.h4){
         this.tabIndex =3
+        $('.tab').addClass('part4').removeClass('part3')
       }
     },
     //购物车的数量
@@ -540,6 +551,14 @@ export default {
 @import '../utils/css/util.styl';
 .con
   background #F7F7F7
+  .tab.part1
+    opacity 0
+  .tab.part2
+    opacity 0.2
+  .tab.part2
+    opacity 0.5
+  .tab.part2
+    opacity 0.7
   .tab
     position fixed
     top 0
