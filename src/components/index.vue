@@ -39,6 +39,7 @@
           <!-- <li v-for="(item,index) in list" :key="index" @click="$router.push({path:'/goodDetail',query:{id:item.id}})" class="listli">     -->
           <li v-for="(item,index) in list" :key="index" @click="goDetail(item.id)" class="listli">
             <div class="li_top" :style="{background:'url(' + item.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
+              <!-- <img :src="item.tea_img_link" alt="" class="bgimg"> -->
               <div class="play"><span></span></div>
               <div class="data">
                 <div class="d_l">
@@ -695,6 +696,9 @@ export default {
           // backgroundIcon('list1.png')
           position relative
           border-radius l(15)
+          .bgimg
+            width 100%
+            display block
           .play
             opacity: 0.3;
             backgroundIcon('play.png')

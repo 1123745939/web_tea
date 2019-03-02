@@ -33,6 +33,7 @@ axios.interceptors.response.use(function (response) {
     //     this.$router.push('/login')
     //   },2000)
     // }
+
     Vue.$vux.loading.hide()
     return Promise.reject(error);
 });
