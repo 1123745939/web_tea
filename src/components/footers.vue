@@ -4,23 +4,23 @@
     <div class="footer">
       <ul class="f_r">
          <li  @click="$router.push('/') " :class="index==1?'active':''">
-          <img src="../assets/img/1s.png" alt="" v-if="index==1">
-          <img src="../assets/img/1.png" alt="" v-else>
+          <img src="../assets/img/1.png" alt="" v-if="index==1">
+          <img src="../assets/img/1s.png" alt="" v-else>
           首页
         </li>
         <li  @click="token == ''? loginMaskShow=true : $router.push('/my') " :class="index==2?'active':''">
-          <img src="../assets/img/2s.png" alt="" v-if="index==2">
-          <img src="../assets/img/2.png" alt="" v-else>
+          <img src="../assets/img/2.png" alt="" v-if="index==2">
+          <img src="../assets/img/2s.png" alt="" v-else>
           所爱
         </li>
          <li @click="token == ''? loginMaskShow=true : $router.push('/orders')" :class="index==3?'active':''">
-          <img src="../assets/img/3s.png" alt="" v-if="index==3">
-          <img src="../assets/img/3.png" alt="" v-else>
+          <img src="../assets/img/3.png" alt="" v-if="index==3">
+          <img src="../assets/img/3s.png" alt="" v-else>
           订单
         </li>
          <li @click="$router.push('/more')" :class="index==4?'active':''">
-          <img src="../assets/img/4s.png" alt=""  v-if="index==4" class="tea">
-          <img src="../assets/img/4.png" alt=""  v-else class="tea">
+          <img src="../assets/img/4.png" alt=""  v-if="index==4" class="tea">
+          <img src="../assets/img/4s.png" alt=""  v-else class="tea">
           更多
         </li>
       </ul>

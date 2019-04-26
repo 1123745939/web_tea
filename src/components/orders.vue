@@ -14,7 +14,7 @@
               <p class="time">{{item.created_at}}</p>
               <p>{{item.status_text}}</p>
             </div>
-            <div class="li_m"  @click="$router.push({path:'/orderDetail',query:{id:item.id,tea_id:item.tea_id}})">
+            <div class="li_m"  @click="goDetail(item.id,item.tea_id)">
               <div class="t_img" :style="{background:'url(' + item.tea_img_link + ') no-repeat center/cover',backgroundSize:'100% 100%'}">
                 <img src="../assets/img/play.png" alt="">
               </div>
@@ -108,6 +108,7 @@
 </template>
 
 <script>
+import $ from 'jquery'
 import footers from './footers'
 import utils from '../utils/js/style.js'
 import { Tab, TabItem , XButton ,Confirm, TransferDomDirective as TransferDom} from 'vux'
@@ -145,24 +146,45 @@ export default {
     }
   },
   created(){
+    
     document.title = '我的订单'
     if(sessionStorage.selectIndex){
       this.selectIndex = sessionStorage.selectIndex
     }else{
       this.selectIndex = 0
     }
-    
-    this.init(1,this.selectIndex)
-    
+     if(localStorage.orderList){
+          this.orderList = JSON.parse(localStorage.orderList)
+      }else{
+        this.init(1,this.selectIndex)
+      }
   },
   mounted(){
     // this.$el.querySelector('#boxs').style.height=this.$refs.cons.offsetHeight-this.$refs.navs.offsetHeight+'px'
     setTimeout(()=>{
         this.scrollMore()
+        if(localStorage.orderScrollHeight){
+            $(document).scrollTop(localStorage.orderScrollHeight) 
+            setTimeout(()=>{
+              localStorage.removeItem('orderScrollHeight')
+            },500)
+        }else{
+          $(document).scrollTop(0)
+        }
+       
     },500)
   },
  
   methods:{
+    //去详情页ss
+    goDetail(id,tea_id){
+      var orderScrollHeight = $(document).scrollTop()
+      if(this.page>1){
+        localStorage.orderList = JSON.stringify(this.orderList)
+      }
+      localStorage.orderScrollHeight = orderScrollHeight
+      this.$router.push({path:'/orderDetail',query:{id:id,tea_id:tea_id}})
+    },
     init(page,status){
       const options = {
         token:this.token,
@@ -211,9 +233,7 @@ export default {
     scrollMore() {
       window.addEventListener('scroll', () => {
         if (this.getScrollTop() + this.getClientHeight() == this.getScrollHeight()) {
-          console.log('到死了')
           this.loadMore=true
-          console.log(this.count,this.page)
           if(this.count>this.page*10){
               this.page ++ ;
               this.init(this.page,this.selectIndex)

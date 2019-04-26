@@ -79,7 +79,10 @@ const router =  new Router({
     {
       path: '/orders',
       name: 'orders',
-      component: orders
+      component: orders,
+      meta: {
+        keepAlive: true // 需要被缓存
+      }
     },
     {
       path: '/orderDetail',

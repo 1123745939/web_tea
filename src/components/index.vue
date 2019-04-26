@@ -24,7 +24,6 @@
     <!-- 列表 -->
   <div class="box" id="boxs">
     <scroll ref="scroll"
-        :data="list"
         :pullDownRefresh="pullDownRefreshObj"
         :pullUpLoad="pullUpLoadObj"
         :startY="parseInt(startY)"

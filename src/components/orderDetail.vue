@@ -97,6 +97,7 @@
         <p @click.stop="applyShouhou">申请售后</p>
         <p>查看物流</p>
         <p @click="confirm">确认收货</p>
+        
       </div>
       <div v-if="order.order_status==3">
         <p @click="evluate"> 评价</p>

@@ -1,7 +1,10 @@
 <template>
   <div id="app">
-   
+    <keep-alive include="orders">
+  <!-- 将缓存name为orders的组件 -->
     <router-view/>
+</keep-alive>
+    
   </div>
 </template>
 

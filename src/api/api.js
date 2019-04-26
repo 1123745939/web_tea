@@ -1,6 +1,6 @@
 import axios from './index'
 import domain from './domain'
-let baseUrl = domain.domain +'/v1' 
+let baseUrl =  '/api/v1' 
 const jsonToQuery = function (JSON, isEncode) {
   var _fdata = function (data, isEncode) {
     data = data == null ? '' : data;
@@ -29,6 +29,12 @@ const jsonToQuery = function (JSON, isEncode) {
     }
   }
   if (_Qstring.length) {
+    // let encrypt = new JSEncrypt()
+    // encrypt.setPublicKey()
+
+    // return encrypt(_Qstring.join('&'));
+    // _Qstring.sort()
+    // console.log(_Qstring.join('').replace(/=/g,''))
     return _Qstring.join('&');
   }
   return '';
